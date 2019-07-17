@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Foodbodi</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_fodimap">Fodimap</string>
+    <string name="title_reservation">Reservation</string>
+    <string name="title_profile">Profile</string>
+    <string name="not_updated">Not updated</string>
+</resources>

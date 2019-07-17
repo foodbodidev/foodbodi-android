@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" android:weightSum="10"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <FrameLayout
+            android:layout_weight="3.5"
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_restaurant"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_gravity="end|top"
+                android:src="@drawable/cast_ic_notification_0"
+        />
+
+
+    </FrameLayout>
+
+    <LinearLayout
+            android:id="@+id/list_restaurant_scroll_view"
+            android:layout_weight="6.5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:orientation="horizontal"
+                android:id="@+id/recycler_restaurant_list"
+                android:layout_width="match_parent"
+
+                android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
+
+</LinearLayout>
