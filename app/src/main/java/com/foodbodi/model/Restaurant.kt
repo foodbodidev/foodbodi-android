@@ -15,7 +15,7 @@ class Restaurant {
     lateinit var category:String
 
     @SerializedName("photo")
-    lateinit var photo:String
+    var photo:String = ""
 
     @SerializedName("open_hour")
     var openHour:String = ""

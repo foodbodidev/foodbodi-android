@@ -1,16 +1,18 @@
 package com.foodbodi.controller
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.foodbodi.AuthenticattionActivity
+import com.foodbodi.AuthenticationActivity
 import com.foodbodi.R
 import com.foodbodi.apis.*
 import com.foodbodi.model.Restaurant
@@ -23,12 +25,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.json.JSONArray
-import org.json.JSONObject
+import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
 //TODO : cache this View so that no need to re-create when navigate back to this
 class GoogleMapFragment : Fragment(){
@@ -80,9 +80,13 @@ class GoogleMapFragment : Fragment(){
 
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
-            //TODO : if logged in, open add restaurant form
-            val intent:Intent = Intent(context, AuthenticattionActivity::class.java)
-            startActivity(intent)
+            val apiKey = this.activity?.getSharedPreferences("api_key", Context.MODE_PRIVATE)
+            if (apiKey != null) {
+
+            } else {
+                val intent: Intent = Intent(context, AuthenticationActivity::class.java)
+                startActivity(intent)
+            }
         })
         return view;
     }
@@ -147,6 +151,9 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
 
         val time = restaurant.openHour + " - " + restaurant.closeHour
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
+
+        var imageView:ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)
+        Picasso.get().load(restaurant.photo).into(imageView)
 
 
     }
