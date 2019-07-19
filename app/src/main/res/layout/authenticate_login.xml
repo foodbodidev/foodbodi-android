@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:weightSum="10"
+              android:layout_gravity="center"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <TextView
+            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    </TextView>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/text_large"
+            android:layout_marginRight="@dimen/text_large"
+            android:layout_weight="7"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+        <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:id="@+id/input_email_login" android:hint="@string/email"
+                  android:layout_marginBottom="@dimen/text_medium"
+        />
+        <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/input_password_login" android:hint="@string/password"
+                  android:layout_marginBottom="@dimen/text_medium" android:password="true"
+        />
+        <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_small"
+
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/White"
+                android:text="@string/login"/>
+
+        <Button
+                android:id="@+id/btn_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_small"
+
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/White"
+                android:text="@string/register"/>
+    </LinearLayout>
+
 
 </LinearLayout>

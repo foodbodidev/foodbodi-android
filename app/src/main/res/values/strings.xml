@@ -5,4 +5,21 @@
     <string name="title_reservation">Reservation</string>
     <string name="title_profile">Profile</string>
     <string name="not_updated">Not updated</string>
+    <string name="continue_with_email">Continue with Email</string>
+    <string name="login">Login</string>
+    <string name="register">Sign Up</string>
+    <string name="gender_question">What is your gender</string>
+    <string name="your_basic">Your basic</string>
+
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="age">Your Age</string>
+    <string name="height">Your Height</string>
+    <string name="weight">Your Weight</string>
+    <string name="target_weight">Goal Weight</string>
+    <string name="next">Next</string>
+    <string name="firstname">First Name</string>
+    <string name="lastname">Last Name</string>
 </resources>

@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+                  android:layout_marginTop="300dp"
+                  android:orientation="vertical"
+                  android:layout_marginLeft="@dimen/text_large"
+                  android:layout_marginRight="@dimen/text_large">
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/gender_question"
+                  android:textSize="@dimen/text_large"
+                  android:textAlignment="center"
+                  android:layout_marginBottom="@dimen/text_large"
+        />
+        <LinearLayout
+                android:weightSum="10"
+                android:layout_width="match_parent" android:layout_height="wrap_content">
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:background="@color/colorPrimary"
+                android:id="@+id/select_gender_male"
+                    android:text="@string/male"
+                    android:layout_weight="5"
+                    android:layout_marginRight="@dimen/text_large"
+                    android:layout_marginLeft="@dimen/text_large"
+            />
 
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:background="@color/colorPrimary"
+                    android:id="@+id/select_gender_female"
+                    android:text="@string/female"
+                    android:layout_weight="5"
+                    android:layout_marginRight="@dimen/text_large"
+                    android:layout_marginLeft="@dimen/text_large"
+            />
+        </LinearLayout>
+
+    </LinearLayout>
 </LinearLayout>

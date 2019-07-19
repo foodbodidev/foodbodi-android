@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 class FoodBodiResponse<T : Any> {
     @SerializedName("status_code")
-    lateinit var statusCode:String
+    lateinit var statusCode:Number
 
     @SerializedName("data")
     lateinit var data:T
@@ -12,7 +12,7 @@ class FoodBodiResponse<T : Any> {
     @SerializedName("message")
     lateinit var errorMessage:String
 
-    fun statusCode(): String {
+    fun statusCode(): Number {
         return this.statusCode;
     }
 

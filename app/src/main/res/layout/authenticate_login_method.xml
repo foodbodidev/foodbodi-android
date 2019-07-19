@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:weightSum="10"
+              android:layout_gravity="center"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <TextView
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    </TextView>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/text_large"
+            android:layout_marginRight="@dimen/text_large"
+            android:layout_weight="6"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+        <com.facebook.login.widget.LoginButton
+                android:id="@+id/btn_continue_with_facebook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_large"
+                android:layout_gravity="center_horizontal"/>
+
+        <com.google.android.gms.common.SignInButton
+                android:id="@+id/btn_continue_with_google"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/text_large"
+                android:layout_height="wrap_content"/>
+
+        <Button
+                android:id="@+id/btn_continue_with_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_large"
+
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/White"
+                android:text="@string/continue_with_email"/>
+    </LinearLayout>
+
 
 </LinearLayout>

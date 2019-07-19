@@ -1,7 +1,7 @@
 package com.foodbodi.controller
 
 import android.content.Context
-import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +12,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.foodbodi.AuthenticationActivity
 import com.foodbodi.R
 import com.foodbodi.apis.*
-import com.foodbodi.model.Restaurant
-import com.foodbodi.model.RestaurantCategory
-import com.foodbodi.model.RestaurantCategoryProvider
+import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -80,15 +77,35 @@ class GoogleMapFragment : Fragment(){
 
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
-            val apiKey = this.activity?.getSharedPreferences("api_key", Context.MODE_PRIVATE)
+            val apiKey:SharedPreferences? = this.activity?.getSharedPreferences("Foodbodi", Context.MODE_PRIVATE)
             if (apiKey != null) {
+                CurrentUserProvider.instance.updateApiKey(apiKey.getString("api_key", null), object : Action<User> {
+                    override fun accept(data: User?) {
+                        if (data == null) {
+                            invokeAuthentication()
+                        } else {
+                            invokeAddRestaurantForm()
+                        }
+                    }
 
+                    override fun deny(data: User?, reason: String) {
+                        Toast.makeText(context, reason, Toast.LENGTH_LONG).show()
+                    }
+
+                })
             } else {
-                val intent: Intent = Intent(context, AuthenticationActivity::class.java)
-                startActivity(intent)
+               invokeAuthentication()
             }
         })
         return view;
+    }
+
+    private fun invokeAuthentication() {
+
+    }
+
+    private fun invokeAddRestaurantForm() {
+
     }
 
     private fun ensureListRestaurantView(view: View) {
