@@ -20,7 +20,7 @@ class RegisterFragment(parent:AuthenticateFlowController) : Fragment() {
     private var parent:AuthenticateFlowController = parent
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view:View = inflater.inflate(R.layout.authenticate_user_account_info, container, false);
-        view.findViewById<Button>(R.id.btn_register).setOnClickListener(object : View.OnClickListener {
+        view.findViewById<Button>(R.id.btn_user_info_signup).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 val email = view.findViewById<EditText>(R.id.input_email).text.toString()
                 val password = view.findViewById<EditText>(R.id.input_password).text.toString()

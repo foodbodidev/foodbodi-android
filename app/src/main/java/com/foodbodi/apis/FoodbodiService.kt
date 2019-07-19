@@ -17,12 +17,15 @@ interface FoodbodiService {
     @GET("metadata/restaurant_category")
     fun getRestaurantCategories():Call<FoodBodiResponse<Map<String, RestaurantCategory>>>
 
+    @FormUrlEncoded
     @POST("login")
     fun login(@Field("email") email:String, @Field("password") password:String):Call<FoodBodiResponse<LoginResponse>>
 
+    @FormUrlEncoded
     @POST("register")
     fun register(@Field("email") email:String, @Field("password") password:String, @Field("first_name") firstName:String, @Field("last_name") lastName:String):Call<FoodBodiResponse<LoginResponse>>
 
+    @FormUrlEncoded
     @POST("profile")
     fun updateProfile(@HeaderMap headers: Map<String, String>,  @Field("age") age:String, @Field("height") height:Int, @Field("weight") weight:Double, @Field("target_weight") targetWeight:Double) : Call<FoodBodiResponse<User>>
 }

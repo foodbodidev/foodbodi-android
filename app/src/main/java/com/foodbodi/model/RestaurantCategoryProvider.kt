@@ -28,8 +28,9 @@ class RestaurantCategoryProvider private constructor(){
 
                     for (task in tasks) {
                         task.accept(map)
-                        tasks.remove(task)
                     }
+
+                    tasks.clear()
                 }
 
             })

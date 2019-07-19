@@ -20,7 +20,7 @@ import retrofit2.Response
 class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController {
 
     override fun invokeRegisterFlow() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, RegisterFragment(this))
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, RegisterFragment(this)).commit()
     }
 
     override fun registerSuccess(email:String, password:String) {
@@ -58,7 +58,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
 
     override fun onSelectLoginMethod(loginMethod: LoginMethod) {
         when(loginMethod) {
-            LoginMethod.MANUAL -> getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, LoginFragment(this))
+            LoginMethod.MANUAL -> getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, LoginFragment(this)).commit()
             LoginMethod.GOOGLE, LoginMethod.FACEBOOK -> Toast.makeText(this,"Coming soon", Toast.LENGTH_LONG).show()
         }
     }
@@ -75,7 +75,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authenticate_flow)
         val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_container_authen_flow, LoginMethodFragment(this));
+        transaction.replace(R.id.frame_container_authen_flow, LoginMethodFragment(this)).commit();
     }
 }
 

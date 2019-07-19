@@ -19,6 +19,7 @@
             android:layout_marginRight="@dimen/text_large"
             android:layout_weight="6"
             android:layout_width="match_parent" android:layout_height="wrap_content">
+        <!--#
         <com.facebook.login.widget.LoginButton
                 android:id="@+id/btn_continue_with_facebook"
                 android:layout_width="match_parent"
@@ -31,13 +32,13 @@
                 android:layout_width="match_parent"
                 android:layout_marginBottom="@dimen/text_large"
                 android:layout_height="wrap_content"/>
+                -->
 
         <Button
                 android:id="@+id/btn_continue_with_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_large"
-
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:background="@color/colorPrimary"
                 android:textColor="@color/White"

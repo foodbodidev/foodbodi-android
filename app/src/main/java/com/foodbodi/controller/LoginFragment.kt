@@ -23,7 +23,7 @@ class LoginFragment(parent:AuthenticateFlowController):Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view:View = inflater.inflate(R.layout.authenticate_login_method, container, false);
+        var view:View = inflater.inflate(R.layout.authenticate_login, container, false);
         view.findViewById<Button>(R.id.btn_login).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 val email = view.findViewById<EditText>(R.id.input_email_login).text.toString()

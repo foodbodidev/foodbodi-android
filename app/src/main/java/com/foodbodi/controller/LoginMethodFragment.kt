@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.facebook.FacebookSdk
 import com.foodbodi.AuthenticateFlowController
 import com.foodbodi.LoginMethod
 import com.foodbodi.R
@@ -27,6 +28,7 @@ class LoginMethodFragment(parent: AuthenticateFlowController) : Fragment() {
 
         })
 
+        /*
         view.findViewById<Button>(R.id.btn_continue_with_google).setOnClickListener(object : View.OnClickListener{
             override fun onClick(p0: View?) {
                 parent.onSelectLoginMethod(LoginMethod.GOOGLE)
@@ -39,7 +41,7 @@ class LoginMethodFragment(parent: AuthenticateFlowController) : Fragment() {
                 parent.onSelectLoginMethod(LoginMethod.FACEBOOK)
             }
 
-        })
+        })*/
 
         return view
     }
