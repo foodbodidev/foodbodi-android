@@ -86,7 +86,7 @@
                     android:layout_width="0dp" android:layout_height="wrap_content"/>
 
             <Button  android:layout_weight="5"
-                     android:id="@+id/btn_select_type_food_truct"
+                     android:id="@+id/btn_select_type_food_truck"
                      android:text="@string/food_truct"
                      android:layout_width="0dp" android:layout_height="wrap_content"/>
         </LinearLayout>

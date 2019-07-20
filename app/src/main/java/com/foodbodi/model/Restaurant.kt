@@ -6,20 +6,27 @@ import org.json.JSONObject
 
 class Restaurant {
     @SerializedName("name")
-    var name:String = "Unnamed";
+    var name:String? = null
 
     @SerializedName("id")
-    lateinit var id:String
+     var id:String? = null
 
     @SerializedName("category")
-    lateinit var category:String
+    var category:String? = null
 
     @SerializedName("photo")
-    var photo:String = ""
+    var photo:String? = null
 
     @SerializedName("open_hour")
-    var openHour:String = ""
+    var openHour:String? = null
 
     @SerializedName("close_hour")
-    var closeHour:String = ""
+    var closeHour:String? = null
+
+    @SerializedName("type")
+    var type:RestaurantType? = null
+}
+
+enum class RestaurantType {
+    RESTAURANT, FOOD_TRUCK
 }
