@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.foodbodi.AddRestaurantActivity
 import com.foodbodi.AuthenticateFlowActivity
 import com.foodbodi.R
 import com.foodbodi.apis.*
@@ -116,7 +117,7 @@ class GoogleMapFragment : Fragment(){
     }
 
     private fun invokeAddRestaurantForm() {
-
+        startActivity(Intent(context, AddRestaurantActivity::class.java))
     }
 
     private fun ensureListRestaurantView(view: View) {

@@ -8,6 +8,7 @@
     <string name="continue_with_email">Continue with Email</string>
     <string name="login">Login</string>
     <string name="register">Sign Up</string>
+    <string name="submit">Submit</string>
     <string name="gender_question">What is your gender</string>
     <string name="your_basic">Your basic</string>
 
@@ -22,4 +23,17 @@
     <string name="next">Next</string>
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>
+    
+    <string name="title">Title</string>
+    <string name="category">Category</string>
+    <string name="hour_example">ex) 13:00</string>
+    <string name="subtitle">Subtitle</string>
+    <string name="price_symbol">$</string>
+    <string name="add_kcalo">Add kcalo</string>
+    <string name="add_menu">Add Menu</string>
+    <string name="open_hour">Open hour</string>
+    <string name="close_hour">Close hour</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="food_truct">Food Truck</string>
+    <string name="menu">Menu</string>
 </resources>
