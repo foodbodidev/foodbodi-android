@@ -25,8 +25,12 @@ class User {
     var targetWeight:Double = 0.0
 
     @SerializedName("sex")
-    var sex:String? = null
+    var sex:Gender? = null
 
     @SerializedName("password")
     var password:String? = null
+}
+
+enum class Gender {
+    MALE, FEMALE
 }
