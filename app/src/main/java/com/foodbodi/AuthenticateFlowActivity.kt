@@ -9,23 +9,28 @@ import androidx.fragment.app.FragmentTransaction
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.LoginResponse
+import com.foodbodi.apis.requests.LoginRequest
 import com.foodbodi.controller.LoginFragment
 import com.foodbodi.controller.LoginMethodFragment
 import com.foodbodi.controller.RegisterFragment
 import com.foodbodi.model.CurrentUserProvider
+import com.foodbodi.model.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController {
-
+    companion object VAR {
+        val PREFERENCE_NAME:String = "Foodbodi"
+        val API_KEY_FIELD = "api_key"
+    }
     override fun invokeRegisterFlow() {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, RegisterFragment(this)).commit()
     }
 
-    override fun registerSuccess(email:String, password:String) {
+    override fun registerSuccess(profile: User) {
         val that:Context = this
-        FoodbodiRetrofitHolder.getService().login(email, password)
+        FoodbodiRetrofitHolder.getService().login(LoginRequest(profile.email!!, profile.password!!))
             .enqueue(object : Callback<FoodBodiResponse<LoginResponse>> {
                 override fun onResponse(
                     call: Call<FoodBodiResponse<LoginResponse>>,
@@ -33,10 +38,10 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                 ) {
                     if (0 == response.body()?.statusCode()) {
                         val token = response.body()?.data()?.token
-                        val profile = response.body()?.data()?.user
-                        CurrentUserProvider.instance.setData(token!!, profile!!)
-
-                        val intent:Intent = Intent(that, UpdateBasicInfoActivity::class.java)
+                        val data:User? = response.body()?.data()?.user
+                        CurrentUserProvider.instance.setData(token!!, data!!)
+                        saveApiKey(token)
+                        val intent = Intent(that, UpdateBasicInfoActivity::class.java)
                         startActivity(intent)
 
                     } else {
@@ -63,8 +68,13 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         }
     }
 
-    override fun onLoginSuccess() {
-        finish()
+    override fun onLoginSuccess(apiKey:String?) {
+        if (apiKey == null) {
+            Toast.makeText(this, "Can not extract api key for further requests", Toast.LENGTH_LONG).show()
+        } else {
+            saveApiKey(apiKey)
+            finish()
+        }
     }
 
     override fun onLoginFail(message: String?) {
@@ -77,16 +87,20 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_container_authen_flow, LoginMethodFragment(this)).commit();
     }
+
+    fun saveApiKey(apiKey:String?) {
+        getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).edit().putString(API_KEY_FIELD, apiKey).apply()
+    }
 }
 
 interface AuthenticateFlowController {
     fun onSelectLoginMethod(loginMethod: LoginMethod)
 
-    fun onLoginSuccess()
+    fun onLoginSuccess(apiKey:String?)
     fun onLoginFail(message:String?)
 
     fun invokeRegisterFlow()
-    fun registerSuccess(email:String, password:String)
+    fun registerSuccess(profile:User)
     fun registerFail(message:String?)
 }
 

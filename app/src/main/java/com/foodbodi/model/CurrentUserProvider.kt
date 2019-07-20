@@ -21,7 +21,7 @@ class CurrentUserProvider private constructor(){
         return user != null;
     }
 
-    fun updateApiKey(key:String?, callback:Action<User>) {
+    fun loadCurrentUser(key:String?, callback:Action<User>) {
         apiKey = key
         if (apiKey != null) {
             FoodbodiRetrofitHolder.getService().getProfile(mapOf(Pair<String, String>("token", apiKey!!)))

@@ -30,11 +30,12 @@ class UpdateBasicInfoActivity : AppCompatActivity() {
                 } else {
                     val headers = HashMap<String, String>()
                     headers.put("token", token)
-                    val age: String = findViewById<EditText>(R.id.input_age).text.toString()
-                    val height: Int = findViewById<EditText>(R.id.input_height).text.toString().toInt()
-                    val weight: Double = findViewById<EditText>(R.id.input_age).text.toString().toDouble()
-                    val target_weight: Double = findViewById<EditText>(R.id.input_age).text.toString().toDouble()
-                    FoodbodiRetrofitHolder.getService().updateProfile(headers, age, height, weight, target_weight)
+                    val profile = User()
+                    profile.age = findViewById<EditText>(R.id.input_age).text.toString().toInt()
+                    profile.height = findViewById<EditText>(R.id.input_height).text.toString().toInt()
+                    profile.weight = findViewById<EditText>(R.id.input_weight).text.toString().toDouble()
+                    profile.targetWeight = findViewById<EditText>(R.id.input_target_weight).text.toString().toDouble()
+                    FoodbodiRetrofitHolder.getService().updateProfile(headers, profile)
                         .enqueue(object : Callback<FoodBodiResponse<User>> {
                             override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
                                 //TODO : //system failure

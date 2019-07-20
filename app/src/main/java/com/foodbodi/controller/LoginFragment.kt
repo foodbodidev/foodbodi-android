@@ -12,6 +12,7 @@ import com.foodbodi.R
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.LoginResponse
+import com.foodbodi.apis.requests.LoginRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,7 +29,7 @@ class LoginFragment(parent:AuthenticateFlowController):Fragment() {
             override fun onClick(p0: View?) {
                 val email = view.findViewById<EditText>(R.id.input_email_login).text.toString()
                 val password = view.findViewById<EditText>(R.id.input_password_login).text.toString()
-                FoodbodiRetrofitHolder.getService().login(email = email, password = password)
+                FoodbodiRetrofitHolder.getService().login(LoginRequest(email, password))
                     .enqueue(object : Callback<FoodBodiResponse<LoginResponse>> {
                         override fun onFailure(call: Call<FoodBodiResponse<LoginResponse>>, t: Throwable) {
                             //TODO : system failure
@@ -39,7 +40,7 @@ class LoginFragment(parent:AuthenticateFlowController):Fragment() {
                             response: Response<FoodBodiResponse<LoginResponse>>
                         ) {
                             if (0 == response.body()?.statusCode()) {
-                                parent.onLoginSuccess();
+                                parent.onLoginSuccess(response.body()?.data()?.token);
                             } else {
                                 parent.onLoginFail(response.body()?.errorMessage());
                             }

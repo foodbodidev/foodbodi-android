@@ -79,24 +79,33 @@ class GoogleMapFragment : Fragment(){
 
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
-            val apiKey:SharedPreferences? = this.activity?.getSharedPreferences("Foodbodi", Context.MODE_PRIVATE)
-            if (apiKey!!.contains("api_key")) {
-                CurrentUserProvider.instance.updateApiKey(apiKey.getString("api_key", null), object : Action<User> {
-                    override fun accept(data: User?) {
-                        if (data == null) {
-                            invokeAuthentication()
-                        } else {
-                            invokeAddRestaurantForm()
-                        }
-                    }
-
-                    override fun deny(data: User?, reason: String) {
-                        Toast.makeText(context, reason, Toast.LENGTH_LONG).show()
-                    }
-
-                })
+            if (CurrentUserProvider.instance.isLoggedIn()) {
+                invokeAddRestaurantForm()
             } else {
-               invokeAuthentication()
+                val apiKey: SharedPreferences? =
+                    this.activity?.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)
+                if (apiKey!!.contains(AuthenticateFlowActivity.API_KEY_FIELD)) {
+                    CurrentUserProvider.instance.loadCurrentUser(
+                        apiKey.getString(
+                            AuthenticateFlowActivity.API_KEY_FIELD,
+                            null
+                        ), object : Action<User> {
+                            override fun accept(data: User?) {
+                                if (data == null) {
+                                    invokeAuthentication()
+                                } else {
+                                    invokeAddRestaurantForm()
+                                }
+                            }
+
+                            override fun deny(data: User?, reason: String) {
+                                Toast.makeText(context, reason, Toast.LENGTH_LONG).show()
+                            }
+
+                        })
+                } else {
+                    invokeAuthentication()
+                }
             }
         })
         return view;
@@ -113,7 +122,7 @@ class GoogleMapFragment : Fragment(){
     private fun ensureListRestaurantView(view: View) {
         viewAdapter = MyAdapter(restaurants);
         //TODO : maybe we should cache the recyclerView, to avoid rerender everytime user come back
-        var viewManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val viewManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.recycler_restaurant_list)?.apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
@@ -171,7 +180,7 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
         val time = restaurant.openHour + " - " + restaurant.closeHour
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
 
-        var imageView:ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)
+        val imageView:ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)
         Picasso.get().load(restaurant.photo).into(imageView)
 
 
