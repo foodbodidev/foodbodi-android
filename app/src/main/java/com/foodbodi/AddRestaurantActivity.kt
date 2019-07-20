@@ -8,11 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import com.foodbodi.model.Restaurant
-import com.foodbodi.model.RestaurantCategory
-import com.foodbodi.model.RestaurantCategoryProvider
-import com.foodbodi.model.RestaurantType
+import com.foodbodi.apis.FoodBodiResponse
+import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.apis.RestaurantResponse
+import com.foodbodi.controller.RestaurantAddMenuFragment
+import com.foodbodi.model.*
 import com.foodbodi.utils.Action
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
@@ -29,6 +33,8 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
         ensureRestaurantTypeInput()
         selectType(restaurantType)
 
+        val addMenuFragment = RestaurantAddMenuFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.frame_container_add_menu, addMenuFragment).commit()
 
         findViewById<Button>(R.id.btn_submit_restaurant).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
@@ -40,8 +46,29 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
                 restaurant.closeHour = findViewById<EditText>(R.id.input_restaurent_close_hour).text.toString()
                 restaurant.type = restaurantType
 
+                val foods:ArrayList<Food>? = addMenuFragment.foodList
+                if (foods != null && foods.isNotEmpty()) {
+                    restaurant.foods = foods
+                }
+                FoodbodiRetrofitHolder.getService().createRestaurant(FoodbodiRetrofitHolder.getHeaders(), restaurant)
+                    .enqueue(object : Callback<FoodBodiResponse<RestaurantResponse>> {
+                        override fun onFailure(call: Call<FoodBodiResponse<RestaurantResponse>>, t: Throwable) {
+                            //TODO : system failure
+                        }
 
+                        override fun onResponse(
+                            call: Call<FoodBodiResponse<RestaurantResponse>>,
+                            response: Response<FoodBodiResponse<RestaurantResponse>>
+                        ) {
+                            if (0 == response.body()?.statusCode()) {
+                                Toast.makeText(this@AddRestaurantActivity, "New restaurant added", Toast.LENGTH_LONG).show()
+                                finish()
+                            } else {
+                                Toast.makeText(this@AddRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                            }
+                        }
 
+                    })
 
             }
 

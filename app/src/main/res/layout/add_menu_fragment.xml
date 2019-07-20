@@ -6,7 +6,7 @@
 
     <TextView
             android:text="@string/menu"
-            android:textSize="@dimen/text_title"
+            android:textSize="@dimen/text_large"
             android:layout_width="match_parent" android:layout_height="wrap_content"/>
     <LinearLayout
             android:weightSum="10"
@@ -24,10 +24,12 @@
                         android:id="@+id/input_food_price"
                         android:hint="@string/price_symbol"
                         android:minWidth="80dp"
+                        android:inputType="numberDecimal"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                 <EditText
                         android:id="@+id/input_food_kcalo"
                         android:hint="@string/add_kcalo"
+                        android:inputType="numberDecimal"
                         android:layout_width="match_parent" android:layout_height="wrap_content"/>
             </LinearLayout>
             
@@ -56,6 +58,7 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_added_food"
             android:layout_width="match_parent"
+            android:minHeight="400dp"
             android:layout_height="wrap_content">
 
     </androidx.recyclerview.widget.RecyclerView>

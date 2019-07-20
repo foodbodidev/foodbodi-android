@@ -1,5 +1,6 @@
 package com.foodbodi.apis
 
+import com.foodbodi.apis.requests.ImportFoodRequest
 import com.foodbodi.apis.requests.LoginRequest
 import com.foodbodi.model.Restaurant
 import com.foodbodi.model.RestaurantCategory
@@ -29,4 +30,12 @@ interface FoodbodiService {
     @Headers("Content-Type: application/json")
     @POST("profile")
     fun updateProfile(@HeaderMap headers: Map<String, String>, @Body user: User) : Call<FoodBodiResponse<User>>
+
+    @Headers("Content-Type: application/json")
+    @POST("restaurant")
+    fun createRestaurant(@HeaderMap headers: Map<String, String>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<RestaurantResponse>>
+
+    @Headers("Content-Type: application/json")
+    @POST("food/import")
+    fun importFoods(@HeaderMap headers: Map<String, String>, @Body importFoodRequest: ImportFoodRequest) : Call<FoodBodiResponse<Restaurant>>
 }

@@ -25,6 +25,9 @@ class Restaurant {
 
     @SerializedName("type")
     var type:RestaurantType? = null
+
+    @SerializedName("foods")
+    var foods:ArrayList<Food>? = null
 }
 
 enum class RestaurantType {

@@ -11,92 +11,96 @@
             android:id="@+id/frame_container_restaurant_photo"
             android:background="@color/cardview_dark_background"
             android:layout_width="match_parent"
-            android:layout_height="250dp">
+            android:layout_height="200dp">
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/text_title"
+                android:layout_marginTop="@dimen/text_large"
                 android:layout_width="wrap_content"
                 android:src="@drawable/cast_ic_notification_0"
                 android:layout_height="wrap_content"/>
     </FrameLayout>
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_marginTop="150dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_width="match_parent" android:layout_height="match_parent">
         <LinearLayout
                 android:orientation="vertical"
-                android:background="@color/cardview_light_background"
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <EditText
-                    android:id="@+id/input_restaurant_name"
-                    android:hint="@string/title"
-                    android:minLines="3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            <Spinner
-                    android:id="@+id/spinner_restaurant_category"
-                    android:layout_width="match_parent" android:layout_height="wrap_content">
-
-            </Spinner>
-
+                android:layout_marginTop="100dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_width="match_parent" android:layout_height="match_parent">
             <LinearLayout
-                    android:weightSum="10"
-                    android:layout_width="match_parent" android:layout_height="wrap_content">
+                    android:orientation="vertical"
+                    android:background="@color/cardview_light_background"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <EditText
+                        android:id="@+id/input_restaurant_name"
+                        android:hint="@string/title"
+                        android:minLines="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <Spinner
+                        android:scrollbarSize="@dimen/text_medium"
+                        android:id="@+id/spinner_restaurant_category"
+                        android:layout_width="match_parent" android:layout_height="wrap_content">
+                </Spinner>
+
                 <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_weight="5"
-                        android:layout_width="0dp" android:layout_height="wrap_content">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                              android:text="@string/open_hour"/>
-                    <EditText
-                            android:id="@+id/input_restaurent_open_hour"
-                            android:hint="@string/hour_example"
-                            android:inputType="time"
-                            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_weight="5"
-                        android:layout_width="0dp" android:layout_height="wrap_content">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                              android:text="@string/open_hour"/>
-                    <EditText
-                            android:id="@+id/input_restaurent_close_hour"
-                            android:hint="@string/hour_example"
-                            android:inputType="time"
-                            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                        android:weightSum="10"
+                        android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="5"
+                            android:layout_width="0dp" android:layout_height="wrap_content">
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                  android:text="@string/open_hour"/>
+                        <EditText
+                                android:id="@+id/input_restaurent_open_hour"
+                                android:hint="@string/hour_example"
+                                android:inputType="time"
+                                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="5"
+                            android:layout_width="0dp" android:layout_height="wrap_content">
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                  android:text="@string/open_hour"/>
+                        <EditText
+                                android:id="@+id/input_restaurent_close_hour"
+                                android:hint="@string/hour_example"
+                                android:inputType="time"
+                                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
+            <LinearLayout
+                    android:weightSum="10"
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:layout_weight="5"
+                        android:id="@+id/btn_select_type_restaurant"
+                        android:text="@string/restaurant"
+                        android:layout_width="0dp" android:layout_height="wrap_content"/>
+
+                <Button android:layout_weight="5"
+                        android:id="@+id/btn_select_type_food_truck"
+                        android:text="@string/food_truct"
+                        android:layout_width="0dp" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
+            <FrameLayout
+                    android:id="@+id/frame_container_add_menu"
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+            </FrameLayout>
+            </ScrollView>
         </LinearLayout>
 
-        <LinearLayout
-                android:weightSum="10"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
-            <Button  android:layout_weight="5"
-                     android:id="@+id/btn_select_type_restaurant"
-                     android:text="@string/restaurant"
-                    android:layout_width="0dp" android:layout_height="wrap_content"/>
 
-            <Button  android:layout_weight="5"
-                     android:id="@+id/btn_select_type_food_truck"
-                     android:text="@string/food_truct"
-                     android:layout_width="0dp" android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <FrameLayout
-                android:id="@+id/frame_container_add_menu"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
-
-        </FrameLayout>
-    </LinearLayout>
 
     <Button
             android:id="@+id/btn_submit_restaurant"
