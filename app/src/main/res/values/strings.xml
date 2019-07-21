@@ -23,7 +23,7 @@
     <string name="next">Next</string>
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>
-    
+
     <string name="title">Title</string>
     <string name="category">Category</string>
     <string name="hour_example">ex) 13:00</string>
@@ -39,4 +39,7 @@
     <string name="menu">Menu</string>
     <string name="money_format">%1$2f $</string>
     <string name="kcalo_format">%1$2f kcalo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
