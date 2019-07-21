@@ -1,6 +1,8 @@
 package com.foodbodi
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,20 +16,53 @@ import com.foodbodi.apis.RestaurantResponse
 import com.foodbodi.controller.RestaurantAddMenuFragment
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.collections.ArrayList
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import android.R.attr.data
+import android.view.MotionEvent
+
 
 class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private var restaurantType:RestaurantType = RestaurantType.RESTAURANT
     private lateinit var type_restaurant:Button
     private lateinit var type_foodtruck:Button
+    private val AUTOCOMPLETE_PLACE_CODE = 1
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (AUTOCOMPLETE_PLACE_CODE == requestCode && data != null) {
+            if (AutocompleteActivity.RESULT_OK == resultCode) {
+                val place:Place = Autocomplete.getPlaceFromIntent(data)
+                this@AddRestaurantActivity.findViewById<EditText>(R.id.input_restaurant_address).setText(place.address)
+
+            } else if (AutocompleteActivity.RESULT_ERROR == resultCode) {
+                val status = Autocomplete.getStatusFromIntent(data)
+                Toast.makeText(this@AddRestaurantActivity, status.statusMessage, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_restaurant)
+        Places.initialize(this, "AIzaSyDKbAhGAfKDxorYtTW4SWGn05t-K8fKu94") //TODO : secure the api key
+        val placesClient:PlacesClient = Places.createClient(this)
+        findViewById<EditText>(R.id.input_restaurant_address).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                var fields:List<Place.Field> = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS)
+                val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this@AddRestaurantActivity)
+                startActivityForResult(intent, AUTOCOMPLETE_PLACE_CODE)
+            }
+            })
 
         ensureRestaurantCategorySpinner()
         ensureRestaurantTypeInput()

@@ -31,6 +31,7 @@
     <string name="price_symbol">$</string>
     <string name="add_kcalo">Add kcalo</string>
     <string name="add_menu">Add Menu</string>
+    <string name="address">Address</string>
     <string name="open_hour">Open hour</string>
     <string name="close_hour">Close hour</string>
     <string name="restaurant">Restaurant</string>
