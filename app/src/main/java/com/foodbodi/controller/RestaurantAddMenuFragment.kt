@@ -1,6 +1,10 @@
 package com.foodbodi.controller
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +18,20 @@ import com.foodbodi.model.Restaurant
 import com.foodbodi.model.RestaurantCategory
 import com.foodbodi.model.RestaurantCategoryProvider
 import com.foodbodi.utils.Action
+import com.foodbodi.utils.PhotoGetter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.list_food_item.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class RestaurantAddMenuFragment : Fragment() {
     var foodList = ArrayList<Food>()
     var foodAdapter:FoodAdapter = FoodAdapter(foodList)
+    private val TAKE_PHOTO_CODE = 2
+    private var photo_name = Date().toString()
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view:View = inflater.inflate(R.layout.add_menu_fragment, container, false)
         val listFoodView = view.findViewById<RecyclerView>(R.id.list_added_food)
@@ -49,7 +62,26 @@ class RestaurantAddMenuFragment : Fragment() {
             }
 
         })
+
+        view.findViewById<FloatingActionButton>(R.id.fab_food_photo).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                startActivityForResult(PhotoGetter(this@RestaurantAddMenuFragment.context!!).getPickPhotoIntent(photo_name), TAKE_PHOTO_CODE)
+            }
+
+        })
         return view
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (TAKE_PHOTO_CODE == requestCode && data != null) {
+            val bitmap: Bitmap? = PhotoGetter(this.context!!).getBitmap(data, photo_name)
+            if (bitmap != null) {
+                val drawable: BitmapDrawable = BitmapDrawable(this.resources, bitmap)
+                view?.findViewById<FrameLayout>(R.id.frame_container_restaurant_photo)!!.setBackground(drawable)
+            } else {
+                Toast.makeText(this.context, "Error when show photo", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
 

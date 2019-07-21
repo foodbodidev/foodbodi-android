@@ -28,7 +28,13 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import android.R.attr.data
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.MotionEvent
+import com.foodbodi.utils.PhotoGetter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -37,6 +43,8 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
     private lateinit var type_restaurant:Button
     private lateinit var type_foodtruck:Button
     private val AUTOCOMPLETE_PLACE_CODE = 1
+    private val TAKE_PHOTO_CODE = 2
+    private var photo_name = Date().toString()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (AUTOCOMPLETE_PLACE_CODE == requestCode && data != null) {
@@ -47,6 +55,15 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
             } else if (AutocompleteActivity.RESULT_ERROR == resultCode) {
                 val status = Autocomplete.getStatusFromIntent(data)
                 Toast.makeText(this@AddRestaurantActivity, status.statusMessage, Toast.LENGTH_LONG).show()
+            }
+        } else if (TAKE_PHOTO_CODE == requestCode && data != null) {
+            val bitmap:Bitmap? = PhotoGetter(this).getBitmap(data, photo_name)
+            if (bitmap != null) {
+                val drawable:BitmapDrawable = BitmapDrawable(this.resources, bitmap)
+                findViewById<FrameLayout>(R.id.frame_container_restaurant_photo)
+                    .setBackground(drawable)
+            } else {
+                Toast.makeText(this, "Error when show photo", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -66,6 +83,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         ensureRestaurantCategorySpinner()
         ensureRestaurantTypeInput()
+        ensureCameraInput()
         selectType(restaurantType)
 
         val addMenuFragment = RestaurantAddMenuFragment()
@@ -147,6 +165,17 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         })
     }
+
+    private fun ensureCameraInput() {
+        findViewById<FloatingActionButton>(R.id.fab_restaurant_photo).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                startActivityForResult(PhotoGetter(this@AddRestaurantActivity).getPickPhotoIntent(photo_name), TAKE_PHOTO_CODE)
+            }
+
+        })
+    }
+
+
 
     private fun selectType(type: RestaurantType) {
         val activeColor = ContextCompat.getColor(this@AddRestaurantActivity, R.color.colorPrimary)

@@ -5,6 +5,7 @@ import com.foodbodi.apis.requests.LoginRequest
 import com.foodbodi.model.Restaurant
 import com.foodbodi.model.RestaurantCategory
 import com.foodbodi.model.User
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -38,4 +39,8 @@ interface FoodbodiService {
     @Headers("Content-Type: application/json")
     @POST("food/import")
     fun importFoods(@HeaderMap headers: Map<String, String>, @Body importFoodRequest: ImportFoodRequest) : Call<FoodBodiResponse<Restaurant>>
+
+    @Multipart
+    @POST("upload/photo")
+    fun uploadPhoto(@Query("name") filename:String, @Part fileData:MultipartBody.Part) : Call<FoodBodiResponse<UploadResponse>>
 }
