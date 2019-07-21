@@ -17,6 +17,7 @@ import com.foodbodi.AddRestaurantActivity
 import com.foodbodi.AuthenticateFlowActivity
 import com.foodbodi.R
 import com.foodbodi.apis.*
+import com.foodbodi.controller.FodiMap.RestaurantInfoMenuActivity
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -119,6 +120,9 @@ class GoogleMapFragment : Fragment(){
     private fun invokeAddRestaurantForm() {
         startActivity(Intent(context, AddRestaurantActivity::class.java))
     }
+    public fun gotoMenuInfoRestaurant(){
+        startActivity(Intent(context, RestaurantInfoMenuActivity::class.java))
+    }
 
     private fun ensureListRestaurantView(view: View) {
         viewAdapter = MyAdapter(restaurants);
@@ -156,9 +160,14 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_restaurant_item, parent, false)
         // set the view's size, margins, paddings and layout parameters
+        itemView.setOnClickListener(object:View.OnClickListener{
+            override fun onClick(p0: View?) {
 
+            }
+        })
         return MyViewHolder(itemView)
     }
+
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
