@@ -29,13 +29,14 @@ class RestaurantAddMenuFragment : Fragment() {
     var foodList = ArrayList<Food>()
     var foodAdapter:FoodAdapter = FoodAdapter(foodList)
     private val TAKE_PHOTO_CODE = 2
-    private var photo_name = Date().toString()
+    private var photoGetter:PhotoGetter? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view:View = inflater.inflate(R.layout.add_menu_fragment, container, false)
         val listFoodView = view.findViewById<RecyclerView>(R.id.list_added_food)
         val viewManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        photoGetter = PhotoGetter(this.context!!)
         listFoodView.apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
@@ -65,7 +66,7 @@ class RestaurantAddMenuFragment : Fragment() {
 
         view.findViewById<FloatingActionButton>(R.id.fab_food_photo).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
-                startActivityForResult(PhotoGetter(this@RestaurantAddMenuFragment.context!!).getPickPhotoIntent(photo_name), TAKE_PHOTO_CODE)
+                startActivityForResult(photoGetter!!.getPickPhotoIntent(), TAKE_PHOTO_CODE)
             }
 
         })
@@ -74,7 +75,7 @@ class RestaurantAddMenuFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (TAKE_PHOTO_CODE == requestCode && data != null) {
-            val bitmap: Bitmap? = PhotoGetter(this.context!!).getBitmap(data, photo_name)
+            val bitmap: Bitmap? = photoGetter!!.getBitmap(data)
             if (bitmap != null) {
                 val drawable: BitmapDrawable = BitmapDrawable(this.resources, bitmap)
                 view?.findViewById<ImageView>(R.id.food_item_photo)!!.setBackground(drawable)

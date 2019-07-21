@@ -13,27 +13,32 @@ import android.graphics.Bitmap
 import java.io.File
 import android.R.attr.bitmap
 import android.R.attr.data
+import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import androidx.core.app.NotificationCompat.getExtras
 import androidx.exifinterface.media.ExifInterface
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class PhotoGetter(context:Context) {
     private val context = context
+    private var photo_name = Date().toString()
 
-    private fun getCaptureImageOutputUri(filename:String): Uri? {
+
+    private fun getCaptureImageOutputUri(): Uri? {
         var outputFileUri: Uri? = null
         val getImage = context.getExternalCacheDir()
         if (getImage != null) {
-            outputFileUri = Uri.fromFile(File(getImage!!.getPath(), filename))
+            outputFileUri = Uri.fromFile(File(getImage!!.getPath(), photo_name))
         }
         return outputFileUri
     }
 
-    fun getPickPhotoIntent(filename: String) : Intent {
+    fun getPickPhotoIntent() : Intent {
         // Determine Uri of camera image to save.
-        val outputFileUri = getCaptureImageOutputUri(filename)
+        val outputFileUri = getCaptureImageOutputUri()
 
         val allIntents = ArrayList<Intent>()
         val packageManager = context.getPackageManager()
@@ -81,15 +86,13 @@ class PhotoGetter(context:Context) {
         return chooserIntent
     }
 
-    fun getBitmap(data:Intent, filename: String) : Bitmap? {
+    fun getBitmap(data:Intent) : Bitmap? {
         var bitmap:Bitmap? = null
-
-        if (getPickImageResultUri(data, filename) != null) {
-            var picUri = getPickImageResultUri(data, filename)
-
+        var picUri = getPickImageResultUri(data)
+        if (picUri != null) {
             try {
                 var myBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), picUri)
-                myBitmap = rotateImageIfRequired(myBitmap, picUri!!)
+                //myBitmap = rotateImageIfRequired(myBitmap, picUri!!)
                 myBitmap = getResizedBitmap(myBitmap, 500)
                 bitmap = myBitmap
 
@@ -102,7 +105,7 @@ class PhotoGetter(context:Context) {
         return bitmap
     }
 
-    fun getPickImageResultUri(data: Intent?, filename: String): Uri? {
+    fun getPickImageResultUri(data: Intent?): Uri? {
         var isCamera = true
         if (data != null) {
             val action = data.action
@@ -110,7 +113,7 @@ class PhotoGetter(context:Context) {
         }
 
 
-        return if (isCamera) getCaptureImageOutputUri(filename) else data!!.data
+        return if (isCamera) getCaptureImageOutputUri() else data!!.data
     }
 
     @Throws(IOException::class)
@@ -148,5 +151,4 @@ class PhotoGetter(context:Context) {
         }
         return Bitmap.createScaledBitmap(image, width, height, true)
     }
-
 }

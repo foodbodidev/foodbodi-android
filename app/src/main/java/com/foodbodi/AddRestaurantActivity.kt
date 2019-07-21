@@ -44,7 +44,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
     private lateinit var type_foodtruck:Button
     private val AUTOCOMPLETE_PLACE_CODE = 1
     private val TAKE_PHOTO_CODE = 2
-    private var photo_name = Date().toString()
+    private var photoGetter:PhotoGetter? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (AUTOCOMPLETE_PLACE_CODE == requestCode && data != null) {
@@ -57,7 +57,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
                 Toast.makeText(this@AddRestaurantActivity, status.statusMessage, Toast.LENGTH_LONG).show()
             }
         } else if (TAKE_PHOTO_CODE == requestCode && data != null) {
-            val bitmap:Bitmap? = PhotoGetter(this).getBitmap(data, photo_name)
+            val bitmap:Bitmap? = photoGetter!!.getBitmap(data)
             if (bitmap != null) {
                 val drawable:BitmapDrawable = BitmapDrawable(this.resources, bitmap)
                 findViewById<FrameLayout>(R.id.frame_container_restaurant_photo)
@@ -80,6 +80,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
                 startActivityForResult(intent, AUTOCOMPLETE_PLACE_CODE)
             }
             })
+
 
         ensureRestaurantCategorySpinner()
         ensureRestaurantTypeInput()
@@ -167,9 +168,10 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
     }
 
     private fun ensureCameraInput() {
+        photoGetter = PhotoGetter(this)
         findViewById<FloatingActionButton>(R.id.fab_restaurant_photo).setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                startActivityForResult(PhotoGetter(this@AddRestaurantActivity).getPickPhotoIntent(photo_name), TAKE_PHOTO_CODE)
+                startActivityForResult(photoGetter!!.getPickPhotoIntent(), TAKE_PHOTO_CODE)
             }
 
         })
