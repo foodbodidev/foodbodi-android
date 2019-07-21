@@ -42,7 +42,7 @@ class RestaurantAddMenuFragment : Fragment() {
             setHasFixedSize(true)
 
             // use a linear layout manager
-            layoutManager = viewManager
+            layoutManager = viewManager!!
 
 
             // specify an viewAdapter (see also next example)
@@ -77,7 +77,7 @@ class RestaurantAddMenuFragment : Fragment() {
             val bitmap: Bitmap? = PhotoGetter(this.context!!).getBitmap(data, photo_name)
             if (bitmap != null) {
                 val drawable: BitmapDrawable = BitmapDrawable(this.resources, bitmap)
-                view?.findViewById<FrameLayout>(R.id.frame_container_restaurant_photo)!!.setBackground(drawable)
+                view?.findViewById<ImageView>(R.id.food_item_photo)!!.setBackground(drawable)
             } else {
                 Toast.makeText(this.context, "Error when show photo", Toast.LENGTH_LONG).show()
             }
