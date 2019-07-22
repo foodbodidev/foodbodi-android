@@ -78,7 +78,7 @@ class RestaurantAddMenuFragment : Fragment() {
             val bitmap: Bitmap? = photoGetter!!.getBitmap(data)
             if (bitmap != null) {
                 val drawable: BitmapDrawable = BitmapDrawable(this.resources, bitmap)
-                view?.findViewById<ImageView>(R.id.food_item_photo)!!.setBackground(drawable)
+                view?.findViewById<ImageView>(R.id.food_item_photo)!!.setImageDrawable(drawable)
             } else {
                 Toast.makeText(this.context, "Error when show photo", Toast.LENGTH_LONG).show()
             }

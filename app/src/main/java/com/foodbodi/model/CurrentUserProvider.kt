@@ -58,6 +58,11 @@ class CurrentUserProvider private constructor(){
         return this.apiKey
     }
 
+    fun logout() {
+        user = null
+        apiKey = null
+    }
+
     companion object Holder {
         var instance:CurrentUserProvider = CurrentUserProvider()
     }

@@ -35,6 +35,7 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import com.foodbodi.utils.PhotoGetter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okhttp3.RequestBody
 
 
 class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -60,8 +61,12 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
             val bitmap:Bitmap? = photoGetter!!.getBitmap(data)
             if (bitmap != null) {
                 val drawable:BitmapDrawable = BitmapDrawable(this.resources, bitmap)
+
+               // val reqFile:RequestBody =
+
                 findViewById<FrameLayout>(R.id.frame_container_restaurant_photo)
                     .setBackground(drawable)
+                
             } else {
                 Toast.makeText(this, "Error when show photo", Toast.LENGTH_LONG).show()
             }
