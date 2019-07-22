@@ -33,9 +33,13 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
+import com.foodbodi.apis.UploadResponse
 import com.foodbodi.utils.PhotoGetter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Multipart
 
 
 class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -46,6 +50,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
     private val AUTOCOMPLETE_PLACE_CODE = 1
     private val TAKE_PHOTO_CODE = 2
     private var photoGetter:PhotoGetter? = null
+    val restaurant = Restaurant()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (AUTOCOMPLETE_PLACE_CODE == requestCode && data != null) {
@@ -60,12 +65,36 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
         } else if (TAKE_PHOTO_CODE == requestCode && data != null) {
             val bitmap:Bitmap? = photoGetter!!.getBitmap(data)
             if (bitmap != null) {
-                val drawable:BitmapDrawable = BitmapDrawable(this.resources, bitmap)
 
-               // val reqFile:RequestBody =
+                val jpegBytes = PhotoGetter.bitmapToJPEG(bitmap)
+                val requestFile = RequestBody.create(MediaType.parse("image/jpeg"), jpegBytes)
+                val body = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
 
-                findViewById<FrameLayout>(R.id.frame_container_restaurant_photo)
-                    .setBackground(drawable)
+                FoodbodiRetrofitHolder.holder.service.uploadPhoto(photoGetter!!.photo_name, body).enqueue(object : Callback<FoodBodiResponse<UploadResponse>> {
+                        override fun onFailure(call: Call<FoodBodiResponse<UploadResponse>>, t: Throwable) {
+                            Toast.makeText(this@AddRestaurantActivity, t.message, Toast.LENGTH_LONG).show()
+                        }
+
+                        override fun onResponse(call: Call<FoodBodiResponse<UploadResponse>>, response: Response<FoodBodiResponse<UploadResponse>>) {
+                            if (0 == response.body()?.statusCode()) {
+                                val mediaLink = response.body()?.data()?.mediaLink
+                                if (mediaLink != null) {
+                                    restaurant.photo = mediaLink
+                                    val imageView =
+                                        this@AddRestaurantActivity.findViewById<ImageView>(R.id.img_restaurant_photo)
+                                    PhotoGetter.downloadPhotoToImageView(mediaLink, imageView)
+
+                                } else {
+                                    Toast.makeText(this@AddRestaurantActivity, "Can't extract media link for uploaded photo", Toast.LENGTH_LONG).show()
+                                }
+                            } else {
+                                Toast.makeText(this@AddRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                    })
+
+
                 
             } else {
                 Toast.makeText(this, "Error when show photo", Toast.LENGTH_LONG).show()
@@ -97,7 +126,6 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         findViewById<Button>(R.id.btn_submit_restaurant).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
-                val restaurant = Restaurant()
                 restaurant.name = findViewById<EditText>(R.id.input_restaurant_name).text.toString()
                 val category:RestaurantCategory? = findViewById<Spinner>(R.id.spinner_restaurant_category).selectedItem as? RestaurantCategory
                 restaurant.category = category?.key

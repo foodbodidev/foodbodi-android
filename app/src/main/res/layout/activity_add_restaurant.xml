@@ -8,10 +8,13 @@
         tools:context=".AddRestaurantActivity">
 
     <FrameLayout
-            android:id="@+id/frame_container_restaurant_photo"
             android:background="@color/cardview_dark_background"
             android:layout_width="match_parent"
             android:layout_height="200dp">
+        <ImageView
+                android:id="@+id/img_restaurant_photo"
+                android:layout_width="match_parent" android:layout_height="200dp"/>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_restaurant_photo"
                 android:layout_gravity="center_horizontal"

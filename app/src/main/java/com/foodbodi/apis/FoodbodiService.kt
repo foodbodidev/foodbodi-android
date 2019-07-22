@@ -37,10 +37,10 @@ interface FoodbodiService {
     fun createRestaurant(@HeaderMap headers: Map<String, String>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<RestaurantResponse>>
 
     @Headers("Content-Type: application/json")
-    @POST("food/import")
+    @POST("currentFood/import")
     fun importFoods(@HeaderMap headers: Map<String, String>, @Body importFoodRequest: ImportFoodRequest) : Call<FoodBodiResponse<Restaurant>>
 
     @Multipart
     @POST("upload/photo")
-    fun uploadPhoto(@Query("name") filename:String, @Part fileData:MultipartBody.Part) : Call<FoodBodiResponse<UploadResponse>>
+    fun uploadPhoto(@Query("filename") filename:String, @Part fileData:MultipartBody.Part) : Call<FoodBodiResponse<UploadResponse>>
 }

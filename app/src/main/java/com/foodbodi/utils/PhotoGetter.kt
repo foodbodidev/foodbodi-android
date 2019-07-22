@@ -15,17 +15,33 @@ import android.R.attr.bitmap
 import android.R.attr.data
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
+import android.widget.ImageView
 import androidx.core.app.NotificationCompat.getExtras
 import androidx.exifinterface.media.ExifInterface
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
+import com.google.android.gms.common.util.IOUtils.toByteArray
+import java.io.ByteArrayOutputStream
+import java.net.URL
 
 
 class PhotoGetter(context:Context) {
     private val context = context
-    private var photo_name = Date().toString()
+    var photo_name = Date().toString()
+    companion object {
+        fun bitmapToJPEG(bitmap: Bitmap) : ByteArray {
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val byteArray = stream.toByteArray()
+            return byteArray
+        }
 
+        fun downloadPhotoToImageView(url: String, imageView: ImageView) {
+            DownloadImageTask(imageView)
+                .execute(url);
+        }
+    }
 
     private fun getCaptureImageOutputUri(): Uri? {
         var outputFileUri: Uri? = null
