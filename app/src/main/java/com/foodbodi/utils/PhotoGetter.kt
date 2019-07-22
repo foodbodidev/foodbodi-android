@@ -36,11 +36,6 @@ class PhotoGetter(context:Context) {
             val byteArray = stream.toByteArray()
             return byteArray
         }
-
-        fun downloadPhotoToImageView(url: String, imageView: ImageView) {
-            DownloadImageTask(imageView)
-                .execute(url);
-        }
     }
 
     private fun getCaptureImageOutputUri(): Uri? {

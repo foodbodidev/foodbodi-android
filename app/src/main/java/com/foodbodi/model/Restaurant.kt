@@ -28,6 +28,18 @@ class Restaurant {
 
     @SerializedName("foods")
     var foods:ArrayList<Food>? = null
+
+    @SerializedName("address")
+    var address:String? = null
+
+    @SerializedName("lat")
+    var lat:Double? = null
+
+    @SerializedName("lng")
+    var lng:Double? = null
+
+    @SerializedName("geohash")
+    var geohash:String? = null
 }
 
 enum class RestaurantType {
