@@ -6,43 +6,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".UpdateBasicInfoActivity">
-    <LinearLayout
-                  android:orientation="vertical"
-                  android:weightSum="10"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+    <FrameLayout
+            android:id="@+id/frame_container_update_basic_info"
+            android:layout_width="match_parent" android:layout_height="match_parent">
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:text="@string/your_basic"
-                  android:textAlignment="center"
-                  android:textSize="@dimen/text_title"
-        />
-        <EditText
-                android:id="@+id/input_age"
-                android:hint="@string/age"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <EditText
-                android:id="@+id/input_height"
-                android:hint="@string/height"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <EditText
-                android:id="@+id/input_weight"
-                android:hint="@string/weight"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <EditText
-                android:id="@+id/input_target_weight"
-                android:hint="@string/target_weight"
-                android:inputType="numberDecimal"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:background="@color/colorPrimary"
-                android:text="@string/next"
-                android:id="@+id/btn_user_info_next"
-        />
-    </LinearLayout>
+    </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

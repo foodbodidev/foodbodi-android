@@ -1,62 +1,90 @@
 package com.foodbodi
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.FragmentTransaction
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.controller.UpdateBasicInfoActivity.SelectGenderFragment
+import com.foodbodi.controller.UpdateBasicInfoActivity.UpdateBasicInfoFragment
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.User
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UpdateBasicInfoActivity : AppCompatActivity() {
+class UpdateBasicInfoActivity : AppCompatActivity(), UpdateBasicInfoController {
+    val profile = User()
 
+    override fun onNext(from: Section) {
+        when(from) {
+            Section.SELECT_GENDER -> {
+                val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_container_update_basic_info, UpdateBasicInfoFragment(this, profile));
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+            Section.UPDATE_INFO -> {
+                submit()
+            }
+        }
+    }
+
+    override fun onBack() {
+    }
+
+    override fun submit() {
+        val token = CurrentUserProvider.instance.getApiKey()
+        if (token == null) {
+            Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
+        } else {
+            val headers = HashMap<String, String>()
+            headers.put("token", token)
+            FoodbodiRetrofitHolder.getService().updateProfile(headers, profile)
+                .enqueue(object : Callback<FoodBodiResponse<User>> {
+                    override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
+                        //TODO : //system failure
+                    }
+
+                    override fun onResponse(
+                        call: Call<FoodBodiResponse<User>>,
+                        response: Response<FoodBodiResponse<User>>
+                    ) {
+                        if (0 == response.body()?.statusCode()) {
+                            val intent = Intent(this@UpdateBasicInfoActivity, MainActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            Toast.makeText(this@UpdateBasicInfoActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                })
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_basic_info)
-        val that:Context = this
-        findViewById<Button>(R.id.btn_user_info_next).setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                val token = CurrentUserProvider.instance.getApiKey()
-                if (token == null) {
-                    Toast.makeText(that, "Please login", Toast.LENGTH_LONG).show()
-                } else {
-                    val headers = HashMap<String, String>()
-                    headers.put("token", token)
-                    val profile = User()
-                    profile.age = findViewById<EditText>(R.id.input_age).text.toString().toInt()
-                    profile.height = findViewById<EditText>(R.id.input_height).text.toString().toInt()
-                    profile.weight = findViewById<EditText>(R.id.input_weight).text.toString().toDouble()
-                    profile.targetWeight = findViewById<EditText>(R.id.input_target_weight).text.toString().toDouble()
-                    FoodbodiRetrofitHolder.getService().updateProfile(headers, profile)
-                        .enqueue(object : Callback<FoodBodiResponse<User>> {
-                            override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
-                                //TODO : //system failure
-                            }
 
-                            override fun onResponse(
-                                call: Call<FoodBodiResponse<User>>,
-                                response: Response<FoodBodiResponse<User>>
-                            ) {
-                                if (0 == response.body()?.statusCode()) {
-                                    val intent = Intent(that, MainActivity::class.java)
-                                    startActivity(intent)
-                                } else {
-                                    Toast.makeText(that, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
-                                }
-                            }
+        var transaction:FragmentTransaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_container_update_basic_info,
+            SelectGenderFragment(this, profile)
+        );
+        transaction.addToBackStack(null);
+        transaction.commit();
 
-                        })
-                }
-            }
-
-        })
     }
+}
+
+interface UpdateBasicInfoController {
+    fun onBack()
+
+    fun onNext(from: Section)
+
+    fun submit()
+}
+
+enum class Section {
+    SELECT_GENDER, UPDATE_INFO
 }
