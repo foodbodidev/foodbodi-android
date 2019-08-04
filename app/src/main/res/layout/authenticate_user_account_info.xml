@@ -3,33 +3,46 @@
               android:orientation="vertical"
               android:weightSum="10"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:layout_marginLeft="40dp"
+              android:layout_marginRight="40dp">
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:text="@string/your_basic"
-              android:textAlignment="center"
+              android:text="@string/continue_with_email"
+              android:textAlignment="textStart"
               android:textSize="@dimen/text_title"
+              android:textColor="@color/title_text_color"
+              android:layout_marginTop="20dp"/>
     />
     <EditText
             android:id="@+id/input_firstname"
             android:hint="@string/firstname"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/fb_textview"
+            android:layout_marginTop="20dp"/>
     <EditText
             android:id="@+id/input_lastname"
             android:hint="@string/lastname"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/fb_textview"
+            android:layout_marginTop="20dp"/>
     <EditText
             android:id="@+id/input_email"
             android:hint="@string/email"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/fb_textview"
+            android:layout_marginTop="20dp"/>
     <EditText
             android:id="@+id/input_password"
             android:hint="@string/password"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/fb_textview"
+            android:layout_marginTop="20dp"/>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Colored"
             android:background="@drawable/fb_button"
             android:text="@string/register"
             android:id="@+id/btn_user_info_signup"
+            android:layout_marginTop="20dp"
     />
 </LinearLayout>

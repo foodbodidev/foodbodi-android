@@ -6,37 +6,49 @@
             android:orientation="vertical"
             android:weightSum="10"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp">>
 
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:text="@string/your_basic"
-                  android:textAlignment="center"
+                  android:textAlignment="textStart"
+                  android:textColor="@color/title_text_color"
                   android:textSize="@dimen/text_title"
         />
         <EditText
                 android:id="@+id/input_age"
                 android:hint="@string/age"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/fb_textview"
+                android:layout_marginTop="40dp"/>
         <EditText
                 android:id="@+id/input_height"
                 android:hint="@string/height"
                 android:inputType="numberDecimal"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/fb_textview"
+                android:layout_marginTop="20dp"/>
         <EditText
                 android:id="@+id/input_weight"
                 android:hint="@string/weight"
                 android:inputType="numberDecimal"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/fb_textview"
+                android:layout_marginTop="20dp"/>
         <EditText
                 android:id="@+id/input_target_weight"
                 android:hint="@string/target_weight"
                 android:inputType="numberDecimal"
-                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/fb_textview"
+                android:layout_marginTop="20dp"/>
         <Button android:layout_width="match_parent" android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:background="@drawable/fb_button"
                 android:text="@string/next"
                 android:id="@+id/btn_user_info_next"
+                android:layout_marginTop="20dp"
         />
     </LinearLayout>
 </LinearLayout>

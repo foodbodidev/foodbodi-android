@@ -22,10 +22,12 @@
         <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
             android:id="@+id/input_email_login" android:hint="@string/email"
                   android:layout_marginBottom="@dimen/text_medium"
+                  android:background="@drawable/fb_textview"
         />
         <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:id="@+id/input_password_login" android:hint="@string/password"
                   android:layout_marginBottom="@dimen/text_medium" android:password="true"
+                  android:background="@drawable/fb_textview"
         />
         <Button
                 android:id="@+id/btn_login"
