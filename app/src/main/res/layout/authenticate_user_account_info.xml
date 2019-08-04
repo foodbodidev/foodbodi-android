@@ -28,7 +28,7 @@
             android:layout_width="match_parent" android:layout_height="wrap_content"/>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Colored"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/fb_button"
             android:text="@string/register"
             android:id="@+id/btn_user_info_signup"
     />

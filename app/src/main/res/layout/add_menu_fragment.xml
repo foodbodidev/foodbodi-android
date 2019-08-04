@@ -44,6 +44,7 @@
                     android:id="@+id/fab_food_photo"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
+                    android:background="@color/quantum_orange"
                     android:layout_height="wrap_content"/>
 
         </FrameLayout>
@@ -51,7 +52,7 @@
     <Button
             android:id="@+id/btn_add_food"
             android:text="@string/add_menu"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/fb_button"
             android:textColor="@color/White"
             android:layout_width="match_parent" android:layout_height="wrap_content"/>
 

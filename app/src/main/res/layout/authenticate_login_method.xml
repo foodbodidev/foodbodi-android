@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_large"
                 style="@style/Widget.AppCompat.Button.Colored"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/fb_button"
                 android:textColor="@color/White"
                 android:text="@string/continue_with_email"/>
     </LinearLayout>
