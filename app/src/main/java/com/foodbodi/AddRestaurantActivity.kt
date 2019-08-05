@@ -40,8 +40,8 @@ import okhttp3.RequestBody
 class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private var restaurantType:RestaurantType = RestaurantType.RESTAURANT
-    private lateinit var type_restaurant:Button
-    private lateinit var type_foodtruck:Button
+    private lateinit var typeRestaurantBtn: Button
+    private lateinit var typeFoodtruckBtn: Button
     private val AUTOCOMPLETE_PLACE_CODE = 1
     private val TAKE_PHOTO_CODE = 2
     private var restaurantPhotoGetter:PhotoGetter? = null
@@ -201,8 +201,8 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
     }
 
     private fun ensureRestaurantTypeInput() {
-        type_restaurant = findViewById<Button>(R.id.btn_select_type_restaurant)
-        type_restaurant.setOnClickListener(object : View.OnClickListener {
+        typeRestaurantBtn = findViewById<Button>(R.id.btn_select_type_restaurant)
+        typeRestaurantBtn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 restaurantType = RestaurantType.RESTAURANT
                 selectType(restaurantType)
@@ -210,8 +210,8 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
             }
 
         })
-        type_foodtruck = findViewById<Button>(R.id.btn_select_type_food_truck)
-        type_foodtruck.setOnClickListener(object : View.OnClickListener {
+        typeFoodtruckBtn = findViewById<Button>(R.id.btn_select_type_food_truck)
+        typeFoodtruckBtn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 restaurantType = RestaurantType.FOOD_TRUCK
                 selectType(restaurantType)
@@ -234,15 +234,15 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
     private fun selectType(type: RestaurantType) {
         val activeColor = ContextCompat.getColor(this@AddRestaurantActivity, R.color.colorPrimary)
-        val inactiveColor = ContextCompat.getColor(this@AddRestaurantActivity, R.color.material_grey_100)
+        val inactiveColor = ContextCompat.getColor(this@AddRestaurantActivity, R.color.gray_color)
         when (type) {
             RestaurantType.RESTAURANT -> {
-                type_restaurant.setBackgroundColor(activeColor)
-                type_foodtruck.setBackgroundColor(inactiveColor)
+                typeRestaurantBtn.setTextColor(activeColor)
+                typeFoodtruckBtn.setTextColor(inactiveColor)
             }
             RestaurantType.FOOD_TRUCK -> {
-                type_restaurant.setBackgroundColor(inactiveColor)
-                type_foodtruck.setBackgroundColor(activeColor)
+                typeRestaurantBtn.setTextColor(inactiveColor)
+                typeFoodtruckBtn.setTextColor(activeColor)
             }
         }
     }

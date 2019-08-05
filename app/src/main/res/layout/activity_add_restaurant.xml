@@ -30,7 +30,7 @@
                 android:layout_width="match_parent" android:layout_height="match_parent">
             <LinearLayout
                     android:orientation="vertical"
-                    android:background="@color/cardview_light_background"
+                    android:background="@drawable/rounded_corner"
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -39,11 +39,20 @@
                         android:hint="@string/title"
                         android:minLines="3"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/fb_edit_text"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginLeft="24dp"/>
+
 
                 <Spinner
                         android:scrollbarSize="@dimen/text_medium"
                         android:id="@+id/spinner_restaurant_category"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/fb_edit_text"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginLeft="24dp"
                         android:layout_width="match_parent" android:layout_height="wrap_content">
                 </Spinner>
 
@@ -53,11 +62,17 @@
                         android:id="@+id/input_restaurant_address"
                         android:hint="@string/address"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/fb_edit_text"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginLeft="24dp"/>
 
                 <LinearLayout
                         android:weightSum="10"
-                        android:layout_width="match_parent" android:layout_height="wrap_content">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginLeft="24dp" android:layout_marginTop="10dp" android:layout_marginRight="24dp">
+
                     <LinearLayout
                             android:orientation="vertical"
                             android:layout_weight="5"
@@ -68,7 +83,10 @@
                                 android:id="@+id/input_restaurent_open_hour"
                                 android:hint="@string/hour_example"
                                 android:inputType="time"
-                                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                                android:background="@drawable/fb_edit_text"
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent" android:layout_height="wrap_content"
+                                android:layout_marginRight="5dp"/>
                     </LinearLayout>
                     <LinearLayout
                             android:orientation="vertical"
@@ -80,7 +98,10 @@
                                 android:id="@+id/input_restaurent_close_hour"
                                 android:hint="@string/hour_example"
                                 android:inputType="time"
-                                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                                android:layout_marginBottom="10dp"
+                                android:background="@drawable/fb_edit_text"
+                                android:layout_width="match_parent" android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"/>
 
                     </LinearLayout>
 
@@ -94,12 +115,19 @@
                 <Button android:layout_weight="5"
                         android:id="@+id/btn_select_type_restaurant"
                         android:text="@string/restaurant"
-                        android:layout_width="0dp" android:layout_height="wrap_content"/>
+                        android:background="@drawable/rounded_corner"
+                        android:textColor="@color/colorPrimary"
+
+                        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginLeft="0dp"
+                        android:layout_marginTop="10dp" android:layout_marginRight="5dp"/>
 
                 <Button android:layout_weight="5"
                         android:id="@+id/btn_select_type_food_truck"
                         android:text="@string/food_truct"
-                        android:layout_width="0dp" android:layout_height="wrap_content"/>
+                        android:background="@drawable/rounded_corner"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+                        android:layout_marginRight="0dp" android:layout_marginLeft="5dp"/>
             </LinearLayout>
 
             <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
