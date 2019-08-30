@@ -29,6 +29,12 @@ class User {
 
     @SerializedName("password")
     var password:String? = null
+
+    fun isProfileReady():Boolean {
+        val hasName = firstName != null && lastName != null && sex != null
+        val hasProfile = height > 0 && weight  > 0 && targetWeight > 0
+        return hasProfile && hasName
+    }
 }
 
 enum class Gender {

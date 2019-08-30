@@ -26,13 +26,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/text_large"
                 android:layout_gravity="center_horizontal"/>
-
+                -->
         <com.google.android.gms.common.SignInButton
                 android:id="@+id/btn_continue_with_google"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="@dimen/text_large"
                 android:layout_height="wrap_content"/>
-                -->
+
 
         <Button
                 android:id="@+id/btn_continue_with_email"

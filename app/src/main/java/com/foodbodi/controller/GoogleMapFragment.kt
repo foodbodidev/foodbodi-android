@@ -81,17 +81,13 @@ class GoogleMapFragment : Fragment(){
 
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
-            if (CurrentUserProvider.instance.isLoggedIn()) {
+            if (CurrentUserProvider.get().isLoggedIn()) {
                 invokeAddRestaurantForm()
             } else {
-                val apiKey: SharedPreferences? =
-                    this.activity?.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)
-                if (apiKey!!.contains(AuthenticateFlowActivity.API_KEY_FIELD)) {
-                    CurrentUserProvider.instance.loadCurrentUser(
-                        apiKey.getString(
-                            AuthenticateFlowActivity.API_KEY_FIELD,
-                            null
-                        ), object : Action<User> {
+                val apiKey = CurrentUserProvider.get().getApiKey(context!!);
+                if (apiKey != null) {
+                    CurrentUserProvider.get().loadCurrentUser(
+                        object : Action<User> {
                             override fun accept(data: User?) {
                                 if (data == null) {
                                     invokeAuthentication()
@@ -104,7 +100,7 @@ class GoogleMapFragment : Fragment(){
                                 Toast.makeText(context, reason, Toast.LENGTH_LONG).show()
                             }
 
-                        })
+                        }, context!!)
                 } else {
                     invokeAuthentication()
                 }

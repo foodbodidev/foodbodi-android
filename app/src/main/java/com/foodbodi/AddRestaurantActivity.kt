@@ -124,6 +124,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val currentContext = this;
         setContentView(R.layout.activity_add_restaurant)
         Places.initialize(this, "AIzaSyDKbAhGAfKDxorYtTW4SWGn05t-K8fKu94") //TODO : secure the api key
         val placesClient:PlacesClient = Places.createClient(this)
@@ -157,7 +158,7 @@ class AddRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
                 if (foodList.isNotEmpty()) {
                     restaurant.foods = foodList
                 }
-                FoodbodiRetrofitHolder.getService().createRestaurant(FoodbodiRetrofitHolder.getHeaders(), restaurant)
+                FoodbodiRetrofitHolder.getService().createRestaurant(FoodbodiRetrofitHolder.getHeaders(currentContext), restaurant)
                     .enqueue(object : Callback<FoodBodiResponse<RestaurantResponse>> {
                         override fun onFailure(call: Call<FoodBodiResponse<RestaurantResponse>>, t: Throwable) {
                             //TODO : system failure

@@ -3,6 +3,7 @@ package com.foodbodi.model
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import com.foodbodi.AuthenticateFlowActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.utils.Action
@@ -12,7 +13,6 @@ import retrofit2.Response
 
 class CurrentUserProvider private constructor(){
     private var user:User? = null
-    private var apiKey:String? = null
     init {
 
     }
@@ -21,8 +21,8 @@ class CurrentUserProvider private constructor(){
         return user != null;
     }
 
-    fun loadCurrentUser(key:String?, callback:Action<User>) {
-        apiKey = key
+    fun loadCurrentUser(callback:Action<User>, context: Context) {
+        val apiKey = getApiKey(context);
         if (apiKey != null) {
             FoodbodiRetrofitHolder.getService().getProfile(mapOf(Pair<String, String>("token", apiKey!!)))
                 .enqueue(object : Callback<FoodBodiResponse<User>> {
@@ -49,21 +49,32 @@ class CurrentUserProvider private constructor(){
         }
     }
 
-    fun setData(apiKey:String, profile:User) {
-        this.apiKey = apiKey
-        this.user = profile
+    fun setApiKey(apiKey:String?, context: Context) {
+        context.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE).edit().putString(
+            AuthenticateFlowActivity.API_KEY_FIELD, apiKey).apply()
+
     }
 
-    fun getApiKey():String? {
-        return this.apiKey
+    fun setUserData(user:User?, context: Context) {
+        this.user = user;
     }
 
-    fun logout() {
-        user = null
-        apiKey = null
+    fun getApiKey(context: Context):String? {
+        return context.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE).getString(AuthenticateFlowActivity.API_KEY_FIELD, null);
+    }
+
+    fun logout(context: Context) {
+        setApiKey(null, context);
+        setUserData(null, context);
     }
 
     companion object Holder {
-        var instance:CurrentUserProvider = CurrentUserProvider()
+        private var instance:CurrentUserProvider? = null
+        fun get():CurrentUserProvider {
+            if (instance == null) {
+                instance = CurrentUserProvider()
+            }
+            return instance!!
+        }
     }
 }

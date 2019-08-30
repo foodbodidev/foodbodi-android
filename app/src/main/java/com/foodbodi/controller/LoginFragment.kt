@@ -40,7 +40,7 @@ class LoginFragment(parent:AuthenticateFlowController):Fragment() {
                             response: Response<FoodBodiResponse<LoginResponse>>
                         ) {
                             if (0 == response.body()?.statusCode()) {
-                                parent.onLoginSuccess(response.body()?.data()?.token);
+                                parent.onLoginSuccess(response.body()?.data()?.token, response.body()?.data()?.user);
                             } else {
                                 parent.onLoginFail(response.body()?.errorMessage());
                             }

@@ -36,7 +36,7 @@ class UpdateBasicInfoActivity : AppCompatActivity(), UpdateBasicInfoController {
     }
 
     override fun submit() {
-        val token = CurrentUserProvider.instance.getApiKey()
+        val token = CurrentUserProvider.get().getApiKey(this)
         if (token == null) {
             Toast.makeText(this, "Please login", Toast.LENGTH_LONG).show()
         } else {

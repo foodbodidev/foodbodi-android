@@ -1,5 +1,6 @@
 package com.foodbodi.apis
 
+import com.foodbodi.apis.requests.GoogleSignInRequest
 import com.foodbodi.apis.requests.ImportFoodRequest
 import com.foodbodi.apis.requests.LoginRequest
 import com.foodbodi.model.Restaurant
@@ -23,6 +24,10 @@ interface FoodbodiService {
     @Headers("Content-Type: application/json")
     @POST("login")
     fun login(@Body loginRequest: LoginRequest):Call<FoodBodiResponse<LoginResponse>>
+
+    @Headers("Content-Type: application/json")
+    @POST("googleSignIn")
+    fun googleSignIn(@Body loginRequest: GoogleSignInRequest):Call<FoodBodiResponse<LoginResponse>>
 
     @Headers("Content-Type: application/json")
     @POST("register")

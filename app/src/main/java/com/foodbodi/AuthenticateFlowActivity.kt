@@ -15,11 +15,22 @@ import com.foodbodi.controller.LoginMethodFragment
 import com.foodbodi.controller.RegisterFragment
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.User
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.R.attr.data
+import com.foodbodi.apis.requests.GoogleSignInRequest
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+
 
 class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController {
+    private var mGoogleSignInClient: GoogleSignInClient? = null
+    private val GOOGLE_SIGN_IN_RESULT_CODE = 1
     companion object VAR {
         val PREFERENCE_NAME:String = "Foodbodi"
         val API_KEY_FIELD = "api_key"
@@ -39,8 +50,9 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                     if (0 == response.body()?.statusCode()) {
                         val token = response.body()?.data()?.token
                         val data:User? = response.body()?.data()?.user
-                        CurrentUserProvider.instance.setData(token!!, data!!)
-                        saveApiKey(token)
+                        CurrentUserProvider.get().setApiKey(token!!, that)
+                        CurrentUserProvider.get().setUserData(data!!, that)
+
                         val intent = Intent(that, UpdateBasicInfoActivity::class.java)
                         startActivity(intent)
 
@@ -64,15 +76,20 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
     override fun onSelectLoginMethod(loginMethod: LoginMethod) {
         when(loginMethod) {
             LoginMethod.MANUAL -> getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, LoginFragment(this)).commit()
-            LoginMethod.GOOGLE, LoginMethod.FACEBOOK -> Toast.makeText(this,"Coming soon", Toast.LENGTH_LONG).show()
+            LoginMethod.GOOGLE -> {
+                val signInIntent = mGoogleSignInClient!!.getSignInIntent()
+                startActivityForResult(signInIntent, GOOGLE_SIGN_IN_RESULT_CODE)
+            }
+            LoginMethod.FACEBOOK -> Toast.makeText(this,"Coming soon", Toast.LENGTH_LONG).show()
         }
     }
 
-    override fun onLoginSuccess(apiKey:String?) {
+    override fun onLoginSuccess(apiKey:String?, user: User?) {
         if (apiKey == null) {
             Toast.makeText(this, "Can not extract api key for further requests", Toast.LENGTH_LONG).show()
         } else {
-            saveApiKey(apiKey)
+            CurrentUserProvider.get().setApiKey(apiKey, this)
+            CurrentUserProvider.get().setUserData(user, this)
             finish()
         }
     }
@@ -84,19 +101,77 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authenticate_flow)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail().requestIdToken(resources.getString(R.string.google_oauth_server_client_id))
+            .build()
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_container_authen_flow, LoginMethodFragment(this)).commit();
+
     }
 
-    fun saveApiKey(apiKey:String?) {
-        getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).edit().putString(API_KEY_FIELD, apiKey).apply()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == GOOGLE_SIGN_IN_RESULT_CODE) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        val that = this;
+        var googleToken:String? = null
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            googleToken = account?.idToken
+        } catch (e: ApiException) {
+            Toast.makeText(this, "GoogleSignIn fail code " + e.message , Toast.LENGTH_LONG).show();
+        }
+        if (googleToken != null) {
+            FoodbodiRetrofitHolder.getService().googleSignIn(GoogleSignInRequest(googleToken))
+                .enqueue(object : Callback<FoodBodiResponse<LoginResponse>> {
+                    override fun onFailure(call: Call<FoodBodiResponse<LoginResponse>>, t: Throwable) {
+                        Toast.makeText(this@AuthenticateFlowActivity, t.message, Toast.LENGTH_LONG).show()
+                    }
+
+                    override fun onResponse(
+                        call: Call<FoodBodiResponse<LoginResponse>>,
+                        response: Response<FoodBodiResponse<LoginResponse>>
+                    ) {
+                        if (0 == response.body()?.statusCode()) {
+                            CurrentUserProvider.get().setApiKey(response.body()?.data()?.token, that);
+                            CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that);
+                            ensureUserBasicInfo(response.body()?.data()?.user)
+                        } else {
+                            onLoginFail(response.body()?.errorMessage());
+                        }
+                    }
+
+                })
+        } else {
+            Toast.makeText(this, "Can not extract google token to login", Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+
+    fun ensureUserBasicInfo(user: User?) {
+        if (user?.isProfileReady()!!) {
+            finish()
+        } else {
+            val intent = Intent(this, UpdateBasicInfoActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 
 interface AuthenticateFlowController {
     fun onSelectLoginMethod(loginMethod: LoginMethod)
 
-    fun onLoginSuccess(apiKey:String?)
+    fun onLoginSuccess(apiKey:String?, user: User?)
     fun onLoginFail(message:String?)
 
     fun invokeRegisterFlow()

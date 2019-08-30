@@ -13,12 +13,13 @@ import com.foodbodi.model.CurrentUserProvider
 
 class ProfileFragment:Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val that = this
         var view:View = inflater.inflate(R.layout.profile_fragment, container, false);
         view.findViewById<Button>(R.id.btn_logout).setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 this@ProfileFragment.activity?.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
                     ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
-                CurrentUserProvider.instance.logout()
+                CurrentUserProvider.get().logout(that.context!!)
             }
 
         })
