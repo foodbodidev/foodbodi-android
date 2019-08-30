@@ -22,6 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.R.attr.data
+import com.facebook.login.LoginResult
+import com.foodbodi.apis.requests.FacebookSignInRequest
 import com.foodbodi.apis.requests.GoogleSignInRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -73,14 +75,20 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onSelectLoginMethod(loginMethod: LoginMethod) {
+    override fun onSelectLoginMethod(loginMethod: LoginMethod, payload: Any?) {
         when(loginMethod) {
-            LoginMethod.MANUAL -> getSupportFragmentManager().beginTransaction().replace(R.id.frame_container_authen_flow, LoginFragment(this)).commit()
+            LoginMethod.MANUAL -> getSupportFragmentManager().beginTransaction().replace(
+                R.id.frame_container_authen_flow,
+                LoginFragment(this)
+            ).commit()
             LoginMethod.GOOGLE -> {
                 val signInIntent = mGoogleSignInClient!!.getSignInIntent()
                 startActivityForResult(signInIntent, GOOGLE_SIGN_IN_RESULT_CODE)
             }
-            LoginMethod.FACEBOOK -> Toast.makeText(this,"Coming soon", Toast.LENGTH_LONG).show()
+            LoginMethod.FACEBOOK -> {
+                val loginResult: LoginResult = payload as LoginResult
+                handleFbSignInResult(loginResult)
+            }
         }
     }
 
@@ -119,6 +127,31 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
+    }
+
+    private fun handleFbSignInResult(loginResult: LoginResult) {
+        val that = this;
+        FoodbodiRetrofitHolder.getService().facebookSignIn(FacebookSignInRequest(loginResult.accessToken.token, loginResult.accessToken.userId))
+            .enqueue(object : Callback<FoodBodiResponse<LoginResponse>> {
+                override fun onResponse(
+                    call: Call<FoodBodiResponse<LoginResponse>>,
+                    response: Response<FoodBodiResponse<LoginResponse>>
+                ) {
+                    if (0 == response.body()?.statusCode()) {
+                        CurrentUserProvider.get().setApiKey(response.body()?.data()?.token, that);
+                        CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that);
+                        ensureUserBasicInfo(response.body()?.data()?.user)
+                    } else {
+                        onLoginFail(response.body()?.errorMessage());
+                    }
+                }
+
+                override fun onFailure(call: Call<FoodBodiResponse<LoginResponse>>, t: Throwable) {
+                    Toast.makeText(this@AuthenticateFlowActivity, t.message, Toast.LENGTH_LONG).show()
+                }
+
+            })
+
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -169,10 +202,11 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
 }
 
 interface AuthenticateFlowController {
-    fun onSelectLoginMethod(loginMethod: LoginMethod)
+    fun onSelectLoginMethod(loginMethod: LoginMethod, payload:Any?)
 
     fun onLoginSuccess(apiKey:String?, user: User?)
     fun onLoginFail(message:String?)
+
 
     fun invokeRegisterFlow()
     fun registerSuccess(profile:User)

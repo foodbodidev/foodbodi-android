@@ -19,14 +19,16 @@
             android:layout_marginRight="@dimen/text_large"
             android:layout_weight="6"
             android:layout_width="match_parent" android:layout_height="wrap_content">
-        <!--#
         <com.facebook.login.widget.LoginButton
                 android:id="@+id/btn_continue_with_facebook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/text_large"
-                android:layout_gravity="center_horizontal"/>
-                -->
+                android:paddingTop="@dimen/text_small"
+                android:paddingBottom="@dimen/text_small"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/text_large"
+                android:layout_marginBottom="@dimen/text_large" />
+
         <com.google.android.gms.common.SignInButton
                 android:id="@+id/btn_continue_with_google"
                 android:layout_width="match_parent"

@@ -45,5 +45,7 @@
     <string name="logout">Logout</string>
 
     <string name="google_oauth_server_client_id">513844011252-0220ffhr75mivnrv0jub2ue1kkkgckfr.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">727165344366619</string>
+    <string name="fb_login_protocol_scheme">fb727165344366619</string>
 
 </resources>
