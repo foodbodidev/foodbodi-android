@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/text_large"
+        tools:context=".RegisterBusinessInformation">
+
+    <TextView
+            android:text="@string/company_information"
+            android:textSize="@dimen/text_title"
+            android:layout_marginTop="@dimen/text_title"
+            android:layout_marginBottom="@dimen/text_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <EditText
+            android:id="@+id/input_restaurant_name"
+            android:hint="@string/company_name"
+            android:background="@drawable/fb_textview"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/text_medium"
+              android:layout_height="wrap_content"/>
+    <EditText
+            android:id="@+id/input_restaurant_registration_number"
+            android:hint="@string/registration_no"
+            android:background="@drawable/fb_textview"
+            android:layout_marginBottom="@dimen/text_medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <EditText
+            android:id="@+id/input_restaurant_representative"
+            android:hint="@string/representative_name"
+            android:background="@drawable/fb_textview"
+            android:layout_marginBottom="@dimen/text_medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <EditText
+            android:id="@+id/input_restaurant_address"
+            android:hint="@string/address"
+            android:background="@drawable/fb_textview"
+            android:layout_marginBottom="@dimen/text_medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/btn_submit_business_info"
+            android:background="@drawable/fb_button"
+            android:text="@string/submit"
+            android:textColor="@color/White"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+
+</LinearLayout>

@@ -13,18 +13,23 @@
             android:layout_height="200dp">
         <ImageView
                 android:id="@+id/img_restaurant_photo"
+                android:scaleType="center"
                 android:layout_width="match_parent" android:layout_height="200dp"/>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <ImageButton
+                android:src="@mipmap/plusWhite"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                android:background="@android:color/transparent"
                 android:id="@+id/fab_restaurant_photo"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/text_large"
+                android:layout_marginTop="@dimen/text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
     </FrameLayout>
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="150dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:layout_width="match_parent" android:layout_height="match_parent">
@@ -34,17 +39,14 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <EditText
+                <TextView
                         android:id="@+id/input_restaurant_name"
-                        android:hint="@string/title"
                         android:minLines="3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
-                        android:background="@drawable/fb_edit_text"
                         android:layout_marginRight="24dp"
                         android:layout_marginLeft="24dp"/>
-
 
                 <Spinner
                         android:scrollbarSize="@dimen/text_medium"
@@ -56,15 +58,12 @@
                         android:layout_width="match_parent" android:layout_height="wrap_content">
                 </Spinner>
 
-                <EditText
+                <TextView
                         android:focusableInTouchMode="false"
-                        android:editable="false"
                         android:id="@+id/input_restaurant_address"
-                        android:hint="@string/address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:background="@drawable/fb_edit_text"
                         android:layout_marginRight="24dp"
                         android:layout_marginLeft="24dp"/>
 
@@ -130,74 +129,85 @@
                         android:layout_marginRight="0dp" android:layout_marginLeft="5dp"/>
             </LinearLayout>
 
-            <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                              android:orientation="vertical"
-                              android:layout_width="match_parent"
-                              android:layout_height="match_parent">
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:orientation="vertical"
+                          android:layout_marginTop="@dimen/text_medium"
+                          android:background="@drawable/rounded_corner"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent">
 
-                    <TextView
-                            android:text="@string/menu"
-                            android:textSize="@dimen/text_large"
-                            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <TextView
+                        android:text="@string/menu"
+                        android:textSize="@dimen/text_large"
+                        android:layout_marginBottom="@dimen/text_medium"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <LinearLayout
+                        android:weightSum="10"
+                        android:layout_marginBottom="@dimen/text_small"
+                        android:layout_width="match_parent" android:layout_height="wrap_content">
                     <LinearLayout
-                            android:weightSum="10"
-                            android:layout_width="match_parent" android:layout_height="wrap_content">
-                        <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_weight="6"
-                                android:layout_width="0dp" android:layout_height="wrap_content">
+                            android:orientation="vertical"
+                            android:layout_weight="8"
+                            android:layout_width="0dp" android:layout_height="wrap_content">
+                        <EditText
+                                android:id="@+id/input_food_name"
+                                android:hint="@string/title"
+                                android:layout_marginBottom="@dimen/text_small"
+                                android:background="@drawable/fb_edit_text"
+                                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
                             <EditText
-                                    android:id="@+id/input_food_name"
-                                    android:hint="@string/title"
+                                    android:id="@+id/input_food_price"
+                                    android:hint="@string/price_symbol"
+                                    android:background="@drawable/fb_edit_text"
+                                    android:minWidth="80dp"
+                                    android:layout_marginRight="@dimen/text_small"
+                                    android:inputType="numberDecimal"
+                                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                            <EditText
+                                    android:id="@+id/input_food_kcalo"
+                                    android:background="@drawable/fb_edit_text"
+                                    android:hint="@string/add_kcalo"
+                                    android:inputType="numberDecimal"
                                     android:layout_width="match_parent" android:layout_height="wrap_content"/>
-                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                                <EditText
-                                        android:id="@+id/input_food_price"
-                                        android:hint="@string/price_symbol"
-                                        android:minWidth="80dp"
-                                        android:inputType="numberDecimal"
-                                        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                                <EditText
-                                        android:id="@+id/input_food_kcalo"
-                                        android:hint="@string/add_kcalo"
-                                        android:inputType="numberDecimal"
-                                        android:layout_width="match_parent" android:layout_height="wrap_content"/>
-                            </LinearLayout>
-
                         </LinearLayout>
-                        <FrameLayout
-                                android:layout_weight="4"
-                                android:layout_width="wrap_content" android:layout_height="match_parent">
-                            <ImageView
-                                    android:id="@+id/image_food_image"
-                                    android:layout_width="match_parent" android:layout_height="match_parent"/>
-                            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                                    android:id="@+id/fab_food_photo"
-                                    android:layout_gravity="center"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
 
-                        </FrameLayout>
                     </LinearLayout>
-                    <Button
-                            android:id="@+id/btn_add_food"
-                            android:text="@string/add_menu"
-                            android:background="@drawable/fb_button"
-                            android:textColor="@color/White"
-                            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                    <FrameLayout
+                            android:layout_weight="2"
+                            android:layout_margin="@dimen/text_small"
+                            android:layout_width="wrap_content" android:layout_height="match_parent">
+                        <ImageView
+                                android:background="@color/edit_text_color"
+                                android:id="@+id/image_food_image"
+                                android:layout_width="match_parent" android:layout_height="match_parent"/>
+                        <ImageButton
+                                android:id="@+id/fab_food_photo"
+                                android:background="@android:color/transparent"
+                                android:src="@mipmap/plusWhite"
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/list_added_food"
-                            android:layout_width="match_parent"
-                            android:minHeight="400dp"
-                            android:layout_height="wrap_content">
-
-                    </androidx.recyclerview.widget.RecyclerView>
+                    </FrameLayout>
                 </LinearLayout>
-            </ScrollView>
-        </LinearLayout>
+                <Button
+                        android:id="@+id/btn_add_food"
+                        android:text="@string/add_menu"
+                        android:background="@drawable/fb_button"
+                        android:textColor="@color/White"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/list_added_food"
+                        android:layout_width="match_parent"
+                        android:minHeight="400dp"
+                        android:layout_height="wrap_content">
+
+                </androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+    </LinearLayout>
 
 
 
