@@ -12,6 +12,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:backgroundTint="@color/colorPrimary"
+                app:srcCompat="@drawable/ic_add_white_36dp"
                 android:id="@+id/fab_add_restaurant"
                 android:layout_width="wrap_content"
                 android:layout_height="72dp"

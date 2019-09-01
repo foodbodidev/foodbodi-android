@@ -36,7 +36,7 @@ class CurrentUserProvider private constructor(){
                         response: Response<FoodBodiResponse<User>>
                     ) {
                         var foodBodiResponse: FoodBodiResponse<User>? = response.body()
-                        if (0 == foodBodiResponse?.statusCode()) {
+                        if (FoodBodiResponse.SUCCESS_CODE == foodBodiResponse?.statusCode()) {
                             user = response.body()?.data()
                         } else {
                             user = null

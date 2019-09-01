@@ -49,7 +49,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                     call: Call<FoodBodiResponse<LoginResponse>>,
                     response: Response<FoodBodiResponse<LoginResponse>>
                 ) {
-                    if (0 == response.body()?.statusCode()) {
+                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                         val token = response.body()?.data()?.token
                         val data:User? = response.body()?.data()?.user
                         CurrentUserProvider.get().setApiKey(token!!, that)
@@ -137,7 +137,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                     call: Call<FoodBodiResponse<LoginResponse>>,
                     response: Response<FoodBodiResponse<LoginResponse>>
                 ) {
-                    if (0 == response.body()?.statusCode()) {
+                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                         CurrentUserProvider.get().setApiKey(response.body()?.data()?.token, that);
                         CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that);
                         ensureUserBasicInfo(response.body()?.data()?.user)
@@ -174,7 +174,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                         call: Call<FoodBodiResponse<LoginResponse>>,
                         response: Response<FoodBodiResponse<LoginResponse>>
                     ) {
-                        if (0 == response.body()?.statusCode()) {
+                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                             CurrentUserProvider.get().setApiKey(response.body()?.data()?.token, that);
                             CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that);
                             ensureUserBasicInfo(response.body()?.data()?.user)

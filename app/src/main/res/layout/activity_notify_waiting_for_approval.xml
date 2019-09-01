@@ -12,7 +12,7 @@
             android:id="@+id/img_new_product"
             android:layout_width="match_parent"
                android:layout_marginTop="130sp"
-               android:src="@mipmap/newProduct"
+               android:src="@mipmap/new_product"
                android:layout_marginBottom="@dimen/text_large"
                android:layout_height="wrap_content"/>
     <TextView

@@ -1,8 +1,6 @@
 package com.foodbodi.controller
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.foodbodi.AddRestaurantActivity
+import com.foodbodi.EditRestaurantActivity
 import com.foodbodi.AuthenticateFlowActivity
 import com.foodbodi.R
+import com.foodbodi.RegisterBusinessInformation
 import com.foodbodi.apis.*
 import com.foodbodi.controller.FodiMap.RestaurantInfoMenuActivity
 import com.foodbodi.model.*
@@ -114,7 +113,35 @@ class GoogleMapFragment : Fragment(){
     }
 
     private fun invokeAddRestaurantForm() {
-        startActivity(Intent(context, AddRestaurantActivity::class.java))
+        FoodbodiRetrofitHolder.getService()
+            .listMineRestaurant(FoodbodiRetrofitHolder.getHeaders(context!!))
+            .enqueue(object : Callback<FoodBodiResponse<RestaurantsResponse>> {
+                override fun onFailure(call: Call<FoodBodiResponse<RestaurantsResponse>>, t: Throwable) {
+                    Toast.makeText( this@GoogleMapFragment.context, "Error when get list restaurants", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onResponse(
+                    call: Call<FoodBodiResponse<RestaurantsResponse>>,
+                    response: Response<FoodBodiResponse<RestaurantsResponse>>
+                ) {
+                    if (FoodBodiResponse.SUCCESS_CODE != response.body()?.statusCode()) {
+                        Toast.makeText( this@GoogleMapFragment.context, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                    } else {
+                        var list:ArrayList<Restaurant> = response.body()!!.data().restaurants
+                        if (FoodBodiResponse.SUCCESS_CODE == list.size) {
+                            startActivity(Intent(context, RegisterBusinessInformation::class.java))
+                        } else {
+                            var restaurant = list.get(0) //currently 1 user 1 restaurant
+
+                            val intent = Intent(context, EditRestaurantActivity::class.java)
+                            intent.putExtra("restaurant", restaurant)
+                            startActivity(intent)
+
+                        }
+                    }
+                }
+
+            })
     }
     public fun gotoMenuInfoRestaurant(){
         startActivity(Intent(context, RestaurantInfoMenuActivity::class.java))

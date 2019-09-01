@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".AddRestaurantActivity">
+        tools:context=".EditRestaurantActivity">
 
     <FrameLayout
             android:background="@color/cardview_dark_background"
@@ -17,7 +17,7 @@
                 android:layout_width="match_parent" android:layout_height="200dp"/>
 
         <ImageButton
-                android:src="@mipmap/plusWhite"
+                android:src="@mipmap/plus_white"
                 android:scaleX="1.5"
                 android:scaleY="1.5"
                 android:background="@android:color/transparent"
@@ -26,7 +26,10 @@
                 android:layout_marginTop="@dimen/text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
     </FrameLayout>
+    <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_marginTop="150dp"
@@ -41,10 +44,17 @@
                     android:layout_height="wrap_content">
                 <TextView
                         android:id="@+id/input_restaurant_name"
-                        android:minLines="3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginLeft="24dp"/>
+                <TextView
+                        android:focusableInTouchMode="false"
+                        android:id="@+id/input_restaurant_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:layout_marginRight="24dp"
                         android:layout_marginLeft="24dp"/>
 
@@ -57,15 +67,6 @@
                         android:layout_marginLeft="24dp"
                         android:layout_width="match_parent" android:layout_height="wrap_content">
                 </Spinner>
-
-                <TextView
-                        android:focusableInTouchMode="false"
-                        android:id="@+id/input_restaurant_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginRight="24dp"
-                        android:layout_marginLeft="24dp"/>
 
                 <LinearLayout
                         android:weightSum="10"
@@ -185,7 +186,7 @@
                         <ImageButton
                                 android:id="@+id/fab_food_photo"
                                 android:background="@android:color/transparent"
-                                android:src="@mipmap/plusWhite"
+                                android:src="@mipmap/plus_white"
                                 android:layout_gravity="center"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
@@ -199,15 +200,19 @@
                         android:textColor="@color/White"
                         android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/list_added_food"
-                        android:layout_width="match_parent"
-                        android:minHeight="400dp"
-                        android:layout_height="wrap_content">
-
-                </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
-    </LinearLayout>
+
+            <ListView
+                    android:scrollbars="none"
+                    android:id="@+id/list_added_food"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="400dp">
+
+            </ListView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
 
 
 

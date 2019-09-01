@@ -52,7 +52,7 @@ class UpdateBasicInfoActivity : AppCompatActivity(), UpdateBasicInfoController {
                         call: Call<FoodBodiResponse<User>>,
                         response: Response<FoodBodiResponse<User>>
                     ) {
-                        if (0 == response.body()?.statusCode()) {
+                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                             val intent = Intent(this@UpdateBasicInfoActivity, MainActivity::class.java)
                             startActivity(intent)
                         } else {

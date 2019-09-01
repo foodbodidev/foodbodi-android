@@ -19,8 +19,11 @@ interface FoodbodiService {
     @GET("restaurant/list")
     fun listRestaurant():Call<FoodBodiResponse<RestaurantsResponse>>;
 
+    @GET("restaurant/mine")
+    fun listMineRestaurant(@HeaderMap headers:Map<String, String>):Call<FoodBodiResponse<RestaurantsResponse>>;
+
     @GET("metadata/restaurant_category")
-    fun getRestaurantCategories():Call<FoodBodiResponse<Map<String, RestaurantCategory>>>
+    fun getRestaurantCategories():Call<FoodBodiResponse<HashMap<String, RestaurantCategory>>>
 
     @Headers("Content-Type: application/json")
     @POST("login")
@@ -47,8 +50,15 @@ interface FoodbodiService {
     fun createRestaurant(@HeaderMap headers: Map<String, String>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<RestaurantResponse>>
 
     @Headers("Content-Type: application/json")
+    @PUT("restaurant/{restaurant_id}")
+    fun updateRestaurant(@HeaderMap headers: Map<String, String>, @Body restaurant: Restaurant, @Path("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<RestaurantResponse>>
+
+    @Headers("Content-Type: application/json")
     @POST("currentFood/import")
     fun importFoods(@HeaderMap headers: Map<String, String>, @Body importFoodRequest: ImportFoodRequest) : Call<FoodBodiResponse<Restaurant>>
+
+    @GET("restaurant/{restaurant_id}/foods")
+    fun listFood(@HeaderMap headers: Map<String, String>, @Path("restaurant_id") restaurant_id: String) : Call<FoodBodiResponse<Restaurant>>
 
     @Multipart
     @POST("upload/photo")

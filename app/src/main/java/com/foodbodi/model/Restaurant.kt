@@ -3,8 +3,9 @@ package com.foodbodi.model
 import androidx.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
+import java.io.Serializable;
 
-class Restaurant {
+class Restaurant : Serializable {
     @SerializedName("name")
     var name:String? = null
 
@@ -40,6 +41,13 @@ class Restaurant {
 
     @SerializedName("geohash")
     var geohash:String? = null
+
+    @SerializedName("phone")
+    var phone = null
+
+    @SerializedName("license")
+    var license:License? = null
+
 }
 
 enum class RestaurantType {

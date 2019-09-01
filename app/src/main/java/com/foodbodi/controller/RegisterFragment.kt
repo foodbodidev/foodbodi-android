@@ -39,7 +39,7 @@ class RegisterFragment(parent:AuthenticateFlowController) : Fragment() {
                         call: Call<FoodBodiResponse<LoginResponse>>,
                         response: Response<FoodBodiResponse<LoginResponse>>
                     ) {
-                        if (0 == response.body()?.statusCode()) {
+                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                             parent.registerSuccess(profile)
                         } else {
                             parent.registerFail(response.body()?.errorMessage())
