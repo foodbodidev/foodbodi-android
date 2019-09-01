@@ -202,14 +202,14 @@
 
             </LinearLayout>
 
-            <ListView
-                    android:scrollbars="none"
+            <LinearLayout
+                    android:orientation="vertical"
                     android:id="@+id/list_added_food"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="400dp">
 
-            </ListView>
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

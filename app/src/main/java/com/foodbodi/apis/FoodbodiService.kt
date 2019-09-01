@@ -4,6 +4,7 @@ import com.foodbodi.apis.requests.FacebookSignInRequest
 import com.foodbodi.apis.requests.GoogleSignInRequest
 import com.foodbodi.apis.requests.ImportFoodRequest
 import com.foodbodi.apis.requests.LoginRequest
+import com.foodbodi.model.Food
 import com.foodbodi.model.Restaurant
 import com.foodbodi.model.RestaurantCategory
 import com.foodbodi.model.User
@@ -63,4 +64,12 @@ interface FoodbodiService {
     @Multipart
     @POST("upload/photo")
     fun uploadPhoto(@Query("filename") filename:String, @Part fileData:MultipartBody.Part) : Call<FoodBodiResponse<UploadResponse>>
+
+    @Headers("Content-Type: application/json")
+    @POST("food")
+    fun createFood(@HeaderMap headers: Map<String, String>, @Body food: Food) : Call<FoodBodiResponse<FoodResponse>>
+
+    @Headers("Content-Type: application/json")
+    @DELETE("food/{id}")
+    fun deleteFood(@HeaderMap headers: Map<String, String>, @Path("id") id: String, @Query("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<FoodResponse>>
 }

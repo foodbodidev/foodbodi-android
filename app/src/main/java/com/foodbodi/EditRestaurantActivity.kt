@@ -1,6 +1,7 @@
 package com.foodbodi
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,11 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import com.foodbodi.apis.FoodBodiResponse
-import com.foodbodi.apis.FoodbodiRetrofitHolder
-import com.foodbodi.apis.RestaurantResponse
 import com.foodbodi.model.*
-import com.foodbodi.utils.Action
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,10 +19,10 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.foodbodi.apis.UploadResponse
-import com.foodbodi.utils.OnSwipeLeftRightListener
-import com.foodbodi.utils.PhotoGetter
+import com.foodbodi.apis.*
+import com.foodbodi.utils.*
 import com.squareup.picasso.Picasso
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -44,12 +41,10 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     private val TAKE_FOOD_PHOTO_CODE = 3
     private var foodPhotoGetter: PhotoGetter? = null
     val currentFood: Food = Food()
-    lateinit var foodList:ArrayList<Food>
-    lateinit var foodAdapter: FoodAdapter
 
     val DATA_SERIALIZE_NAME:String = "restaurant"
 
-    lateinit var foodListView:ListView
+    lateinit var foodListView:DynamicLinearLayoutController
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (TAKE_PHOTO_CODE == requestCode && data != null) {
@@ -145,8 +140,9 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
                 ) {
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                         val list:ArrayList<Food> = response.body()?.data()?.foods!!
-                        foodList = list
-                        foodAdapter.notifyDataSetChanged()
+                        for (food in list) {
+                            foodListView.addItem("FOOD", food)
+                        }
 
                     } else {
                         Toast.makeText(this@EditRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
@@ -170,8 +166,6 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        foodList = ArrayList<Food>()
-        foodAdapter = FoodAdapter( foodList, this)
         val currentContext = this;
         setContentView(R.layout.activity_add_restaurant)
 
@@ -279,16 +273,64 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
     private fun ensureAddMenuView() {
         foodPhotoGetter = PhotoGetter(this)
-        foodListView = findViewById<ListView>(R.id.list_added_food)
-        foodListView.adapter = foodAdapter
+        foodListView = object : DynamicLinearLayoutController(findViewById<LinearLayout>(R.id.list_added_food)) {
+            override fun onItemLeftSwipe(pos: Int, view: View) {
+                askToDeleteFood(pos, view)
+            }
+
+            override fun onItemRightSwipe(pos: Int, view: View) {
+                askToDeleteFood(pos, view)
+            }
+
+        }
+        foodListView.setRenderer("FOOD", object : Renderer<Any> {
+            override fun getView(data: Any): View? {
+                val inflater = LayoutInflater.from(this@EditRestaurantActivity)
+                val view = inflater.inflate(R.layout.list_food_item, null)
+                var name = view.findViewById<TextView>(R.id.food_item_name)
+                var price = view.findViewById<TextView>(R.id.food_item_price)
+                var kcalo = view.findViewById<TextView>(R.id.food_item_kcalo)
+                var photo = view.findViewById<ImageView>(R.id.food_item_photo)
+
+                var food = data as Food
+                name!!.setText(food?.name);
+
+                if (food?.price != null) {
+                    price!!.setText(view?.context?.getString(R.string.money_format, food.price))
+                }
+                if (food?.calo != null) {
+                    kcalo!!.setText(view?.context?.getString(R.string.kcalo_format, food.calo))
+                }
+
+                val imageView: ImageView = photo!!
+                if (food?.photo != null) {
+                    Picasso.get().load(food.photo).into(imageView)
+                }
+
+                return view
+            }
+
+        })
 
         findViewById<Button>(R.id.btn_add_food).setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val food = ensureFoodInputData()
                 if (food != null) {
-                    foodAdapter.add(food)
-                    foodAdapter.notifyDataSetChanged()
-                    clearAddFoodForm()
+                    FoodbodiRetrofitHolder.getService().createFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), food)
+                        .enqueue(object : Callback<FoodBodiResponse<FoodResponse>> {
+                            override fun onFailure(call: Call<FoodBodiResponse<FoodResponse>>, t: Throwable) {
+
+                            }
+
+                            override fun onResponse(
+                                call: Call<FoodBodiResponse<FoodResponse>>,
+                                response: Response<FoodBodiResponse<FoodResponse>>
+                            ) {
+                                foodListView.addItem("FOOD", food)
+                                clearAddFoodForm()
+                            }
+
+                        })
                 }
             }
 
@@ -300,19 +342,41 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
             }
 
         })
+    }
 
-        val itemTouchhelper:ItemTouchHelper =  ItemTouchHelper(OnSwipeLeftRightListener(object : Action<Int> {
-            override fun accept(data: Int?) {
-                foodList.removeAt(data!!)
-                foodAdapter.notifyDataSetChanged()
-            }
+    private fun askToDeleteFood(pos:Int, view: View) {
+        AlertDialog.Builder(this)
+            .setMessage("Delete ?")
+            .setPositiveButton("Yes",object : DialogInterface.OnClickListener {
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+                    val food:Food = foodListView.data.get(pos) as Food
+                    FoodbodiRetrofitHolder.getService().deleteFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), food.id!!, food.restaurant_id!!)
+                        .enqueue(object : Callback<FoodBodiResponse<FoodResponse>> {
+                            override fun onFailure(call: Call<FoodBodiResponse<FoodResponse>>, t: Throwable) {
 
-            override fun deny(data: Int?, reason: String) {
-                Toast.makeText(this@EditRestaurantActivity, "Gesture problem : $reason", Toast.LENGTH_LONG).show()
-            }
+                            }
 
-        }, ContextCompat.getDrawable(this, R.drawable.ic_delete_sweep_black_24dp)!!, ColorDrawable(Color.RED)));
-        //itemTouchhelper.attachToRecyclerView(listFoodView);
+                            override fun onResponse(
+                                call: Call<FoodBodiResponse<FoodResponse>>,
+                                response: Response<FoodBodiResponse<FoodResponse>>
+                            ) {
+                                if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                                    foodListView.removeItem(pos)
+                                } else {
+                                    Toast.makeText(this@EditRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                                }
+                            }
+
+                        })
+                }
+
+            })
+            .setNegativeButton("No",object : DialogInterface.OnClickListener {
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+                    view.setTranslationX(0f)
+                }
+
+            }).show()
     }
 
     private fun clearAddFoodForm() {
@@ -324,6 +388,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         val priceInput = findViewById<EditText>(R.id.input_food_price)
         val kcaloInput = findViewById<EditText>(R.id.input_food_kcalo)
         var food:Food = Food()
+        food.restaurant_id = restaurant.id
         if (TextUtils.isEmpty(nameInput.text)) {
             nameInput.setError("Food name is required")
             return null
@@ -370,56 +435,6 @@ class CategoryAdapter(private val context: Context,
 
     override fun getCount(): Int {
         return dataSource.size
-    }
-
-}
-
-class FoodAdapter(foods: ArrayList<Food>, context: Context) : ArrayAdapter<Food>(context, R.layout.list_food_item, foods) {
-    var foods:ArrayList<Food>
-    init {
-        this.foods = foods
-    }
-    //view holder is used to prevent findViewById calls
-    private class FoodItemViewHolder {
-        internal var photo: ImageView? = null
-        internal var name: TextView? = null
-        internal var price: TextView? = null
-        internal var kcalo: TextView? = null
-    }
-
-    override fun getView(position: Int, view: View?, container: ViewGroup): View {
-        var view = view
-
-        val viewHolder: FoodItemViewHolder
-        if (view == null) {
-            val inflater = LayoutInflater.from(context)
-            view = inflater.inflate(R.layout.list_food_item, container, false)
-            viewHolder = FoodItemViewHolder()
-            viewHolder.name = view.findViewById<TextView>(R.id.food_item_name)
-            viewHolder.price = view.findViewById<TextView>(R.id.food_item_price)
-            viewHolder.kcalo = view.findViewById<TextView>(R.id.food_item_kcalo)
-            viewHolder.photo = view.findViewById<ImageView>(R.id.food_item_photo)
-            view.tag = viewHolder
-        } else {
-            viewHolder = view.tag as FoodItemViewHolder
-        }
-
-        val food = getItem(position)
-        viewHolder.name!!.setText(food?.name);
-
-        if (food?.price != null) {
-            viewHolder.price!!.setText(view?.context?.getString(R.string.money_format, food.price))
-        }
-        if (food?.calo != null) {
-            viewHolder.kcalo!!.setText(view?.context?.getString(R.string.kcalo_format, food.calo))
-        }
-
-        val imageView: ImageView = viewHolder.photo!!
-        if (food?.photo != null) {
-            Picasso.get().load(food.photo).into(imageView)
-        }
-
-        return view!!
     }
 
 }

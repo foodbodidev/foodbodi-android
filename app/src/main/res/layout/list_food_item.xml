@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:weightSum="10"
->
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="8"
-            android:layout_width="0dp" android:layout_height="wrap_content">
-        <TextView
-                android:id="@+id/food_item_name"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:textSize="@dimen/text_medium"
-        />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@color/White"
+                  android:weightSum="10">
         <LinearLayout
-                android:layout_width="match_parent" android:layout_height="wrap_content">
+                android:orientation="vertical"
+                android:layout_weight="8"
+                android:layout_width="0dp" android:layout_height="wrap_content">
             <TextView
-                    android:id="@+id/food_item_price"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView
-                    android:id="@+id/food_item_kcalo"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                    android:id="@+id/food_item_name"
+                    android:text="(Food name)"
+                    android:layout_marginBottom="@dimen/text_small"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_medium"
+            />
+            <LinearLayout
+                    android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView
+                        android:text="(Price)"
+                        android:layout_marginRight="@dimen/text_medium"
+                        android:id="@+id/food_item_price"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView
+                        android:text="(Kcalo)"
+                        android:id="@+id/food_item_kcalo"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 
+            </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+                android:layout_weight="2"
+                android:layout_width="0dp" android:layout_height="wrap_content">
+            <ImageView
+                    android:background="@color/gray_color"
+                    android:id="@+id/food_item_photo"
+                    android:layout_width="200px" android:layout_height="200px"/>
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-            android:layout_weight="2"
-            android:layout_width="0dp" android:layout_height="wrap_content">
-        <ImageView
-                android:id="@+id/food_item_photo"
-                android:layout_width="match_parent" android:layout_height="match_parent"/>
-    </LinearLayout>
 
-</LinearLayout>

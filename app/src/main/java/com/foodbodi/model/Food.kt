@@ -18,4 +18,7 @@ class Food {
     @SerializedName("calo")
     var calo:Double? = null
 
+    @SerializedName("restaurant_id")
+    var restaurant_id:String? = null
+
 }
