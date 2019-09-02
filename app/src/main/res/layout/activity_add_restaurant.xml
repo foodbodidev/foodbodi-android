@@ -6,36 +6,50 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".EditRestaurantActivity">
-
-    <FrameLayout
-            android:background="@color/cardview_dark_background"
+    <androidx.viewpager.widget.ViewPager
+            android:background="@color/gray_color"
+            android:id="@+id/pager_restaurant_photo"
             android:layout_width="match_parent"
             android:layout_height="200dp">
-        <ImageView
-                android:id="@+id/img_restaurant_photo"
-                android:scaleType="center"
-                android:layout_width="match_parent" android:layout_height="200dp"/>
 
+    </androidx.viewpager.widget.ViewPager>
+
+
+    <RelativeLayout
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="80dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="48dp"
+            android:layout_height="48dp">
         <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@mipmap/plus_white"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
                 android:background="@android:color/transparent"
                 android:id="@+id/fab_restaurant_photo"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/text_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:scaleType="fitCenter"
+               />
+        <ProgressBar
+                android:id="@+id/fab_restaurant_photo_loading"
+                android:indeterminateTint="@color/colorPrimary"
+                android:visibility="invisible"
+                android:background="@color/gray_color"
+                android:layout_width="48dp"
+                android:layout_height="48dp"/>
+    </RelativeLayout>
 
-    </FrameLayout>
-    <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_marginTop="150dp"
+            android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_marginTop="150dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:layout_width="match_parent" android:layout_height="match_parent">
+
             <LinearLayout
                     android:orientation="vertical"
                     android:background="@drawable/rounded_corner"
@@ -44,6 +58,8 @@
                     android:layout_height="wrap_content">
                 <TextView
                         android:id="@+id/input_restaurant_name"
+                        android:textSize="@dimen/text_medium"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
@@ -190,6 +206,14 @@
                                 android:layout_gravity="center"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
+                        <ProgressBar
+                                android:id="@+id/fab_food_photo_loading"
+                                android:indeterminateTint="@color/colorPrimary"
+                                android:visibility="invisible"
+                                android:layout_gravity="center"
+                                android:background="@color/edit_text_color"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"/>
 
                     </FrameLayout>
                 </LinearLayout>

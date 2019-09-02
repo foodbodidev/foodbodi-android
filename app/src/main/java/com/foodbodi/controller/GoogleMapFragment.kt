@@ -214,7 +214,9 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
 
         val imageView:ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)
-        Picasso.get().load(restaurant.photo).fit().centerInside().into(imageView)
+        if (restaurant.photos.size > 0) {
+            Picasso.get().load(restaurant.photos.get(0)).fit().centerInside().into(imageView)
+        }
 
 
     }

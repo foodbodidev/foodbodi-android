@@ -49,5 +49,7 @@ dependencies {
 
     implementation 'com.facebook.android:facebook-login:[5,6)'
 
+    implementation 'com.github.yalantis:ucrop:2.2.3-native'
+
 
 }

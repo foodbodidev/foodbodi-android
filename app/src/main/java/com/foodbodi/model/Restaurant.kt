@@ -15,8 +15,8 @@ class Restaurant : Serializable {
     @SerializedName("category")
     var category:String? = null
 
-    @SerializedName("photo")
-    var photo:String? = null
+    @SerializedName("photos")
+    var photos:ArrayList<String> = ArrayList()
 
     @SerializedName("open_hour")
     var openHour:String? = null

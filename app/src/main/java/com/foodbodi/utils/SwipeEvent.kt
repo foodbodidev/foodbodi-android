@@ -9,8 +9,8 @@ import android.widget.Toast
 abstract class SwipeEvent() : View.OnTouchListener {
     val CLICK_DURATION:Long = 3000
     val SWIPE_DISTANCE = 150;
-    abstract fun onClick(view: View)
-    abstract fun onLongClick(view: View)
+    abstract fun onClick(view: View, event: MotionEvent)
+    abstract fun onLongClick(view: View, event: MotionEvent)
     abstract fun onLeftSwipe(view: View)
     abstract fun onRightSwipe(view: View)
     var x1:Float = 0f
@@ -42,10 +42,10 @@ abstract class SwipeEvent() : View.OnTouchListener {
 
                 if (x1 == x2 && y1 == y2 ) {
                     if (t2 - t1 < CLICK_DURATION) {
-                        onClick(view)
+                        onClick(view, event)
                         //Click
                     } else {
-                        onLongClick(view)
+                        onLongClick(view, event)
                         //Long click
                     }
                 } else if (x1 > x2 && (x1 - x2) > SWIPE_DISTANCE) {

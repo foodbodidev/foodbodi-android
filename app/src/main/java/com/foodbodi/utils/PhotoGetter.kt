@@ -13,20 +13,33 @@ import android.graphics.Bitmap
 import java.io.File
 import android.R.attr.bitmap
 import android.R.attr.data
+import android.app.Activity
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.app.NotificationCompat.getExtras
 import androidx.exifinterface.media.ExifInterface
+import com.foodbodi.apis.FoodBodiResponse
+import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.apis.UploadResponse
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import com.google.android.gms.common.util.IOUtils.toByteArray
+import com.squareup.picasso.Picasso
+import com.yalantis.ucrop.UCrop
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.net.URL
 
 
-class PhotoGetter(context:Context) {
+class PhotoGetter(context:Activity) {
     private val context = context
     var photo_name = Date().toString()
     companion object {
@@ -35,6 +48,10 @@ class PhotoGetter(context:Context) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             val byteArray = stream.toByteArray()
             return byteArray
+        }
+        fun loadImageFromURL(mediaLink:String, imageView: ImageView) {
+            Picasso.get().load(mediaLink).centerCrop().resize(imageView.width, imageView.height).into(imageView)
+
         }
     }
 
@@ -45,6 +62,11 @@ class PhotoGetter(context:Context) {
             outputFileUri = Uri.fromFile(File(getImage!!.getPath(), photo_name))
         }
         return outputFileUri
+    }
+
+    fun getCroppedImageOutputUri() : Uri? {
+        val getImage = context.getExternalCacheDir()
+        return Uri.fromFile(File(getImage!!.path, "cropped"))
     }
 
     fun getPickPhotoIntent() : Intent {
@@ -101,19 +123,29 @@ class PhotoGetter(context:Context) {
         var bitmap:Bitmap? = null
         var picUri = getPickImageResultUri(data)
         if (picUri != null) {
-            try {
-                var myBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), picUri)
-                //myBitmap = rotateImageIfRequired(myBitmap, picUri!!)
-                myBitmap = getResizedBitmap(myBitmap, 500)
-                bitmap = myBitmap
-
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+            bitmap = getBitmapFromURL(picUri)
         } else {
             bitmap = (data.getExtras()?.get("data") as Bitmap)
         }
         return bitmap
+    }
+
+    fun getBitmapFromURL(url:Uri):Bitmap? {
+        try {
+            var myBitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), url)
+            //myBitmap = rotateImageIfRequired(myBitmap, picUri!!)
+            myBitmap = getResizedBitmap(myBitmap, 500)
+            return myBitmap
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun getBitmapFromURLString(url:String) :Bitmap?{
+        var uri:Uri = Uri.parse(url)
+        return getBitmapFromURL(uri)
     }
 
     fun getPickImageResultUri(data: Intent?): Uri? {
@@ -123,8 +155,8 @@ class PhotoGetter(context:Context) {
             isCamera = action != null && action == MediaStore.ACTION_IMAGE_CAPTURE
         }
 
-
-        return if (isCamera) getCaptureImageOutputUri() else data!!.data
+        var uri:Uri? =  if (isCamera) getCaptureImageOutputUri() else data!!.data
+        return uri
     }
 
     @Throws(IOException::class)

@@ -2,13 +2,16 @@ package com.foodbodi.utils
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
+import com.foodbodi.R
+import kotlinx.android.synthetic.main.list_food_item.view.*
 
-abstract class DynamicLinearLayoutController(val root:LinearLayout) {
+abstract class DynamicLinearLayoutController(val root:LinearLayout, var itemContainerId:Int, var itemContentId:Int) {
     val itemRenderer:HashMap<String, Renderer<Any>> = HashMap<String, Renderer<Any>>()
     val data:ArrayList<Any> = ArrayList()
 
@@ -22,17 +25,16 @@ abstract class DynamicLinearLayoutController(val root:LinearLayout) {
         val view:View? = renderer?.getView(data)
 
         if (view != null) {
-            val container = createItemContainer()
-            container.addView(view)
-            root.addView(container)
+            root.addView(view)
             val pos = this.data.size
-            view.setOnTouchListener(object : SwipeEvent() {
-                override fun onClick(view: View) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            var child:LinearLayout = view.findViewById<LinearLayout>(this.itemContentId)
+            child.setOnTouchListener(object : SwipeEvent() {
+                override fun onClick(view: View, event: MotionEvent) {
+                    swipeCancel(view, event)
                 }
 
-                override fun onLongClick(view: View) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                override fun onLongClick(view: View, event: MotionEvent) {
+                    swipeCancel(view, event)
                 }
 
                 override fun onLeftSwipe(view: View) {
@@ -52,14 +54,6 @@ abstract class DynamicLinearLayoutController(val root:LinearLayout) {
     fun removeItem(pos:Int) {
         root.removeViewAt(pos)
         this.data.removeAt(pos)
-    }
-
-    private fun createItemContainer() : ViewGroup {
-        val itemContainer = LinearLayout(root.context)
-        itemContainer.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
-        itemContainer.background = ColorDrawable(Color.GRAY)
-        return itemContainer
-
     }
 
     abstract fun onItemLeftSwipe(pos:Int, view: View)

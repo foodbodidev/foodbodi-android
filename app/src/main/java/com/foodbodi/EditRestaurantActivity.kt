@@ -18,12 +18,22 @@ import kotlin.collections.ArrayList
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.opengl.Visibility
+import android.os.Build
 import android.text.TextUtils
+import android.view.ViewTreeObserver
+import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.viewpager.widget.ViewPager
 import com.foodbodi.apis.*
 import com.foodbodi.utils.*
 import com.squareup.picasso.Picasso
+import com.yalantis.ucrop.UCrop
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -35,79 +45,144 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     private lateinit var typeRestaurantBtn: Button
     private lateinit var typeFoodtruckBtn: Button
     private val TAKE_PHOTO_CODE = 2
+    private val TAKE_FOOD_PHOTO_CODE = 3
+    private val CROP_FOOD_PHOTO_CODE = 4
+    private val CROP_RESTAURANT_PHOTO_CODE = 5
+
     private var restaurantPhotoGetter:PhotoGetter? = null
     var restaurant = Restaurant()
 
-    private val TAKE_FOOD_PHOTO_CODE = 3
     private var foodPhotoGetter: PhotoGetter? = null
     val currentFood: Food = Food()
+
+    var capturedFoodPhoto:String? = null
+    var capturedRestaurantPhotos:ArrayList<String> = ArrayList()
 
     val DATA_SERIALIZE_NAME:String = "restaurant"
 
     lateinit var foodListView:DynamicLinearLayoutController
+    lateinit var photoPager:ViewPager
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (TAKE_PHOTO_CODE == requestCode && data != null) {
-            val bitmap:Bitmap? = restaurantPhotoGetter!!.getBitmap(data)
-            if (bitmap != null) {
-                val imageView = this@EditRestaurantActivity.findViewById<ImageView>(R.id.img_restaurant_photo)
-                uploadBitmapThenLoadToImageView(bitmap, imageView, restaurantPhotoGetter!!.photo_name)
-                
-            } else {
-                Toast.makeText(this, "Error when show photo", Toast.LENGTH_LONG).show()
-            }
-        } else if (TAKE_FOOD_PHOTO_CODE == requestCode && data != null) {
-            val bitmap: Bitmap? = foodPhotoGetter!!.getBitmap(data)
-            if (bitmap != null) {
-                val imageView = this@EditRestaurantActivity.findViewById<ImageView>(R.id.image_food_image)
-                uploadBitmapThenLoadToImageView(bitmap, imageView, foodPhotoGetter!!.photo_name)
-            }
-        }
-    }
+    lateinit var restaurantPhotoProgressBar:ProgressBar
+    lateinit var foodPhotoProgressBar:ProgressBar
 
-    private fun uploadBitmapThenLoadToImageView(bitmap: Bitmap, imageView: ImageView, filename:String) {
-        val jpegBytes = PhotoGetter.bitmapToJPEG(bitmap)
-        val requestFile = RequestBody.create(MediaType.parse("image/jpeg"), jpegBytes)
-        val body = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val currentContext = this;
+        setContentView(R.layout.activity_add_restaurant)
 
-        FoodbodiRetrofitHolder.holder.service.uploadPhoto(filename, body).enqueue(object :
-            Callback<FoodBodiResponse<UploadResponse>> {
-            override fun onFailure(call: Call<FoodBodiResponse<UploadResponse>>, t: Throwable) {
-                Toast.makeText(this@EditRestaurantActivity, t.message, Toast.LENGTH_LONG).show()
-            }
+        restaurantPhotoProgressBar = findViewById(R.id.fab_restaurant_photo_loading)
+        foodPhotoProgressBar = findViewById(R.id.fab_food_photo_loading)
+        ensurePhotoBanner()
+        ensureRestaurantCategorySpinner()
+        ensureRestaurantTypeInput()
+        ensureCameraInput()
+        selectType(restaurantType)
+        ensureAddMenuView()
 
-            override fun onResponse(
-                call: Call<FoodBodiResponse<UploadResponse>>,
-                response: Response<FoodBodiResponse<UploadResponse>>
-            ) {
-                if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                    val mediaLink = response.body()?.data()?.mediaLink
-                    if (mediaLink != null) {
-                        currentFood.photo = mediaLink
-                        Picasso.get().load(mediaLink).fit().into(imageView)
 
-                    } else {
-                        Toast.makeText(
-                            this@EditRestaurantActivity,
-                            "Can't extract media link for uploaded photo",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                } else {
-                    Toast.makeText(
-                        this@EditRestaurantActivity,
-                        response.body()?.errorMessage(),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+        findViewById<Button>(R.id.btn_submit_restaurant).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val updateData = getData()
+                FoodbodiRetrofitHolder.getService().updateRestaurant(FoodbodiRetrofitHolder.getHeaders(currentContext), updateData,  restaurant.id!!)
+                    .enqueue(object : Callback<FoodBodiResponse<RestaurantResponse>> {
+                        override fun onFailure(call: Call<FoodBodiResponse<RestaurantResponse>>, t: Throwable) {
+                            Toast.makeText(this@EditRestaurantActivity, "Update restaurant fail : " + t.message, Toast.LENGTH_LONG).show()
+                        }
+
+                        override fun onResponse(
+                            call: Call<FoodBodiResponse<RestaurantResponse>>,
+                            response: Response<FoodBodiResponse<RestaurantResponse>>
+                        ) {
+                            if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                                Toast.makeText(this@EditRestaurantActivity, "Update successfully", Toast.LENGTH_LONG).show()
+                                finish()
+                            } else {
+                                Toast.makeText(this@EditRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                    })
+
             }
 
         })
+
+
+        fillData()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (TAKE_PHOTO_CODE == requestCode && data != null) {
+            UCrop.of(restaurantPhotoGetter!!.getPickImageResultUri(data)!!, restaurantPhotoGetter!!.getCroppedImageOutputUri()!!)
+                .withAspectRatio(3f,2f)
+                .start(this, CROP_RESTAURANT_PHOTO_CODE)
+        } else if (TAKE_FOOD_PHOTO_CODE == requestCode && data != null) {
+            UCrop.of(restaurantPhotoGetter!!.getPickImageResultUri(data)!!, restaurantPhotoGetter!!.getCroppedImageOutputUri()!!)
+                .withAspectRatio(1f,1f)
+                .start(this, CROP_FOOD_PHOTO_CODE)
+        } else if (CROP_RESTAURANT_PHOTO_CODE == requestCode && data != null) {
+            var resultUri:Uri? = UCrop.getOutput(data);
+            val bitmap:Bitmap? = restaurantPhotoGetter!!.getBitmapFromURL(resultUri!!)
+            if (bitmap != null) {
+                restaurantPhotoProgressBar.setVisibility(View.VISIBLE)
+                restaurantPhotoProgressBar.startAnimation(RotateAnimation(0f, 360f))
+
+                uploadBitmapThenLoadToImageView(bitmap, restaurantPhotoGetter!!.photo_name, object : Action<String> {
+                    override fun accept(mediaLink: String?) {
+                        var view:RestaurantPhotoItem = RestaurantPhotoItem(mediaLink!!)
+                        addRestaurantPhoto(view)
+                        restaurantPhotoProgressBar.setVisibility(View.INVISIBLE)
+                        capturedRestaurantPhotos.add(mediaLink!!)
+                    }
+
+                    override fun deny(data: String?, reason: String) {
+                        Toast.makeText(this@EditRestaurantActivity, reason, Toast.LENGTH_LONG).show()
+                    }
+
+                })
+
+            } else {
+                Toast.makeText(this, "Error when show photo", Toast.LENGTH_LONG).show()
+            }
+        } else if (CROP_FOOD_PHOTO_CODE == requestCode && data != null) {
+            var resultUri:Uri? = UCrop.getOutput(data);
+            val bitmap:Bitmap? = restaurantPhotoGetter!!.getBitmapFromURL(resultUri!!)
+            if (bitmap != null) {
+                foodPhotoProgressBar.visibility = View.VISIBLE
+                foodPhotoProgressBar.startAnimation(RotateAnimation(0f, 360f))
+                val imageView = this@EditRestaurantActivity.findViewById<ImageView>(R.id.image_food_image)
+                uploadBitmapThenLoadToImageView(bitmap, foodPhotoGetter!!.photo_name,
+                    object : Action<String> {
+                        override fun deny(data: String?, reason: String) {
+                            foodPhotoProgressBar.visibility = View.INVISIBLE
+                            Toast.makeText(this@EditRestaurantActivity, reason, Toast.LENGTH_LONG).show()
+                        }
+
+                        override fun accept(data: String?) {
+                            capturedFoodPhoto = data
+                            foodPhotoProgressBar.visibility = View.INVISIBLE
+                            PhotoGetter.loadImageFromURL(data!!, imageView)
+                        }
+
+                    })
+            }
+        }
+        else if (UCrop.RESULT_ERROR == requestCode) {
+            Toast.makeText(this, "Crop image problem!!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun addRestaurantPhoto(view:RestaurantPhotoItem) {
+        val adapter = photoPager.adapter as ScreenSlidePagerAdapter
+        adapter.photoViews.add(view)
+        adapter.notifyDataSetChanged()
     }
 
     private fun fillData() {
         val restaurantData:Restaurant = intent.getSerializableExtra(DATA_SERIALIZE_NAME) as Restaurant
         restaurant = restaurantData
+        capturedRestaurantPhotos = restaurant.photos
         findViewById<TextView>(R.id.input_restaurant_name).setText(restaurantData.name)
         findViewById<TextView>(R.id.input_restaurant_address).setText(restaurantData.address)
         if (restaurantData.type != null) {
@@ -150,6 +225,11 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
                 }
 
             })
+
+        for (url in capturedRestaurantPhotos) {
+            var view:RestaurantPhotoItem = RestaurantPhotoItem(url)
+            addRestaurantPhoto(view)
+        }
     }
 
     private fun getData() : Restaurant {
@@ -160,50 +240,18 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         updateData.openHour = findViewById<EditText>(R.id.input_restaurent_open_hour).text.toString()
         updateData.closeHour = findViewById<EditText>(R.id.input_restaurent_close_hour).text.toString()
         updateData.type = restaurantType
+        updateData.photos = capturedRestaurantPhotos
         // restaurant.address = findViewById<EditText>(R.id.input_restaurant_address).text.toString()
         return updateData
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val currentContext = this;
-        setContentView(R.layout.activity_add_restaurant)
 
-        ensureRestaurantCategorySpinner()
-        ensureRestaurantTypeInput()
-        ensureCameraInput()
-        selectType(restaurantType)
-        ensureAddMenuView()
+    private fun ensurePhotoBanner() {
+        photoPager = findViewById<ViewPager>(R.id.pager_restaurant_photo)
 
-
-        findViewById<Button>(R.id.btn_submit_restaurant).setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                val updateData = getData()
-                FoodbodiRetrofitHolder.getService().updateRestaurant(FoodbodiRetrofitHolder.getHeaders(currentContext), updateData,  restaurant.id!!)
-                    .enqueue(object : Callback<FoodBodiResponse<RestaurantResponse>> {
-                        override fun onFailure(call: Call<FoodBodiResponse<RestaurantResponse>>, t: Throwable) {
-                            Toast.makeText(this@EditRestaurantActivity, "Update restaurant fail : " + t.message, Toast.LENGTH_LONG).show()
-                        }
-
-                        override fun onResponse(
-                            call: Call<FoodBodiResponse<RestaurantResponse>>,
-                            response: Response<FoodBodiResponse<RestaurantResponse>>
-                        ) {
-                            if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                                Toast.makeText(this@EditRestaurantActivity, "New restaurant added", Toast.LENGTH_LONG).show()
-                                finish()
-                            } else {
-                                Toast.makeText(this@EditRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
-                            }
-                        }
-
-                    })
-
-            }
-
-        })
-
-        fillData()
+        // The pager adapter, which provides the pages to the view pager widget.
+        val pagerAdapter = ScreenSlidePagerAdapter(supportFragmentManager)
+        photoPager.adapter = pagerAdapter
     }
 
 
@@ -273,7 +321,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
     private fun ensureAddMenuView() {
         foodPhotoGetter = PhotoGetter(this)
-        foodListView = object : DynamicLinearLayoutController(findViewById<LinearLayout>(R.id.list_added_food)) {
+        foodListView = object : DynamicLinearLayoutController(findViewById<LinearLayout>(R.id.list_added_food), R.id.food_item_container, R.id.food_item_content) {
             override fun onItemLeftSwipe(pos: Int, view: View) {
                 askToDeleteFood(pos, view)
             }
@@ -387,8 +435,10 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         val nameInput = findViewById<EditText>(R.id.input_food_name)
         val priceInput = findViewById<EditText>(R.id.input_food_price)
         val kcaloInput = findViewById<EditText>(R.id.input_food_kcalo)
+        val imageInput = findViewById<ImageView>(R.id.image_food_image)
         var food:Food = Food()
         food.restaurant_id = restaurant.id
+        food.photo = capturedFoodPhoto
         if (TextUtils.isEmpty(nameInput.text)) {
             nameInput.setError("Food name is required")
             return null
@@ -411,6 +461,47 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
     override fun onItemSelected(adapter: AdapterView<*>?, parent: View?, position: Int, id: Long) {
 
+    }
+
+    fun uploadBitmapThenLoadToImageView(bitmap: Bitmap, filename:String, callback:Action<String>) {
+        val jpegBytes = PhotoGetter.bitmapToJPEG(bitmap)
+        val requestFile = RequestBody.create(MediaType.parse("image/jpeg"), jpegBytes)
+        val body = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
+
+        FoodbodiRetrofitHolder.holder.service.uploadPhoto(filename, body).enqueue(object :
+            Callback<FoodBodiResponse<UploadResponse>> {
+            override fun onFailure(call: Call<FoodBodiResponse<UploadResponse>>, t: Throwable) {
+                Toast.makeText(this@EditRestaurantActivity, t.message, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(
+                call: Call<FoodBodiResponse<UploadResponse>>,
+                response: Response<FoodBodiResponse<UploadResponse>>
+            ) {
+                if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                    val mediaLink = response.body()?.data()?.mediaLink
+                    if (mediaLink != null) {
+                        callback.accept(mediaLink)
+                    } else {
+                        callback.deny(null,"Can't extract media link for uploaded photo")
+                    }
+                } else {
+                    callback.deny(null, response.body()?.errorMessage()!!)
+                }
+            }
+
+        })
+    }
+
+    private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+        var photoViews = ArrayList<RestaurantPhotoItem>()
+        override fun getCount(): Int {
+            return photoViews.size
+        }
+
+        override fun getItem(position: Int): Fragment {
+            return photoViews.get(position)
+        }
     }
 
 

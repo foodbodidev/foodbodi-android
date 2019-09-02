@@ -41,8 +41,8 @@
     <string name="restaurant">Restaurant</string>
     <string name="food_truct">Food Truck</string>
     <string name="menu">Menu</string>
-    <string name="money_format">%1$2f $</string>
-    <string name="kcalo_format">%1$2f kcalo</string>
+    <string name="money_format">$ %1$.2f</string>
+    <string name="kcalo_format">%1$.2f kcalo</string>
 
     <string name="company_information">Company information</string>
 
