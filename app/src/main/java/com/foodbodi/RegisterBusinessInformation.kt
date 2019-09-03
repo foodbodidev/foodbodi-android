@@ -66,9 +66,9 @@ class RegisterBusinessInformation : AppCompatActivity() {
                 val info = Restaurant()
                 info.name = name
                 info.address = address
-                val latlng:GoogleMapUtils.LatLng = GoogleMapUtils.convertAddressToLatLng(address)
-                info.lat = latlng.lat
-                info.lng = latlng.lng
+                val latlng:GoogleMapUtils.LatLng? = GoogleMapUtils.convertAddressToLatLng(address, this@RegisterBusinessInformation)
+                info.lat = latlng?.lat
+                info.lng = latlng?.lng
 
                 val license = License()
                 license.registration_number = registration_no

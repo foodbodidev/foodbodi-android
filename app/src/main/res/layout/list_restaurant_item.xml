@@ -5,8 +5,14 @@
               android:orientation="vertical"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content">
-    <ImageView android:id="@+id/restaurant_item_photo" android:layout_width="60pt" android:layout_height="40pt" android:contentDescription="Photo" android:background="@color/colorPrimary"/>
-    <TextView android:id="@+id/restaurant_item_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+    <ImageView android:id="@+id/restaurant_item_photo"
+               android:layout_width="60pt"
+               android:layout_height="40pt"
+               android:contentDescription="Photo"
+               android:background="@color/gray_color"/>
+    <TextView android:id="@+id/restaurant_item_name"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:text="@string/not_updated"
               android:textStyle="bold"
               android:textSize="@dimen/text_medium"

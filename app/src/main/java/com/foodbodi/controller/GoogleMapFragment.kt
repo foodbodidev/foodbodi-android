@@ -1,6 +1,15 @@
 package com.foodbodi.controller
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +17,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,11 +48,40 @@ class GoogleMapFragment : Fragment(){
     private  var recyclerView: RecyclerView? = null;
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var restaurants:ArrayList<Restaurant>
+    private lateinit var mLocationManager:LocationManager
+    var MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         restaurants = ArrayList();
+        mLocationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
 
+        checkLocationPermission()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (ContextCompat.checkSelfPermission(this.activity!!,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+
+            //TODO : update location
+            //locationManager.requestLocationUpdates(provider, 400, 1, this);
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (ContextCompat.checkSelfPermission(this.activity!!,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+
+            //TODO : remove update location
+            //locationManager.removeUpdates(this);
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -108,6 +148,28 @@ class GoogleMapFragment : Fragment(){
         return view;
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode) {
+            MY_PERMISSIONS_REQUEST_LOCATION -> {
+                if (grantResults.isNotEmpty()
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    if (ContextCompat.checkSelfPermission(this.context!!,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                       //TODO : update current location
+
+                    }
+
+                } else {
+                    //TODO :disable location feature because user don't allow
+
+                }
+            }
+        }
+    }
+
     private fun invokeAuthentication() {
         startActivity(Intent(context, AuthenticateFlowActivity::class.java))
     }
@@ -166,6 +228,46 @@ class GoogleMapFragment : Fragment(){
         }
 
 
+    }
+
+    fun checkLocationPermission(): Boolean {
+        if (ContextCompat.checkSelfPermission(
+                this.context!!,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this.activity!!,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                AlertDialog.Builder(this.context)
+                    .setTitle(R.string.title_location_permission)
+                    .setMessage(R.string.text_location_permission)
+                    .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
+                        //Prompt the user once explanation has been shown
+                        ActivityCompat.requestPermissions(
+                            this.activity!!,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                            MY_PERMISSIONS_REQUEST_LOCATION
+                        )
+                    })
+                    .create()
+                    .show()
+
+
+            } else {
+                ActivityCompat.requestPermissions(
+                    this.activity!!,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    MY_PERMISSIONS_REQUEST_LOCATION
+                )
+            }
+            return false
+        } else {
+            return true
+        }
     }
 }
 
