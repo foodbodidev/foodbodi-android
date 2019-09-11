@@ -26,6 +26,8 @@ android {
     }
 }
 
+apply plugin: 'com.google.gms.google-services'
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -50,6 +52,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:[5,6)'
 
     implementation 'com.github.yalantis:ucrop:2.2.3-native'
+    implementation 'com.google.firebase:firebase-firestore:21.0.0'
+    implementation 'com.github.drfonfon:android-kotlin-geohash:1.0'
 
 
 }

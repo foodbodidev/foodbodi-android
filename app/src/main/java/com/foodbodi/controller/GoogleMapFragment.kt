@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -22,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.fonfon.kgeohash.GeoHash
 import com.foodbodi.EditRestaurantActivity
 import com.foodbodi.AuthenticateFlowActivity
 import com.foodbodi.R
@@ -30,44 +32,50 @@ import com.foodbodi.apis.*
 import com.foodbodi.controller.FodiMap.RestaurantInfoMenuActivity
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.foodbodi.utils.GoogleMapUtils
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 //TODO : cache this View so that no need to re-create when navigate back to this
-class GoogleMapFragment : Fragment(){
+class GoogleMapFragment : Fragment(), LocationListener{
 
     private lateinit var supportMapFragment: SupportMapFragment;
     private  var recyclerView: RecyclerView? = null;
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var restaurants:ArrayList<Restaurant>
+    private var restaurantMarkers:HashMap<String, Marker> = HashMap()
+    private var userCurrentLocation:Marker? = null
     private lateinit var mLocationManager:LocationManager
+    private lateinit var googleMap:GoogleMap
+    private lateinit var criteria:Criteria
+    private lateinit var Holder:String
+
     var MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    val firestore = FirebaseFirestore.getInstance()
 
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        restaurants = ArrayList();
+        restaurants = ArrayList()
+        criteria  = Criteria()
         mLocationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
-
-        checkLocationPermission()
+        Holder = mLocationManager.getBestProvider(criteria, false);
 
     }
 
     override fun onResume() {
         super.onResume()
-        if (ContextCompat.checkSelfPermission(this.activity!!,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-
+        if (ContextCompat.checkSelfPermission(this.activity!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             //TODO : update location
             //locationManager.requestLocationUpdates(provider, 400, 1, this);
         }
@@ -75,9 +83,7 @@ class GoogleMapFragment : Fragment(){
 
     override fun onPause() {
         super.onPause()
-        if (ContextCompat.checkSelfPermission(this.activity!!,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.activity!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             //TODO : remove update location
             //locationManager.removeUpdates(this);
@@ -86,37 +92,49 @@ class GoogleMapFragment : Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view:View = inflater.inflate(R.layout.fodimap, container, false);
+
+        val loadRestauranAction : Action<Location> = object : Action<Location> {
+            override fun accept(data: Location?) {
+                loadRestaurant(data!!)
+                moveCamera(data!!.latitude, data.longitude, 12.5f)
+            }
+
+            override fun deny(data: Location?, reason: String) {
+                print(reason)
+            }
+        }
+
+        val markCurrentLocation : Action<Location> = object : Action<Location> {
+            override fun accept(data: Location?) {
+                userCurrentLocation = googleMap.addMarker(MarkerOptions().position(LatLng(data!!.latitude, data.longitude)).title("You"))
+            }
+
+            override fun deny(data: Location?, reason: String) {
+                Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
+            }
+
+        }
+
+        val afterCheckPermissionLocationAction : Action<Any> = object : Action<Any> {
+            override fun accept(data: Any?) {
+                ensureGetCurrentLocation(loadRestauranAction);
+                ensureGetCurrentLocation(markCurrentLocation);
+            }
+
+            override fun deny(data: Any?, reason: String) {
+            }
+
+        }
+
         supportMapFragment = SupportMapFragment.newInstance();
         supportMapFragment.getMapAsync(OnMapReadyCallback {
-            val latLng = LatLng(1.289545, 103.849972)
-            it.addMarker(
-                MarkerOptions().position(latLng)
-                    .title("Singapore")
-            )
-            it.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+            googleMap = it
+            restaurantMarkers.clear();
+            checkLocationPermission(afterCheckPermissionLocationAction);
 
-        })
+        });
+
         getChildFragmentManager().beginTransaction().replace(R.id.map, supportMapFragment).commit();
-
-        FoodbodiRetrofitHolder.getService().listRestaurant().enqueue(object :Callback<FoodBodiResponse<RestaurantsResponse>>{
-            override fun onFailure(call: Call<FoodBodiResponse<RestaurantsResponse>>, t: Throwable) {
-                System.out.println(t.stackTrace)
-                Toast.makeText(context, "Can not load list of restaurants", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onResponse(
-                call: Call<FoodBodiResponse<RestaurantsResponse>>,
-                response: Response<FoodBodiResponse<RestaurantsResponse>>
-            ) {
-                var list = response.body()?.data()?.restaurants
-                if (list != null) {
-                    restaurants = list
-                }
-                ensureListRestaurantView(view)
-
-            }
-
-        })
 
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
@@ -151,15 +169,21 @@ class GoogleMapFragment : Fragment(){
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode) {
             MY_PERMISSIONS_REQUEST_LOCATION -> {
-                if (grantResults.isNotEmpty()
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                    if (ContextCompat.checkSelfPermission(this.context!!,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
+                        ensureGetCurrentLocation(object : Action<Location> {
+                            @SuppressLint("MissingPermission")
+                            override fun accept(data: Location?) {
+                                mLocationManager.requestLocationUpdates(Holder, 3000, 7f, this@GoogleMapFragment)
 
-                       //TODO : update current location
+                            }
 
+                            override fun deny(data: Location?, reason: String) {
+                                Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
+                            }
+
+                        })
                     }
 
                 } else {
@@ -167,6 +191,97 @@ class GoogleMapFragment : Fragment(){
 
                 }
             }
+        }
+    }
+
+    private fun loadRestaurant(location : Location) {
+        findNearbyRestaurant(
+            GoogleMapUtils.LatLng(location.latitude, location.longitude),
+            object : Action<ArrayList<Restaurant>> {
+                override fun accept(list: ArrayList<Restaurant>?) {
+                    restaurants = list!!
+                    ensureListRestaurantView()
+
+                }
+
+                override fun deny(data: ArrayList<Restaurant>?, reason: String) {
+                    Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
+                }
+
+            })
+    }
+
+    override fun onLocationChanged(currentLocation: Location?) {
+        print("User current location : " + currentLocation.toString())
+        if (userCurrentLocation != null && currentLocation?.latitude != null) {
+            userCurrentLocation!!.position = LatLng(currentLocation.latitude, currentLocation.longitude)
+        }
+
+    }
+
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+    }
+
+    override fun onProviderEnabled(p0: String?) {
+    }
+
+    override fun onProviderDisabled(p0: String?) {
+    }
+
+    private fun moveCamera(lat:Double, lng:Double, zoom:Float) {
+        var latlng:LatLng = LatLng(lat, lng)
+        var cameraPos:CameraPosition = CameraPosition.Builder().target(latlng).zoom(zoom).build()
+        var cameraUpdate:CameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPos)
+        googleMap.moveCamera(cameraUpdate)
+    }
+
+    private fun findNearbyRestaurant(location:GoogleMapUtils.LatLng, callback:Action<ArrayList<Restaurant>>) {
+        val geohash = GeoHash(location.lat, location.lng, 5)
+        val center = geohash.toString()
+
+        firestore.collection("restaurants").whereArrayContains("neighbour_geohash", center)
+            .addSnapshotListener{snapshot, e ->
+                run {
+                    if (e != null) {
+                        callback.deny(null, e.message!!)
+                    }
+
+                    if (snapshot != null) {
+                        var list = ArrayList<Restaurant>()
+                        for (document in snapshot.documents) {
+                            val r = document.toObject(Restaurant::class.java);
+                            r!!.id = document.id
+                            list.add(r)
+                        }
+                        callback.accept(list)
+
+                    } else {
+                        callback.deny(null, "Can not get restaurants in zone $center")
+                    }
+                }
+            }
+    }
+
+    fun checkGpsStatus() : Boolean{
+        return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    fun ensureGetCurrentLocation(callback:Action<Location>) {
+        if(checkGpsStatus() == true) {
+            if (Holder != null) {
+                if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    callback.deny(null, "GPS permission denied")
+                }
+                val location:Location? = mLocationManager.getLastKnownLocation(Holder)
+                callback.accept(location)
+            } else {
+                callback.deny(null,"Could not find GPS service holder name");
+            }
+        }else {
+            callback.deny(null,"Please Enable GPS First")
+
         }
     }
 
@@ -209,11 +324,11 @@ class GoogleMapFragment : Fragment(){
         startActivity(Intent(context, RestaurantInfoMenuActivity::class.java))
     }
 
-    private fun ensureListRestaurantView(view: View) {
+    private fun ensureListRestaurantView() {
         viewAdapter = MyAdapter(restaurants);
         //TODO : maybe we should cache the recyclerView, to avoid rerender everytime user come back
         val viewManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView = view.findViewById<RecyclerView>(R.id.recycler_restaurant_list)?.apply {
+        recyclerView = this@GoogleMapFragment.view!!.findViewById<RecyclerView>(R.id.recycler_restaurant_list)?.apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
@@ -227,46 +342,51 @@ class GoogleMapFragment : Fragment(){
 
         }
 
+        markRestaurantsOnMap()
+
 
     }
 
-    fun checkLocationPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(
-                this.context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+    private fun markRestaurantsOnMap() {
+        for (r in restaurants) {
+            var marker = restaurantMarkers.get(r.id)
+            if (marker == null) {
+                val markerOption = MarkerOptions()
+                markerOption.title(r.name)
+                if (r.lat != null && r.lng != null) {
+                    marker = googleMap.addMarker(markerOption.position(LatLng(r.lat!!, r.lng!!)));
+                    restaurantMarkers.put(r.id!!, marker);
+                }
+            } else {
+                marker.position = LatLng(r.lat!!, r.lng!!)
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this.activity!!,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
+            }
+        }
+
+    }
+
+    fun checkLocationPermission(callback:Action<Any>) {
+        if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this.activity!!, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog.Builder(this.context)
                     .setTitle(R.string.title_location_permission)
                     .setMessage(R.string.text_location_permission)
                     .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
                         //Prompt the user once explanation has been shown
-                        ActivityCompat.requestPermissions(
-                            this.activity!!,
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            MY_PERMISSIONS_REQUEST_LOCATION
-                        )
+                        ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
+                        callback.accept(null)
                     })
                     .create()
                     .show()
 
 
             } else {
-                ActivityCompat.requestPermissions(
-                    this.activity!!,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    MY_PERMISSIONS_REQUEST_LOCATION
-                )
+                ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
+                callback.accept(null);
             }
-            return false
         } else {
-            return true
+            callback.accept(null)
         }
     }
 }

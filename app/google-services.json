@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "513844011252",
+    "firebase_url": "https://foodbodi.firebaseio.com",
+    "project_id": "foodbodi",
+    "storage_bucket": "foodbodi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513844011252:android:f9b36645bb945b25",
+        "android_client_info": {
+          "package_name": "com.foodbodi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "513844011252-s14v7j52hq6quj6e89sl3sfcb1lgrbjl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9oAUU7lhbGRLy1Vg1l19VBOJE7nKFrFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "513844011252-s14v7j52hq6quj6e89sl3sfcb1lgrbjl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "513844011252-k6keale0or7hu3m84nuhb2hpfp5ieeo7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "KPT.FoodBodi.dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
