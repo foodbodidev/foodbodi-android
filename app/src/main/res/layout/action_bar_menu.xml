@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:weightSum="10"
+              android:background="@color/White"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="match_parent"
+                 android:layout_weight="4.5"
+                 android:layout_gravity="center"
+                 app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+                 android:background="@android:color/transparent"
+                 android:layout_height="wrap_content"/>
+    <TextView
+            android:layout_weight="1"
+            android:id="@+id/app_title"
+            android:textSize="@dimen/text_medium"
+            android:text="Foodbodi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#000000" />
+    <ImageButton
+            android:id="@+id/btn_logout"
+            android:layout_weight="4.5"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+            android:background="@android:color/transparent"
+
+    />
+
+</LinearLayout>
