@@ -61,6 +61,8 @@
     <string name="wating_for_approval_msg">Your information will be reviewed and approved in 1-3 days</string>
 
     <string name="title_location_permission">Location permission required</string>
-    <string name="text_location_permission">To have better user experience, Foodbodi need you allow to share the location</string>
+    <string name="text_location_permission">To have better user experience, Foodbodi need you allow to share the
+        location
+    </string>
 
 </resources>

@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.1"
     defaultConfig {
         applicationId "com.foodbodi"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -23,6 +23,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'LICENSE-EDL-1.0.txt'
+        exclude 'LICENSE-EPL-1.0.txt'
     }
 }
 
@@ -41,6 +56,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation 'com.google.android.gms:play-services-fitness:16.0.1'
     implementation 'com.google.android.libraries.places:places:2.0.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
@@ -54,6 +70,10 @@ dependencies {
     implementation 'com.github.yalantis:ucrop:2.2.3-native'
     implementation 'com.google.firebase:firebase-firestore:21.0.0'
     implementation 'com.github.drfonfon:android-kotlin-geohash:1.0'
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    // https://mvnrepository.com/artifact/org.mapdb/mapdb
+    compile group: 'org.mapdb', name: 'mapdb', version: '1.0.6'
 
 
 }
