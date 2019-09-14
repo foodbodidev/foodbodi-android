@@ -21,10 +21,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.R.attr.data
 import com.facebook.login.LoginResult
 import com.foodbodi.apis.requests.FacebookSignInRequest
 import com.foodbodi.apis.requests.GoogleSignInRequest
+import com.foodbodi.model.LocalDailyLogDbManager
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
@@ -98,6 +98,8 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         } else {
             CurrentUserProvider.get().setApiKey(apiKey, this)
             CurrentUserProvider.get().setUserData(user, this)
+            val email = user!!.email
+            LocalDailyLogDbManager.updateTodayDailyLogRecord(email!!, 0)
             finish()
         }
     }

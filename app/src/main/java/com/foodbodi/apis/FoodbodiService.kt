@@ -4,10 +4,7 @@ import com.foodbodi.apis.requests.FacebookSignInRequest
 import com.foodbodi.apis.requests.GoogleSignInRequest
 import com.foodbodi.apis.requests.ImportFoodRequest
 import com.foodbodi.apis.requests.LoginRequest
-import com.foodbodi.model.Food
-import com.foodbodi.model.Restaurant
-import com.foodbodi.model.RestaurantCategory
-import com.foodbodi.model.User
+import com.foodbodi.model.*
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -72,4 +69,12 @@ interface FoodbodiService {
     @Headers("Content-Type: application/json")
     @DELETE("food/{id}")
     fun deleteFood(@HeaderMap headers: Map<String, String>, @Path("id") id: String, @Query("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<FoodResponse>>
+
+    @GET("dailylog/{year}/{month}/{day}")
+    fun getDailyLog(@HeaderMap headers: Map<String, String>, @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String) :Call<FoodBodiResponse<DailyLog>>
+
+    @Headers("Content-Type: application/json")
+    @POST("dailylog/{year}/{month}/{day}")
+    fun updateDailyLog(@HeaderMap headers: Map<String, String>,@Body dailylog: DailyLog,  @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String ) :Call<FoodBodiResponse<DailyLog>>
+
 }
