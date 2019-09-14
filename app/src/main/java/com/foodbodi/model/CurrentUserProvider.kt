@@ -13,22 +13,29 @@ import retrofit2.Response
 
 class CurrentUserProvider private constructor(){
     private var user:User? = null
+    private var status:Status = Status.NOT_RUN
+    val callbacks:ArrayList<Action<User>> = ArrayList()
     init {
 
     }
 
     fun isLoggedIn():Boolean {
-        return user != null;
+        return status == Status.LOGGED_IN
     }
 
     fun loadCurrentUser(callback:Action<User>, context: Context) {
         val apiKey = getApiKey(context);
+        registerCallback(callback)
         if (apiKey != null) {
+            status = Status.RUNNING
             FoodbodiRetrofitHolder.getService().getProfile(mapOf(Pair<String, String>("token", apiKey!!)))
                 .enqueue(object : Callback<FoodBodiResponse<User>> {
                     override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
                         System.out.println(t)
-                        callback.deny(user, "Cannot get profile of user")
+                        status = Status.NOT_LOGGED_IN
+                        for (item in this@CurrentUserProvider.callbacks) {
+                            callback.deny(user, "Cannot get profile of user")
+                        }
                     }
 
                     override fun onResponse(
@@ -38,15 +45,26 @@ class CurrentUserProvider private constructor(){
                         var foodBodiResponse: FoodBodiResponse<User>? = response.body()
                         if (FoodBodiResponse.SUCCESS_CODE == foodBodiResponse?.statusCode()) {
                             user = response.body()?.data()
+                            status = Status.LOGGED_IN
                         } else {
                             user = null
+                            status = Status.NOT_LOGGED_IN
                         }
-                        callback.accept(user)
+                        for (item in this@CurrentUserProvider.callbacks) {
+                            callback.accept(user)
+                        }
 
                     }
 
                 })
+        } else {
+            status = Status.NOT_LOGGED_IN
+            callback.deny(null, "Api token is absence")
         }
+    }
+
+    fun registerCallback(callback:Action<User>) {
+        callbacks.add(callback)
     }
 
     fun setApiKey(apiKey:String?, context: Context) {
@@ -57,6 +75,11 @@ class CurrentUserProvider private constructor(){
 
     fun setUserData(user:User?, context: Context) {
         this.user = user;
+        status = Status.LOGGED_IN
+    }
+
+    fun getUser() : User? {
+        return this.user
     }
 
     fun getApiKey(context: Context):String? {
@@ -66,6 +89,7 @@ class CurrentUserProvider private constructor(){
     fun logout(context: Context) {
         setApiKey(null, context);
         setUserData(null, context);
+        status = Status.NOT_LOGGED_IN
     }
 
     companion object Holder {
@@ -76,5 +100,9 @@ class CurrentUserProvider private constructor(){
             }
             return instance!!
         }
+    }
+
+    enum class Status {
+        NOT_RUN, RUNNING, LOGGED_IN, NOT_LOGGED_IN
     }
 }
