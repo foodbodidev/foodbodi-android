@@ -141,26 +141,7 @@ class GoogleMapFragment : Fragment(), LocationListener{
             if (CurrentUserProvider.get().isLoggedIn()) {
                 invokeAddRestaurantForm()
             } else {
-                val apiKey = CurrentUserProvider.get().getApiKey(context!!);
-                if (apiKey != null) {
-                    CurrentUserProvider.get().loadCurrentUser(
-                        object : Action<User> {
-                            override fun accept(data: User?) {
-                                if (data == null) {
-                                    invokeAuthentication()
-                                } else {
-                                    invokeAddRestaurantForm()
-                                }
-                            }
-
-                            override fun deny(data: User?, reason: String) {
-                                Toast.makeText(context, reason, Toast.LENGTH_LONG).show()
-                            }
-
-                        }, context!!)
-                } else {
-                    invokeAuthentication()
-                }
+                invokeAuthentication()
             }
         })
         return view;
