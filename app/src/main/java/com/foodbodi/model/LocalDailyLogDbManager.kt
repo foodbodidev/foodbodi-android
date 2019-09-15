@@ -1,10 +1,23 @@
 package com.foodbodi.model
 
 import android.content.Context
+import android.widget.Toast
+import com.foodbodi.apis.FoodBodiResponse
+import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.utils.Action
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.Field
 import org.mapdb.DB
 import org.mapdb.DBMaker
 import org.mapdb.HTreeMap
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
+import java.time.Year
 import java.util.*
 
 class LocalDailyLogDbManager {
@@ -13,6 +26,8 @@ class LocalDailyLogDbManager {
         val DB_NAME:String = "foodimap-db"
         val DAILYLOG_TABLE:String = "dailylog"
         val DB_VERSION = 1;
+
+        var cachNumOfStep = 0;
 
         var instance:DB? = null
         fun get(context:Context, username:String, dbName:String):DB? {
@@ -54,6 +69,80 @@ class LocalDailyLogDbManager {
             val doc = ensureLocalDailyLogRecord(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), username)
             return if (doc != null && doc.step != null ) doc.step!! else 0
         }
+
+        fun getDailyLogOfDate(year: Int, month: Int, date: Int, context: Context, callback: Action<DailyLog>) {
+            FoodbodiRetrofitHolder.getService().getDailyLog(
+                FoodbodiRetrofitHolder.getHeaders(context),
+               year.toString(),
+                month.toString(),
+                date.toString()
+            ).enqueue(object : Callback<FoodBodiResponse<DailyLog>> {
+                override fun onFailure(call: Call<FoodBodiResponse<DailyLog>>, t: Throwable) {
+                    callback.deny(null, "Can not get daily log of ${year}-${month}-${date}")
+                }
+
+                override fun onResponse(
+                    call: Call<FoodBodiResponse<DailyLog>>,
+                    response: Response<FoodBodiResponse<DailyLog>>
+                ) {
+                    if (isToday(year, month, date)) {
+                        getTodayTotalStep(context, object : Action<Int> {
+                            override fun accept(step: Int?) {
+                                val lastCachedCount = getTodayStepCount(CurrentUserProvider.get().getUser()!!.email!!)
+                                if (lastCachedCount > step!!) {
+                                    cachNumOfStep = lastCachedCount
+                                } else cachNumOfStep = step
+                                val result = DailyLog()
+                                result.calo_threshold = response.body()!!.data().calo_threshold;
+                                result.step = cachNumOfStep
+                                result.total_eat = response.body()!!.data.total_eat
+                                callback.accept(result)
+
+                            }
+
+                            override fun deny(data: Int?, reason: String) {
+                                callback.deny(null, reason)
+                            }
+
+                        })
+                    } else {
+                        val result = DailyLog()
+                        result.calo_threshold = response.body()!!.data().calo_threshold;
+                        result.step = response.body()!!.data.step
+                        result.total_eat = response.body()!!.data.total_eat
+                        callback.accept(result)
+                    }
+
+                }
+
+            })
+        }
+
+        private fun isToday(year: Int, month: Int, date: Int):Boolean {
+            val myCalendar:Calendar = Calendar.getInstance()
+            return year == myCalendar.get(Calendar.YEAR)
+                    && month == myCalendar.get(Calendar.MONTH)
+                    && date == myCalendar.get(Calendar.DATE)
+        }
+
+        private fun getTodayTotalStep(context: Context, callback: Action<Int>) {
+            val fitnessOptions: FitnessOptions = FitnessOptions.builder()
+                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                .build()
+            val googleSignInAccount = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
+            Fitness.getHistoryClient(context, googleSignInAccount)
+                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
+                .addOnSuccessListener { dataSet ->
+                    if (dataSet.dataPoints.size > 0) {
+                        callback.accept(dataSet.dataPoints.get(0).getValue(Field.FIELD_STEPS).asInt())
+                    } else {
+                        callback.accept(0)
+                    }
+                }
+                .addOnCanceledListener { callback.deny(null, "Can not extract total step from GoogleFit") }
+        }
+
 
     }
 }

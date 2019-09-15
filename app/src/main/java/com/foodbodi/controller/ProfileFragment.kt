@@ -113,53 +113,23 @@ class ProfileFragment : Fragment() {
 
     private fun loadDailyLog() {
 
-        FoodbodiRetrofitHolder.getService().getDailyLog(
-            FoodbodiRetrofitHolder.getHeaders(this@ProfileFragment.requireContext()),
-            selectedDate.year.toString(),
-            selectedDate.month.toString(),
-            selectedDate.day.toString()
-        ).enqueue(object : Callback<FoodBodiResponse<DailyLog>> {
-                override fun onFailure(call: Call<FoodBodiResponse<DailyLog>>, t: Throwable) {
-                    Toast.makeText(this@ProfileFragment.context, "Can not get daily log of ${selectedDate.year}-${selectedDate.month}-${selectedDate.day}", Toast.LENGTH_LONG).show();
+        LocalDailyLogDbManager.getDailyLogOfDate(
+            selectedDate.year,
+            selectedDate.month,
+            selectedDate.day,
+            this@ProfileFragment.context!!,
+            object : Action<DailyLog> {
+                override fun accept(data: DailyLog?) {
+                    state = data!!
+                    updateView()
+                    ensureSensor()
                 }
 
-                override fun onResponse(
-                    call: Call<FoodBodiResponse<DailyLog>>,
-                    response: Response<FoodBodiResponse<DailyLog>>
-                ) {
-                    if (isToday()) {
-                        getTodayTotalStep(object : Action<Int> {
-                            override fun accept(step: Int?) {
-                                val lastCachedCount = LocalDailyLogDbManager.getTodayStepCount(CurrentUserProvider.get().getUser()!!.email!!)
-                                if (lastCachedCount > step!!) {
-                                    cachNumOfStep = lastCachedCount
-                                } else cachNumOfStep = step
-
-                                state.calo_threshold = response.body()!!.data().calo_threshold;
-                                state.step = cachNumOfStep
-                                state.total_eat = response.body()!!.data.total_eat
-
-                                updateView()
-                                ensureSensor()
-                            }
-
-                            override fun deny(data: Int?, reason: String) {
-                                Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
-                            }
-
-                        })
-                    } else {
-                        state.calo_threshold = response.body()!!.data().calo_threshold
-                        state.step = response.body()!!.data().step
-                        state.total_eat = response.body()!!.data.total_eat
-                        updateView()
-                        ensureSensor()
-                    }
-
+                override fun deny(data: DailyLog?, reason: String) {
+                    Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
                 }
 
             })
-
 
     }
 
@@ -169,63 +139,52 @@ class ProfileFragment : Fragment() {
                 && selectedDate.day == myCalendar.get(Calendar.DATE)
     }
 
-
-
-
-    private fun getTodayTotalStep(callback: Action<Int>) {
-        val googleSignInAccount = GoogleSignIn.getAccountForExtension(this.requireActivity(), fitnessOptions)
-        Fitness.getHistoryClient(this.requireActivity(), googleSignInAccount)
-            .readDailyTotal(TYPE_STEP_COUNT_DELTA)
-            .addOnSuccessListener { dataSet ->
-                if (dataSet.dataPoints.size > 0) {
-                    callback.accept(dataSet.dataPoints.get(0).getValue(Field.FIELD_STEPS).asInt())
-                } else {
-                    callback.accept(0)
-                }
-            }
-            .addOnCanceledListener { callback.deny(null, "Can not extract total step from GoogleFit") }
-    }
-
-
-
     private fun updateView() {
-        view!!.findViewById<TextView>(R.id.text_num_of_step).text = state.step.toString()
-        view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
+        if (view != null) {
+            view!!.findViewById<TextView>(R.id.text_num_of_step).text = state.getStep().toString()
+            view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
 
-        val maximum = state.getThreshold()
-        val kcaloToConsume = state.getTotalEat() - state.getStep()
-        val remainKcalo = maximum - kcaloToConsume
+            val maximum = state.getThreshold()
+            val kcaloToConsume = state.getTotalEat() - state.getStep()
+            val remainKcalo = maximum - kcaloToConsume
 
-        val pieChart:PieChart = view!!.findViewById(R.id.pie_chart_kcalo)
-        pieChart.setUsePercentValues(true)
-        pieChart.setDrawSlicesUnderHole(true)
-        pieChart.description = null
-        pieChart.setHoleColor(ContextCompat.getColor(this.requireContext(), R.color.White));
+            val pieChart: PieChart = view!!.findViewById(R.id.pie_chart_kcalo)
+            pieChart.setUsePercentValues(false)
+            pieChart.setDrawSlicesUnderHole(true)
+            pieChart.setDrawEntryLabels(false)
 
-        pieChart.setTransparentCircleColor(ContextCompat.getColor(this.requireContext(), R.color.White));
 
-        pieChart.setHoleRadius(40f);
-        pieChart.centerTextRadiusPercent = 0.5f
+            pieChart.description = null
+            pieChart.setHoleColor(ContextCompat.getColor(this.requireContext(), R.color.White));
 
-        pieChart.setDrawCenterText(true);
-        pieChart.setCenterTextSize(resources.getDimension(R.dimen.text_medium))
+            pieChart.setTransparentCircleColor(ContextCompat.getColor(this.requireContext(), R.color.White));
 
-        pieChart.setRotationAngle(0f);
-        // enable rotation of the chart by touch
-        pieChart.setRotationEnabled(true);
-        pieChart.setHighlightPerTapEnabled(true);
-        pieChart
-        val kcalos = ArrayList<PieEntry>()
-        kcalos.add(PieEntry(remainKcalo.toFloat(), "Remain calories"))
-        kcalos.add(PieEntry(kcaloToConsume.toFloat(), "Calories intake"))
-        val pieData:PieData = PieData()
-        val dataSet = PieDataSet(kcalos, "Calories (kcalo)")
-        dataSet.setColors(Arrays.asList(Color.GRAY, ContextCompat.getColor(this.requireContext(), R.color.colorPrimary)))
-        pieData.dataSet = dataSet
+            pieChart.setHoleRadius(60f);
 
-        pieChart.data = pieData
-        pieChart.centerText = "$remainKcalo kcal left"
-        pieChart.animateXY(500, 500)
+            pieChart.setDrawCenterText(true);
+
+            pieChart.setRotationAngle(0f);
+            // enable rotation of the chart by touch
+            pieChart.setRotationEnabled(true);
+            pieChart.setHighlightPerTapEnabled(true);
+            pieChart
+            val kcalos = ArrayList<PieEntry>()
+            kcalos.add(PieEntry(remainKcalo.toFloat(), "Remain calories"))
+            kcalos.add(PieEntry(kcaloToConsume.toFloat(), "Calories intake"))
+            val pieData: PieData = PieData()
+            val dataSet = PieDataSet(kcalos, "Calories (kcalo)")
+            dataSet.setColors(
+                Arrays.asList(
+                    Color.GRAY,
+                    ContextCompat.getColor(this.requireContext(), R.color.colorPrimary)
+                )
+            )
+            pieData.dataSet = dataSet
+
+            pieChart.data = pieData
+            pieChart.centerText = "$remainKcalo kcal left"
+            pieChart.animateXY(500, 500)
+        }
     }
 
     private fun ensureSensor() {
