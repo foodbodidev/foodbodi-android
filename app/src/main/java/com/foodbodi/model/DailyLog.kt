@@ -27,4 +27,16 @@ class DailyLog : Serializable {
         }
     }
 
+    fun getStep():Int {
+        return if (step != null) step!! else 0
+    }
+
+    fun getTotalEat() : Int {
+        return if (total_eat != null) total_eat!! else 0
+    }
+
+    fun getThreshold() : Int {
+        return if (calo_threshold != null) calo_threshold!! else 3000
+    }
+
 }

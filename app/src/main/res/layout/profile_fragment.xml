@@ -11,13 +11,17 @@
             android:orientation="vertical">
         <TextView
                 android:id="@+id/text_daily_log_date"
+                android:layout_marginBottom="@dimen/text_medium"
+                android:layout_marginTop="@dimen/text_medium"
                 android:textAlignment="center"
                 android:layout_width="match_parent"
                   android:layout_height="wrap_content"/>
         <com.github.mikephil.charting.charts.PieChart
+                android:layout_marginLeft="@dimen/text_medium"
+                android:layout_marginRight="@dimen/text_medium"
                 android:id="@+id/pie_chart_kcalo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
         />
 
     </LinearLayout>
