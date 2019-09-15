@@ -86,10 +86,11 @@ class CurrentUserProvider private constructor(){
         return context.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE).getString(AuthenticateFlowActivity.API_KEY_FIELD, null);
     }
 
-    fun logout(context: Context) {
+    fun logout(context: Context, callback: Action<User>) {
         setApiKey(null, context);
         setUserData(null, context);
         status = Status.NOT_LOGGED_IN
+        callback.accept(null)
     }
 
     companion object Holder {

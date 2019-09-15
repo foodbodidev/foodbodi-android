@@ -2,7 +2,7 @@
     <string name="app_name">Foodbodi</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_fodimap">Fodimap</string>
-    <string name="title_reservation">Reservation</string>
+    <string name="title_reservation">Calories intake</string>
     <string name="title_profile">Profile</string>
     <string name="not_updated">Not updated</string>
     <string name="continue_with_email">Continue With Email</string>
@@ -11,7 +11,7 @@
     <string name="register">Sign Up</string>
     <string name="submit">Submit</string>
     <string name="gender_question">What is your gender</string>
-    <string name="your_basic">Your basic</string>
+    <string name="your_basic">Your information</string>
 
     <string name="email">Email</string>
     <string name="password">Password</string>

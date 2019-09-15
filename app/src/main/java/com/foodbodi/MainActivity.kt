@@ -12,16 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.facebook.FacebookSdk
+import com.facebook.login.LoginManager
 import com.foodbodi.controller.GoogleMapFragment
 import com.foodbodi.controller.ProfileFragment
 import com.foodbodi.controller.ReservationFragment
 import com.foodbodi.model.*
+import com.foodbodi.utils.Action
 
 class MainActivity : AppCompatActivity() {
 
      val LOCAL_DB_USER = "foodbodi-db-user"
      val LOCAL_DB_NAME = "foodbodi-local-db"
     private lateinit var googleMapFragment: GoogleMapFragment;
+    lateinit var navView: BottomNavigationView
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_fodimap -> {
@@ -34,7 +38,11 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_profile -> {
-                loadFragment(ProfileFragment());
+                if (CurrentUserProvider.get().isLoggedIn()) {
+                    loadFragment(ProfileFragment());
+                } else {
+                    startActivity(Intent(this, AuthenticateFlowActivity::class.java))
+                }
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -51,17 +59,21 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_fodimap -> {
                 logOutBtn?.visibility = View.INVISIBLE
                 actionBar?.visibility = View.INVISIBLE
-                title?.text = "Fodimap"
+                title?.text = resources.getText(R.string.title_fodimap)
+                getActionBar()?.hide()
+
             }
             R.id.navigation_reservation -> {
                 logOutBtn?.visibility = View.INVISIBLE
                 actionBar?.visibility = View.VISIBLE
-                title?.text = "Reservations"
+                title?.text = resources.getText(R.string.title_reservation)
+                getActionBar()?.show()
             }
             R.id.navigation_profile -> {
                 logOutBtn?.visibility = View.VISIBLE
                 actionBar?.visibility = View.VISIBLE
-                title?.text = "Profile"
+                title?.text = resources.getText(R.string.title_profile)
+                getActionBar()?.show()
             }
         }
     }
@@ -76,7 +88,17 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(p0: View?) {
                 this@MainActivity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
                     ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
-                CurrentUserProvider.get().logout(this@MainActivity)
+                CurrentUserProvider.get().logout(this@MainActivity, object : Action<User> {
+                    override fun accept(data: User?) {
+                        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+                        LoginManager.getInstance().logOut()
+                    }
+
+                    override fun deny(data: User?, reason: String) {
+                    }
+
+                })
+
             }
 
         })
@@ -93,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         startActivity(Intent(this, SplashScreen::class.java))
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView = findViewById(R.id.nav_view)
 
         googleMapFragment = GoogleMapFragment();
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
