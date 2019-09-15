@@ -5,6 +5,8 @@ import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleMapFragment: GoogleMapFragment;
     lateinit var navView: BottomNavigationView
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        updateActionBar(item.itemId)
         when (item.itemId) {
             R.id.navigation_fodimap -> {
                 loadFragment(googleMapFragment);
@@ -46,69 +49,30 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
         }
-        updateActionBar(item.itemId)
         false
     }
 
     fun updateActionBar(itemId:Int) {
-        val actionBar = supportActionBar?.customView;
-        val title:TextView? = actionBar?.findViewById<TextView>(R.id.app_title)
-        val backBtn = actionBar?.findViewById<ImageButton>(R.id.btn_back)
-        val logOutBtn = actionBar?.findViewById<ImageButton>(R.id.btn_logout)
         when (itemId) {
             R.id.navigation_fodimap -> {
-                logOutBtn?.visibility = View.INVISIBLE
-                actionBar?.visibility = View.INVISIBLE
-                title?.text = resources.getText(R.string.title_fodimap)
-                getActionBar()?.hide()
-
+                supportActionBar?.hide()
             }
             R.id.navigation_reservation -> {
-                logOutBtn?.visibility = View.INVISIBLE
-                actionBar?.visibility = View.VISIBLE
-                title?.text = resources.getText(R.string.title_reservation)
-                getActionBar()?.show()
+                supportActionBar?.show()
+                supportActionBar?.title = resources.getText(R.string.title_reservation)
             }
             R.id.navigation_profile -> {
-                logOutBtn?.visibility = View.VISIBLE
-                actionBar?.visibility = View.VISIBLE
-                title?.text = resources.getText(R.string.title_profile)
-                getActionBar()?.show()
+                supportActionBar?.show()
+                supportActionBar?.title = resources.getText(R.string.title_profile)
             }
         }
     }
 
 
-
-    @SuppressLint("WrongConstant")
-    fun ensureAppBar() {
-        getSupportActionBar()?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar()?.setCustomView(R.layout.action_bar_menu);
-        supportActionBar?.customView?.findViewById<ImageButton>(R.id.btn_logout)?.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                this@MainActivity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
-                    ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
-                CurrentUserProvider.get().logout(this@MainActivity, object : Action<User> {
-                    override fun accept(data: User?) {
-                        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
-                        LoginManager.getInstance().logOut()
-                    }
-
-                    override fun deny(data: User?, reason: String) {
-                    }
-
-                })
-
-            }
-
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         LocalDailyLogDbManager.get(this, LOCAL_DB_USER, LOCAL_DB_NAME)
-        ensureAppBar()
 
         RestaurantCategoryProvider.getInstance()
         setContentView(R.layout.activity_main)
@@ -127,6 +91,33 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        getMenuInflater().inflate(R.menu.global_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_logout -> {
+                this@MainActivity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
+                    ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
+                CurrentUserProvider.get().logout(this@MainActivity, object : Action<User> {
+                    override fun accept(data: User?) {
+                        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+                        LoginManager.getInstance().logOut()
+                    }
+
+                    override fun deny(data: User?, reason: String) {
+                    }
+
+                })
+                return true
+            } else -> {
+            return super.onOptionsItemSelected(item)
+        }
+        }
     }
 
     fun loadFragment(fragment: Fragment) {
