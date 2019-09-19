@@ -1,9 +1,17 @@
 package com.foodbodi
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActionBar
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Criteria
+import android.location.Location
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +20,9 @@ import android.widget.ImageButton
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.facebook.FacebookSdk
@@ -23,7 +34,30 @@ import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        var MY_PERMISSIONS_REQUEST_LOCATION = 99;
+        var mLocationManager: LocationManager? = null;
+        var locationProvider: String? = null;
 
+
+        fun ensureGetCurrentLocation(context: Context, callback: Action<Location>) {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                callback.deny(null, "GPS permission denied")
+            } else {
+                val location = mLocationManager?.getLastKnownLocation(locationProvider);
+                callback.accept(location)
+            }
+
+        }
+    }
      val LOCAL_DB_USER = "foodbodi-db-user"
      val LOCAL_DB_NAME = "foodbodi-local-db"
     private lateinit var googleMapFragment: GoogleMapFragment;
@@ -72,6 +106,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
+        locationProvider = mLocationManager?.getBestProvider(Criteria(), true)
+
         LocalDailyLogDbManager.get(this, LOCAL_DB_USER, LOCAL_DB_NAME)
 
         RestaurantCategoryProvider.getInstance()
@@ -83,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         googleMapFragment = GoogleMapFragment();
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+        checkLocationPermission()
 
         if (CurrentUserProvider.get().isLoggedIn()) {
             LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()?.email!!, 0)
@@ -131,6 +168,72 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationProvider = mLocationManager?.getBestProvider(Criteria(), true)
+                    if (ContextCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+                    }
+                } else {
+                    //TODO :disable location feature because user don't allow
+
+                }
+            }
+        }
+    }
+
+    fun checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle(R.string.title_location_permission)
+                    .setMessage(R.string.text_location_permission)
+                    .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
+                        //Prompt the user once explanation has been shown
+                        ActivityCompat.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                            MY_PERMISSIONS_REQUEST_LOCATION
+                        )
+                    })
+                    .create()
+                    .show()
+            } else {
+                val alertDialog = AlertDialog.Builder(this@MainActivity);
+
+                alertDialog.setTitle("GPS is settings");
+                alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+                alertDialog.setPositiveButton("Settings") { p0, p1 ->
+                    val intent = Intent(Intent.ACTION_VIEW);
+                    intent.setPackage("com.google.android.apps.maps")
+                    this@MainActivity.startActivityForResult(intent, MY_PERMISSIONS_REQUEST_LOCATION);
+                };
+
+                alertDialog.setNegativeButton(
+                    "Cancel"
+                ) { dialog, p1 -> dialog?.cancel(); };
+                alertDialog.show();
+            }
+        } else {
+            navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+
+        }
+
+    }
 
 
 }

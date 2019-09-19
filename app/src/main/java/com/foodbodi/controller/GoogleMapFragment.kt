@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -52,20 +53,16 @@ class GoogleMapFragment : Fragment(), LocationListener {
     private lateinit var restaurants: ArrayList<Restaurant>
     private var restaurantMarkers: HashMap<String, Marker> = HashMap()
     private var userCurrentLocation: Marker? = null
-    private lateinit var mLocationManager: LocationManager
     private lateinit var googleMap: GoogleMap
 
-    var MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     val firestore = FirebaseFirestore.getInstance()
-    var locationProvider: String? = null;
 
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         restaurants = ArrayList()
-        mLocationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
-
     }
 
     override fun onResume() {
@@ -95,48 +92,9 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View = inflater.inflate(R.layout.fodimap, container, false);
-
-        val loadRestauranAction: Action<Location> = object : Action<Location> {
-            override fun accept(data: Location?) {
-                loadRestaurant(data)
-                if (data != null) {
-                    moveCamera(data.latitude, data.longitude, 12.5f)
-                }
-            }
-
-            override fun deny(data: Location?, reason: String) {
-                print(reason)
-            }
-        }
-
-        val markCurrentLocation: Action<Location> = object : Action<Location> {
-            override fun accept(data: Location?) {
-                userCurrentLocation =
-                    googleMap.addMarker(MarkerOptions().position(LatLng(data!!.latitude, data.longitude)).title("You"))
-            }
-
-            override fun deny(data: Location?, reason: String) {
-                Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
-            }
-
-        }
-
-        val afterCheckPermissionLocationAction: Action<Any> = object : Action<Any> {
-            override fun accept(data: Any?) {
-                ensureGetCurrentLocation(loadRestauranAction);
-                ensureGetCurrentLocation(markCurrentLocation);
-            }
-
-            override fun deny(data: Any?, reason: String) {
-            }
-
-        }
-
         supportMapFragment = SupportMapFragment.newInstance();
         supportMapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
-            restaurantMarkers.clear();
-            checkLocationPermission(afterCheckPermissionLocationAction);
             googleMap.setOnMarkerClickListener { marker ->
                 if (marker.tag != null) {
                     val restaurantId =
@@ -145,6 +103,21 @@ class GoogleMapFragment : Fragment(), LocationListener {
                 }
                 false
             }
+
+            restaurantMarkers.clear()
+
+            MainActivity.ensureGetCurrentLocation(this.requireContext(), object : Action<Location> {
+                override fun accept(data: Location?) {
+                    afterLocationPermissionGranted(data)
+                }
+
+                override fun deny(data: Location?, reason: String) {
+
+                }
+
+            })
+
+
 
         });
 
@@ -161,41 +134,25 @@ class GoogleMapFragment : Fragment(), LocationListener {
         return view;
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            MY_PERMISSIONS_REQUEST_LOCATION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(
-                            this.context!!,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
 
-                        ensureGetCurrentLocation(object : Action<Location> {
-                            @SuppressLint("MissingPermission")
-                            override fun accept(data: Location?) {
-                                mLocationManager.requestLocationUpdates(
-                                    locationProvider,
-                                    3000,
-                                    7f,
-                                    this@GoogleMapFragment
-                                )
-
-                            }
-
-                            override fun deny(data: Location?, reason: String) {
-                                Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
-                            }
-
-                        })
-                    }
-
-                } else {
-                    //TODO :disable location feature because user don't allow
-
-                }
-            }
+    @SuppressLint("MissingPermission")
+    private fun afterLocationPermissionGranted(data:Location?) {
+        if (MainActivity.locationProvider != null) {
+            MainActivity.mLocationManager?.requestLocationUpdates(
+                MainActivity.locationProvider,
+                3000,
+                7f,
+                this@GoogleMapFragment
+            )
         }
+
+        loadRestaurant(data)
+        if (data != null) {
+            userCurrentLocation =
+                googleMap.addMarker(MarkerOptions().position(LatLng(data!!.latitude, data.longitude)).title("You"))
+            moveCamera(data.latitude, data.longitude, 12.5f)
+        }
+
     }
 
     private fun loadRestaurant(location: Location?) {
@@ -268,37 +225,6 @@ class GoogleMapFragment : Fragment(), LocationListener {
                     }
                 }
             }
-    }
-
-    fun ensureGetCurrentLocation(callback: Action<Location>) {
-        if (ActivityCompat.checkSelfPermission(
-                this.context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                this.context!!,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            callback.deny(null, "GPS permission denied")
-        } else {
-            val netWorklocation: Location? = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            val gpsLocation: Location? = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            val passiveLocation: Location? = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            if (gpsLocation != null) {
-                locationProvider = LocationManager.GPS_PROVIDER;
-                callback.accept(gpsLocation)
-            } else if (netWorklocation != null) {
-                locationProvider = LocationManager.NETWORK_PROVIDER
-                callback.accept(netWorklocation)
-            } else if (passiveLocation != null) {
-                locationProvider = LocationManager.PASSIVE_PROVIDER
-                callback.accept(passiveLocation);
-            } else {
-                callback.deny(null, "Can not get the current location")
-            }
-        }
-
     }
 
     private fun invokeAuthentication() {
@@ -395,76 +321,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
     }
 
-    fun checkLocationPermission(callback: Action<Any>) {
-        if (ContextCompat.checkSelfPermission(
-                this.context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this.activity!!,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
-                AlertDialog.Builder(this.context)
-                    .setTitle(R.string.title_location_permission)
-                    .setMessage(R.string.text_location_permission)
-                    .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
-                        //Prompt the user once explanation has been shown
-                        ActivityCompat.requestPermissions(
-                            this.activity!!,
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            MY_PERMISSIONS_REQUEST_LOCATION
-                        )
-                        callback.accept(null)
-                    })
-                    .create()
-                    .show()
 
-
-            } else {
-                val alertDialog = AlertDialog.Builder(this.context);
-
-                alertDialog.setTitle("GPS is settings");
-                alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
-                alertDialog.setPositiveButton("Settings") { p0, p1 ->
-                    val intent = Intent(Intent.ACTION_VIEW);
-                    intent.setPackage("com.google.android.apps.maps")
-                    this@GoogleMapFragment.startActivityForResult(intent, MY_PERMISSIONS_REQUEST_LOCATION);
-                };
-
-                alertDialog.setNegativeButton(
-                    "Cancel"
-                ) { dialog, p1 -> dialog?.cancel(); };
-                alertDialog.show();
-            }
-        } else {
-           ensureGetCurrentLocation(object : Action<Location> {
-               override fun accept(data: Location?) {
-                   callback.accept(data)
-               }
-
-               override fun deny(data: Location?, reason: String) {
-                       val alertDialog = AlertDialog.Builder(this@GoogleMapFragment.context);
-
-                       alertDialog.setTitle("GPS is settings");
-                       alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
-                       alertDialog.setPositiveButton("Settings") { p0, p1 ->
-                           val intent = Intent(Intent.ACTION_VIEW);
-                           intent.setPackage("com.google.android.apps.maps")
-                           this@GoogleMapFragment.startActivityForResult(intent, MY_PERMISSIONS_REQUEST_LOCATION);
-                       };
-
-                       alertDialog.setNegativeButton(
-                           "Cancel"
-                       ) { dialog, p1 -> dialog?.cancel(); };
-                       alertDialog.show();
-
-               }
-
-           })
-        }
-    }
 
 
 }
