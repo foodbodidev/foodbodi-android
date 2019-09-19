@@ -31,6 +31,10 @@ class DailyLog : Serializable {
         return if (step != null) step!! else 0
     }
 
+    fun getBurnedCalo() : Double {
+        return 25.0 * getStep() / 1000;
+    }
+
     fun getTotalEat() : Int {
         return if (total_eat != null) total_eat!! else 0
     }

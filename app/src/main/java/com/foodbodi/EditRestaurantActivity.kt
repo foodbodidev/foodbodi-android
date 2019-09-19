@@ -58,13 +58,16 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     var capturedFoodPhoto:String? = null
     var capturedRestaurantPhotos:ArrayList<String> = ArrayList()
 
-    val DATA_SERIALIZE_NAME:String = "restaurant"
 
     lateinit var foodListView:DynamicLinearLayoutController
     lateinit var photoPager:ViewPager
 
     lateinit var restaurantPhotoProgressBar:ProgressBar
     lateinit var foodPhotoProgressBar:ProgressBar
+
+    companion object {
+        val DATA_SERIALIZE_NAME:String = "restaurant"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

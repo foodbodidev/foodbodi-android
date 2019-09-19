@@ -11,6 +11,7 @@ import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,12 +25,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fonfon.kgeohash.GeoHash
-import com.foodbodi.EditRestaurantActivity
-import com.foodbodi.AuthenticateFlowActivity
+import com.foodbodi.*
 import com.foodbodi.R
-import com.foodbodi.RegisterBusinessInformation
 import com.foodbodi.apis.*
-import com.foodbodi.controller.FodiMap.RestaurantInfoMenuActivity
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.foodbodi.utils.GoogleMapUtils
@@ -57,7 +55,7 @@ class GoogleMapFragment : Fragment(), LocationListener{
     private lateinit var mLocationManager:LocationManager
     private lateinit var googleMap:GoogleMap
     private lateinit var criteria:Criteria
-    private lateinit var Holder:String
+    private var Holder:String? = null
 
     var MY_PERMISSIONS_REQUEST_LOCATION = 99;
     val firestore = FirebaseFirestore.getInstance()
@@ -131,6 +129,7 @@ class GoogleMapFragment : Fragment(), LocationListener{
             googleMap = it
             restaurantMarkers.clear();
             checkLocationPermission(afterCheckPermissionLocationAction);
+            googleMap.setOnMarkerClickListener { marker -> val restaurantId = marker.tag as String; this@GoogleMapFragment.gotoMenuInfoRestaurant(restaurantId); false }
 
         });
 
@@ -250,13 +249,21 @@ class GoogleMapFragment : Fragment(), LocationListener{
     fun ensureGetCurrentLocation(callback:Action<Location>) {
         if(checkGpsStatus() == true) {
             if (Holder != null) {
-                if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(
+                            this.context!!,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(
+                            this.context!!,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
 
-                    callback.deny(null, "GPS permission denied")
-                }
-                val location:Location? = mLocationManager.getLastKnownLocation(Holder)
-                callback.accept(location)
+                        callback.deny(null, "GPS permission denied")
+                    }
+                    val location: Location? = mLocationManager.getLastKnownLocation(Holder)
+
+                    callback.accept(location)
             } else {
                 callback.deny(null,"Could not find GPS service holder name");
             }
@@ -292,7 +299,7 @@ class GoogleMapFragment : Fragment(), LocationListener{
                             var restaurant = list.get(0) //currently 1 user 1 restaurant
 
                             val intent = Intent(context, EditRestaurantActivity::class.java)
-                            intent.putExtra("restaurant", restaurant)
+                            intent.putExtra(EditRestaurantActivity.DATA_SERIALIZE_NAME, restaurant)
                             startActivity(intent)
 
                         }
@@ -301,8 +308,10 @@ class GoogleMapFragment : Fragment(), LocationListener{
 
             })
     }
-    public fun gotoMenuInfoRestaurant(){
-        startActivity(Intent(context, RestaurantInfoMenuActivity::class.java))
+    private fun gotoMenuInfoRestaurant(restaurantId:String){
+        val intent = Intent(context, RestaurantDetailActivity::class.java)
+        intent.putExtra(RestaurantDetailActivity.RESTAURANT_ID, restaurantId)
+        startActivity(intent)
     }
 
     private fun ensureListRestaurantView() {
@@ -336,12 +345,14 @@ class GoogleMapFragment : Fragment(), LocationListener{
                 markerOption.title(r.name)
                 if (r.lat != null && r.lng != null) {
                     marker = googleMap.addMarker(markerOption.position(LatLng(r.lat!!, r.lng!!)));
+                    marker.tag = r.id
                     restaurantMarkers.put(r.id!!, marker);
                 }
             } else {
                 marker.position = LatLng(r.lat!!, r.lng!!)
 
             }
+
         }
 
     }

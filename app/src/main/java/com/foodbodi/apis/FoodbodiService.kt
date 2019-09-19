@@ -17,6 +17,9 @@ interface FoodbodiService {
     @GET("restaurant/list")
     fun listRestaurant():Call<FoodBodiResponse<RestaurantsResponse>>;
 
+    @GET("restaurant/{id}")
+    fun getRestaurant(@HeaderMap headers: Map<String, String>, @Path("id") id:String) : Call<FoodBodiResponse<RestaurantResponse>>
+
     @GET("restaurant/mine")
     fun listMineRestaurant(@HeaderMap headers:Map<String, String>):Call<FoodBodiResponse<RestaurantsResponse>>;
 

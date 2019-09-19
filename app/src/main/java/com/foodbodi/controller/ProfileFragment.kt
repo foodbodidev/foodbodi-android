@@ -145,7 +145,7 @@ class ProfileFragment : Fragment() {
             view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
 
             val maximum = state.getThreshold()
-            val kcaloToConsume = state.getTotalEat() - state.getStep()
+            val kcaloToConsume = state.getTotalEat() - state.getBurnedCalo()
             val remainKcalo = maximum - kcaloToConsume
 
             val pieChart: PieChart = view!!.findViewById(R.id.pie_chart_kcalo)
@@ -230,7 +230,7 @@ class ProfileFragment : Fragment() {
 
     class DateString(var year: Int, var month: Int, var day: Int) {
         fun getString(): String {
-            return StringBuilder().append(year.toString()).append("-").append(month.toString()).append("-")
+            return StringBuilder().append(year.toString()).append("-").append((month + 1).toString()).append("-")
                 .append(day.toString()).toString()
         }
     }
