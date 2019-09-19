@@ -7,11 +7,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,20 +52,17 @@ class GoogleMapFragment : Fragment(), LocationListener{
     private var userCurrentLocation:Marker? = null
     private lateinit var mLocationManager:LocationManager
     private lateinit var googleMap:GoogleMap
-    private lateinit var criteria:Criteria
-    private var Holder:String? = null
 
     var MY_PERMISSIONS_REQUEST_LOCATION = 99;
     val firestore = FirebaseFirestore.getInstance()
+    var locationProvider:String? = null;
 
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         restaurants = ArrayList()
-        criteria  = Criteria()
         mLocationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
-        Holder = mLocationManager.getBestProvider(criteria, false);
 
     }
 
@@ -93,8 +88,10 @@ class GoogleMapFragment : Fragment(), LocationListener{
 
         val loadRestauranAction : Action<Location> = object : Action<Location> {
             override fun accept(data: Location?) {
-                loadRestaurant(data!!)
-                moveCamera(data!!.latitude, data.longitude, 12.5f)
+                loadRestaurant(data)
+                if (data != null) {
+                    moveCamera(data.latitude, data.longitude, 12.5f)
+                }
             }
 
             override fun deny(data: Location?, reason: String) {
@@ -155,7 +152,7 @@ class GoogleMapFragment : Fragment(), LocationListener{
                         ensureGetCurrentLocation(object : Action<Location> {
                             @SuppressLint("MissingPermission")
                             override fun accept(data: Location?) {
-                                mLocationManager.requestLocationUpdates(Holder, 3000, 7f, this@GoogleMapFragment)
+                                mLocationManager.requestLocationUpdates(locationProvider, 3000, 7f, this@GoogleMapFragment)
 
                             }
 
@@ -174,21 +171,25 @@ class GoogleMapFragment : Fragment(), LocationListener{
         }
     }
 
-    private fun loadRestaurant(location : Location) {
-        findNearbyRestaurant(
-            GoogleMapUtils.LatLng(location.latitude, location.longitude),
-            object : Action<ArrayList<Restaurant>> {
-                override fun accept(list: ArrayList<Restaurant>?) {
-                    restaurants = list!!
-                    ensureListRestaurantView()
+    private fun loadRestaurant(location : Location?) {
+        if (location != null) {
+            findNearbyRestaurant(
+                GoogleMapUtils.LatLng(location.latitude, location.longitude),
+                object : Action<ArrayList<Restaurant>> {
+                    override fun accept(list: ArrayList<Restaurant>?) {
+                        restaurants = list!!
+                        ensureListRestaurantView()
 
-                }
+                    }
 
-                override fun deny(data: ArrayList<Restaurant>?, reason: String) {
-                    Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
-                }
+                    override fun deny(data: ArrayList<Restaurant>?, reason: String) {
+                        Toast.makeText(this@GoogleMapFragment.context, reason, Toast.LENGTH_LONG).show()
+                    }
 
-            })
+                })
+        } else {
+            Toast.makeText(this.context, "Problem when trying to get current location", Toast.LENGTH_LONG).show();
+        }
     }
 
     override fun onLocationChanged(currentLocation: Location?) {
@@ -242,35 +243,28 @@ class GoogleMapFragment : Fragment(), LocationListener{
             }
     }
 
-    fun checkGpsStatus() : Boolean{
-        return mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
     fun ensureGetCurrentLocation(callback:Action<Location>) {
-        if(checkGpsStatus() == true) {
-            if (Holder != null) {
-                    if (ActivityCompat.checkSelfPermission(
-                            this.context!!,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(
-                            this.context!!,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-
-                        callback.deny(null, "GPS permission denied")
-                    }
-                    val location: Location? = mLocationManager.getLastKnownLocation(Holder)
-
-                    callback.accept(location)
+        if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            callback.deny(null, "GPS permission denied")
+        } else {
+            val netWorklocation: Location? = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            val gpsLocation: Location? = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            val passiveLocation: Location? = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            if (gpsLocation != null) {
+                locationProvider = LocationManager.GPS_PROVIDER;
+                callback.accept(gpsLocation)
+            } else if (netWorklocation != null) {
+                locationProvider = LocationManager.NETWORK_PROVIDER
+                callback.accept(netWorklocation)
+            } else if (passiveLocation != null){
+                locationProvider = LocationManager.PASSIVE_PROVIDER
+                callback.accept(passiveLocation);
             } else {
-                callback.deny(null,"Could not find GPS service holder name");
+                callback.deny(null, "Can not get the current location")
             }
-        }else {
-            callback.deny(null,"Please Enable GPS First")
-
         }
+
     }
 
     private fun invokeAuthentication() {
@@ -359,7 +353,6 @@ class GoogleMapFragment : Fragment(), LocationListener{
 
     fun checkLocationPermission(callback:Action<Any>) {
         if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(this.activity!!, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog.Builder(this.context)
                     .setTitle(R.string.title_location_permission)
@@ -424,7 +417,7 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
 
         })
 
-        val time = restaurant.openHour + " - " + restaurant.closeHour
+        val time = restaurant.open_hour + " - " + restaurant.close_hour
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
 
         val imageView:ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)

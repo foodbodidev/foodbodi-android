@@ -16,19 +16,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.collections.ArrayList
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.opengl.Visibility
-import android.os.Build
 import android.text.TextUtils
-import android.view.ViewTreeObserver
 import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.viewpager.widget.ViewPager
 import com.foodbodi.apis.*
 import com.foodbodi.utils.*
@@ -203,8 +197,8 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
             })
         }
-        findViewById<TextView>(R.id.input_restaurent_open_hour).setText(restaurantData.openHour)
-        findViewById<TextView>(R.id.input_restaurent_close_hour).setText(restaurantData.closeHour)
+        findViewById<TextView>(R.id.input_restaurent_open_hour).setText(restaurantData.open_hour)
+        findViewById<TextView>(R.id.input_restaurent_close_hour).setText(restaurantData.close_hour)
 
         FoodbodiRetrofitHolder.getService().listFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), restaurantData.id!!)
             .enqueue(object : Callback<FoodBodiResponse<Restaurant>> {
@@ -240,8 +234,8 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         val category:RestaurantCategory? = findViewById<Spinner>(R.id.spinner_restaurant_category).selectedItem as? RestaurantCategory
         val updateData = Restaurant()
         updateData.category = category?.key
-        updateData.openHour = findViewById<EditText>(R.id.input_restaurent_open_hour).text.toString()
-        updateData.closeHour = findViewById<EditText>(R.id.input_restaurent_close_hour).text.toString()
+        updateData.open_hour = findViewById<EditText>(R.id.input_restaurent_open_hour).text.toString()
+        updateData.close_hour = findViewById<EditText>(R.id.input_restaurent_close_hour).text.toString()
         updateData.type = restaurantType
         updateData.photos = capturedRestaurantPhotos
         // restaurant.address = findViewById<EditText>(R.id.input_restaurant_address).text.toString()

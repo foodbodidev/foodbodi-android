@@ -19,10 +19,10 @@ class Restaurant : Serializable {
     var photos:ArrayList<String> = ArrayList()
 
     @SerializedName("open_hour")
-    var openHour:String? = null
+    var open_hour:String? = null
 
     @SerializedName("close_hour")
-    var closeHour:String? = null
+    var close_hour:String? = null
 
     @SerializedName("type")
     var type:RestaurantType? = null
