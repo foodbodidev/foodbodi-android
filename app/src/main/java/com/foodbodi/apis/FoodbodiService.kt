@@ -12,16 +12,16 @@ import retrofit2.http.*
 interface FoodbodiService {
 
     @GET("profile")
-    fun getProfile(@HeaderMap headers:Map<String, String>):Call<FoodBodiResponse<User>>
+    fun getProfile(@HeaderMap headers:Map<String, String?>):Call<FoodBodiResponse<User>>
 
     @GET("restaurant/list")
     fun listRestaurant():Call<FoodBodiResponse<RestaurantsResponse>>;
 
     @GET("restaurant/{id}")
-    fun getRestaurant(@HeaderMap headers: Map<String, String>, @Path("id") id:String) : Call<FoodBodiResponse<RestaurantResponse>>
+    fun getRestaurant(@HeaderMap headers: Map<String, String?>, @Path("id") id:String) : Call<FoodBodiResponse<RestaurantResponse>>
 
     @GET("restaurant/mine")
-    fun listMineRestaurant(@HeaderMap headers:Map<String, String>):Call<FoodBodiResponse<RestaurantsResponse>>;
+    fun listMineRestaurant(@HeaderMap headers:Map<String, String?>):Call<FoodBodiResponse<RestaurantsResponse>>;
 
     @GET("metadata/restaurant_category")
     fun getRestaurantCategories():Call<FoodBodiResponse<HashMap<String, RestaurantCategory>>>
@@ -44,22 +44,22 @@ interface FoodbodiService {
 
     @Headers("Content-Type: application/json")
     @POST("profile")
-    fun updateProfile(@HeaderMap headers: Map<String, String>, @Body user: User) : Call<FoodBodiResponse<User>>
+    fun updateProfile(@HeaderMap headers: Map<String, String?>, @Body user: User) : Call<FoodBodiResponse<User>>
 
     @Headers("Content-Type: application/json")
     @POST("restaurant")
-    fun createRestaurant(@HeaderMap headers: Map<String, String>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<RestaurantResponse>>
+    fun createRestaurant(@HeaderMap headers: Map<String, String?>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<RestaurantResponse>>
 
     @Headers("Content-Type: application/json")
     @PUT("restaurant/{restaurant_id}")
-    fun updateRestaurant(@HeaderMap headers: Map<String, String>, @Body restaurant: Restaurant, @Path("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<RestaurantResponse>>
+    fun updateRestaurant(@HeaderMap headers: Map<String, String?>, @Body restaurant: Restaurant, @Path("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<RestaurantResponse>>
 
     @Headers("Content-Type: application/json")
     @POST("currentFood/import")
-    fun importFoods(@HeaderMap headers: Map<String, String>, @Body importFoodRequest: ImportFoodRequest) : Call<FoodBodiResponse<Restaurant>>
+    fun importFoods(@HeaderMap headers: Map<String, String?>, @Body importFoodRequest: ImportFoodRequest) : Call<FoodBodiResponse<Restaurant>>
 
     @GET("restaurant/{restaurant_id}/foods")
-    fun listFood(@HeaderMap headers: Map<String, String>, @Path("restaurant_id") restaurant_id: String) : Call<FoodBodiResponse<Restaurant>>
+    fun listFood(@HeaderMap headers: Map<String, String?>, @Path("restaurant_id") restaurant_id: String) : Call<FoodBodiResponse<Restaurant>>
 
     @Multipart
     @POST("upload/photo")
@@ -67,17 +67,17 @@ interface FoodbodiService {
 
     @Headers("Content-Type: application/json")
     @POST("food")
-    fun createFood(@HeaderMap headers: Map<String, String>, @Body food: Food) : Call<FoodBodiResponse<FoodResponse>>
+    fun createFood(@HeaderMap headers: Map<String, String?>, @Body food: Food) : Call<FoodBodiResponse<FoodResponse>>
 
     @Headers("Content-Type: application/json")
     @DELETE("food/{id}")
-    fun deleteFood(@HeaderMap headers: Map<String, String>, @Path("id") id: String, @Query("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<FoodResponse>>
+    fun deleteFood(@HeaderMap headers: Map<String, String?>, @Path("id") id: String, @Query("restaurant_id") restaurant_id:String) : Call<FoodBodiResponse<FoodResponse>>
 
     @GET("dailylog/{year}/{month}/{day}")
-    fun getDailyLog(@HeaderMap headers: Map<String, String>, @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String) :Call<FoodBodiResponse<DailyLog>>
+    fun getDailyLog(@HeaderMap headers: Map<String, String?>, @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String) :Call<FoodBodiResponse<DailyLog>>
 
     @Headers("Content-Type: application/json")
     @POST("dailylog/{year}/{month}/{day}")
-    fun updateDailyLog(@HeaderMap headers: Map<String, String>,@Body dailylog: DailyLog,  @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String ) :Call<FoodBodiResponse<DailyLog>>
+    fun updateDailyLog(@HeaderMap headers: Map<String, String?>,@Body dailylog: DailyLog,  @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String ) :Call<FoodBodiResponse<DailyLog>>
 
 }

@@ -12,9 +12,9 @@ class FoodbodiRetrofitHolder {
             return holder.service
         }
 
-        fun getHeaders(context: Context) : Map<String, String> {
-            val map = HashMap<String, String>()
-            map.put("token", CurrentUserProvider.get().getApiKey(context)!!)
+        fun getHeaders(context: Context) : Map<String, String?> {
+            val map = HashMap<String, String?>()
+            map.put("token", CurrentUserProvider.get().getApiKey(context))
             return map
         }
     }

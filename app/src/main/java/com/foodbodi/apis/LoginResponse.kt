@@ -4,7 +4,7 @@ import com.foodbodi.model.User
 import com.google.gson.annotations.SerializedName
 
 class LoginResponse {
-    @SerializedName("data")
+    @SerializedName("user")
     var user:User? = null
 
     @SerializedName("token")
