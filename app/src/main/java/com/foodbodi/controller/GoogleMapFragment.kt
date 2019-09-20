@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +39,7 @@ import retrofit2.Response
 
 //TODO : cache this View so that no need to re-create when navigate back to this
 class GoogleMapFragment : Fragment(), LocationListener {
-
+    val TAG = GoogleMapFragment::class.java.simpleName
     private lateinit var supportMapFragment: SupportMapFragment;
     private var recyclerView: RecyclerView? = null;
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -153,7 +154,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
     }
 
     override fun onLocationChanged(currentLocation: Location?) {
-        print("User current location : " + currentLocation.toString())
+        Log.i(TAG, "User current location : " + currentLocation.toString())
         if (userCurrentLocation == null) {
             userCurrentLocation = googleMap.addMarker(
                 MarkerOptions().position(

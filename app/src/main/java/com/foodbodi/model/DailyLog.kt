@@ -1,8 +1,10 @@
 package com.foodbodi.model
 
+import com.foodbodi.utils.DateString
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import java.lang.StringBuilder
+import java.util.*
 
 class DailyLog : Serializable {
 
@@ -24,6 +26,10 @@ class DailyLog : Serializable {
     companion object {
         fun getLocalID(year:Int, month:Int, day:Int, user:String):String {
             return StringBuilder().append(String.format("%04d-%02d-%02d", year, month, day)).append("-").append(user).toString()
+        }
+
+        fun getLocalID(dateString: DateString, user:String):String {
+            return Companion.getLocalID(dateString.year, dateString.month, dateString.day, user)
         }
     }
 

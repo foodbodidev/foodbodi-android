@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.utils.Action
+import com.foodbodi.utils.DateString
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
@@ -30,7 +31,7 @@ class LocalDailyLogDbManager {
         var cachNumOfStep = 0;
 
         var instance:DB? = null
-        fun get(context:Context, username:String, dbName:String):DB? {
+        fun get(context:Context):DB? {
             if (instance == null) {
                 instance = DBMaker.newFileDB(File(context.filesDir.absolutePath + DB_NAME)).make()
             }
@@ -42,8 +43,8 @@ class LocalDailyLogDbManager {
             return instance
         }
 
-        fun ensureLocalDailyLogRecord(year: Int, month : Int, day : Int, user:String):DailyLog {
-            val id = DailyLog.getLocalID(year, month, day, user);
+        fun ensureLocalDailyLogRecord(dateString: DateString, user:String):DailyLog {
+            val id = DailyLog.getLocalID(dateString, user);
             var log = DailyLog()
             log.owner = user
             val hashMap:HTreeMap<String, DailyLog> =
@@ -56,8 +57,8 @@ class LocalDailyLogDbManager {
 
         fun updateTodayDailyLogRecord(user:String, newValue: Int):DailyLog {
             val calendar:Calendar = Calendar.getInstance()
-            val id = DailyLog.getLocalID(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), user);
-            val doc = ensureLocalDailyLogRecord(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), user)
+            val id = DailyLog.getLocalID(DateString.fromCalendar(calendar), user);
+            val doc = ensureLocalDailyLogRecord(DateString.fromCalendar(calendar), user)
             doc.step = newValue
             val hashMap:HTreeMap<String, DailyLog> = getDefaultDb()!!.getHashMap(DAILYLOG_TABLE)
             hashMap.put(id, doc)
@@ -66,11 +67,14 @@ class LocalDailyLogDbManager {
 
         fun getTodayStepCount(username: String):Int {
             val calendar:Calendar = Calendar.getInstance()
-            val doc = ensureLocalDailyLogRecord(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), username)
+            val doc = ensureLocalDailyLogRecord(DateString.fromCalendar(calendar), username)
             return if (doc != null && doc.step != null ) doc.step!! else 0
         }
 
-        fun getDailyLogOfDate(year: Int, month: Int, date: Int, context: Context, callback: Action<DailyLog>) {
+        fun getDailyLogOfDate(dateString: DateString, context: Context, callback: Action<DailyLog>) {
+            val year = dateString.year
+            val month = dateString.month
+            val date = dateString.day
             FoodbodiRetrofitHolder.getService().getDailyLog(
                 FoodbodiRetrofitHolder.getHeaders(context),
                year.toString(),
@@ -118,7 +122,7 @@ class LocalDailyLogDbManager {
             })
         }
 
-        private fun isToday(year: Int, month: Int, date: Int):Boolean {
+        public fun isToday(year: Int, month: Int, date: Int):Boolean {
             val myCalendar:Calendar = Calendar.getInstance()
             return year == myCalendar.get(Calendar.YEAR)
                     && month == myCalendar.get(Calendar.MONTH)

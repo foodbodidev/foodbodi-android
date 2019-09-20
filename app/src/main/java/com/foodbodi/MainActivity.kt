@@ -25,6 +25,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.Worker
 import com.facebook.FacebookSdk
 import com.facebook.login.LoginManager
 import com.foodbodi.controller.GoogleMapFragment
@@ -32,6 +35,7 @@ import com.foodbodi.controller.ProfileFragment
 import com.foodbodi.controller.ReservationFragment
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
+import com.foodbodi.workers.SyncDailyLogWorker
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -109,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
         locationProvider = mLocationManager?.getBestProvider(Criteria(), true)
 
-        LocalDailyLogDbManager.get(this, LOCAL_DB_USER, LOCAL_DB_NAME)
+        LocalDailyLogDbManager.get(this)
 
         RestaurantCategoryProvider.getInstance()
         setContentView(R.layout.activity_main)
@@ -126,11 +130,15 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        if (CurrentUserProvider.get().isLoggedIn()) {
-            LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()?.email!!, 0)
-            syncData()
-        }
+        CurrentUserProvider.get().registerCallback(object : Action<User> {
+            override fun accept(data: User?) {
+                syncData()
+            }
 
+            override fun deny(data: User?, reason: String) {
+            }
+
+        })
 
     }
 
@@ -169,7 +177,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun syncData() {
-
+        val syncRequest = OneTimeWorkRequestBuilder<SyncDailyLogWorker>().build()
+        WorkManager.getInstance(this).enqueue(syncRequest)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

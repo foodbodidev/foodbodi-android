@@ -10,6 +10,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +21,7 @@ import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.DailyLog
 import com.foodbodi.utils.Action
 import com.foodbodi.model.LocalDailyLogDbManager
+import com.foodbodi.utils.DateString
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
@@ -44,12 +46,13 @@ import kotlin.collections.ArrayList
 
 
 class ProfileFragment : Fragment() {
+    val TAG = ProfileFragment::class.java.simpleName
     val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE: Int = 10
 
     val myCalendar: Calendar = Calendar.getInstance();
 
     var selectedDate: DateString =
-        DateString(myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DATE))
+        DateString.fromCalendar(myCalendar)
 
     var cachNumOfStep = 0;
     var state: DailyLog = DailyLog()
@@ -113,10 +116,7 @@ class ProfileFragment : Fragment() {
 
     private fun loadDailyLog() {
 
-        LocalDailyLogDbManager.getDailyLogOfDate(
-            selectedDate.year,
-            selectedDate.month,
-            selectedDate.day,
+        LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
             this@ProfileFragment.context!!,
             object : Action<DailyLog> {
                 override fun accept(data: DailyLog?) {
@@ -208,9 +208,9 @@ class ProfileFragment : Fragment() {
                 .addOnCompleteListener(object : OnCompleteListener<Void> {
                     override fun onComplete(task: Task<Void>) {
                         if (task.isSuccessful()) {
-                            print("Listener registered!");
+                            Log.i(TAG, "Listener registered!");
                         } else {
-                            print("Listener not registered" + task.exception);
+                            Log.i(TAG, "Listener not registered" + task.exception);
                         }
                     }
 
@@ -226,13 +226,6 @@ class ProfileFragment : Fragment() {
             updateView()
         }
 
-    }
-
-    class DateString(var year: Int, var month: Int, var day: Int) {
-        fun getString(): String {
-            return StringBuilder().append(year.toString()).append("-").append((month + 1).toString()).append("-")
-                .append(day.toString()).toString()
-        }
     }
 
 }

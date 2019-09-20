@@ -7,6 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
+    kotlinOptions { jvmTarget = "1.8" }
     defaultConfig {
         applicationId "com.foodbodi"
         minSdkVersion 19
@@ -44,6 +45,8 @@ android {
 apply plugin: 'com.google.gms.google-services'
 
 dependencies {
+    def work_version = "2.2.0"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -74,6 +77,9 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     // https://mvnrepository.com/artifact/org.mapdb/mapdb
     compile group: 'org.mapdb', name: 'mapdb', version: '1.0.6'
+
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
 
 
 }

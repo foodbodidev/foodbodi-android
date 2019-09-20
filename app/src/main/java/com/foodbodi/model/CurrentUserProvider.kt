@@ -50,9 +50,7 @@ class CurrentUserProvider private constructor(){
                             user = null
                             status = Status.NOT_LOGGED_IN
                         }
-                        for (item in this@CurrentUserProvider.callbacks) {
-                            callback.accept(user)
-                        }
+                        flushCallbacks()
 
                     }
 
@@ -73,9 +71,12 @@ class CurrentUserProvider private constructor(){
 
     }
 
-    fun setUserData(user:User?, context: Context) {
+    fun setUserData(user:User?, context: Context, flushCallback:Boolean) {
         this.user = user;
         status = Status.LOGGED_IN
+        if (flushCallback) {
+            flushCallbacks()
+        }
     }
 
     fun getUser() : User? {
@@ -88,9 +89,16 @@ class CurrentUserProvider private constructor(){
 
     fun logout(context: Context, callback: Action<User>) {
         setApiKey(null, context);
-        setUserData(null, context);
+        setUserData(null, context, false);
         status = Status.NOT_LOGGED_IN
         callback.accept(null)
+    }
+
+    private fun flushCallbacks() {
+        for (item in this@CurrentUserProvider.callbacks) {
+            item.accept(user)
+        }
+        callbacks.clear()
     }
 
     companion object Holder {

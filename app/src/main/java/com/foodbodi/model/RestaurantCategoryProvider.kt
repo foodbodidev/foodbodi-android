@@ -1,5 +1,6 @@
 package com.foodbodi.model
 
+import android.util.Log
 import android.widget.Toast
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
@@ -12,6 +13,7 @@ import retrofit2.Response
 import java.util.function.Consumer
 
 class RestaurantCategoryProvider private constructor(){
+    val TAG = RestaurantCategoryProvider::class.java.simpleName
     private var map:HashMap<String, RestaurantCategory>? = null
      private var tasks:ArrayList<Action<Map<String, RestaurantCategory>>> = ArrayList()
     init {
@@ -38,7 +40,7 @@ class RestaurantCategoryProvider private constructor(){
     }
 
     fun queue(action:Action<Map<String, RestaurantCategory>>) {
-        System.out.println("Queue task on RestaurantCategoryProvider")
+        Log.i(TAG,"Queue task on RestaurantCategoryProvider")
         tasks.add(action)
     }
 

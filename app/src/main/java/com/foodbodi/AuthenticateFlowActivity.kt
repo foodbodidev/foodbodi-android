@@ -53,7 +53,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                         val token = response.body()?.data()?.token
                         val data:User? = response.body()?.data()?.user
                         CurrentUserProvider.get().setApiKey(token!!, that)
-                        CurrentUserProvider.get().setUserData(data!!, that)
+                        CurrentUserProvider.get().setUserData(data!!, that, true)
 
                         val intent = Intent(that, UpdateBasicInfoActivity::class.java)
                         startActivity(intent)
@@ -97,7 +97,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
             Toast.makeText(this, "Can not extract api key for further requests", Toast.LENGTH_LONG).show()
         } else {
             CurrentUserProvider.get().setApiKey(apiKey, this)
-            CurrentUserProvider.get().setUserData(user, this)
+            CurrentUserProvider.get().setUserData(user, this, true)
             val email = user!!.email
             LocalDailyLogDbManager.updateTodayDailyLogRecord(email!!, 0)
             finish()
@@ -141,7 +141,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                 ) {
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                         CurrentUserProvider.get().setApiKey(response.body()?.data()?.token, that);
-                        CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that);
+                        CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that, true);
                         ensureUserBasicInfo(response.body()?.data()?.user)
                     } else {
                         onLoginFail(response.body()?.errorMessage());
@@ -178,7 +178,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                     ) {
                         if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                             CurrentUserProvider.get().setApiKey(response.body()?.data()?.token, that);
-                            CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that);
+                            CurrentUserProvider.get().setUserData(response.body()?.data()?.user, that, true);
                             ensureUserBasicInfo(response.body()?.data()?.user)
                         } else {
                             onLoginFail(response.body()?.errorMessage());
