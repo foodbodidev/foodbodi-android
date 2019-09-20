@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         var locationProvider: String? = null;
 
 
-        fun ensureGetCurrentLocation(context: Context, callback: Action<Location>) {
+        fun ensureGetLastLocation(context: Context, callback: Action<Location>) {
             if (ActivityCompat.checkSelfPermission(
                     context,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -120,7 +120,11 @@ class MainActivity : AppCompatActivity() {
 
         googleMapFragment = GoogleMapFragment();
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-        checkLocationPermission()
+        if (checkLocationPermission()) {
+            navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+        } else {
+
+        }
 
         if (CurrentUserProvider.get().isLoggedIn()) {
             LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()?.email!!, 0)
@@ -178,7 +182,6 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.ACCESS_FINE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
-                        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
                     }
                 } else {
                     //TODO :disable location feature because user don't allow
@@ -188,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun checkLocationPermission() {
+    fun checkLocationPermission():Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -198,42 +201,23 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                AlertDialog.Builder(this@MainActivity)
-                    .setTitle(R.string.title_location_permission)
-                    .setMessage(R.string.text_location_permission)
-                    .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
-                        //Prompt the user once explanation has been shown
-                        ActivityCompat.requestPermissions(
-                            this@MainActivity,
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            MY_PERMISSIONS_REQUEST_LOCATION
-                        )
-                    })
-                    .create()
-                    .show()
-            } else {
-                val alertDialog = AlertDialog.Builder(this@MainActivity);
+            AlertDialog.Builder(this@MainActivity)
+                .setTitle(R.string.title_location_permission)
+                .setMessage(R.string.text_location_permission)
+                .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialogInterface, i ->
+                    //Prompt the user once explanation has been shown
+                    ActivityCompat.requestPermissions(
+                        this@MainActivity,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        MY_PERMISSIONS_REQUEST_LOCATION
+                    )
+                })
+                .create()
+                .show()
+            return false
 
-                alertDialog.setTitle("GPS is settings");
-                alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
-                alertDialog.setPositiveButton("Settings") { p0, p1 ->
-                    val intent = Intent(Intent.ACTION_VIEW);
-                    intent.setPackage("com.google.android.apps.maps")
-                    this@MainActivity.startActivityForResult(intent, MY_PERMISSIONS_REQUEST_LOCATION);
-                };
-
-                alertDialog.setNegativeButton(
-                    "Cancel"
-                ) { dialog, p1 -> dialog?.cancel(); };
-                alertDialog.show();
-            }
         } else {
-            navView.findViewById<View>(R.id.navigation_fodimap).performClick();
-
+           return true
         }
-
     }
-
-
 }

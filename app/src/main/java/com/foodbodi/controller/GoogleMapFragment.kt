@@ -2,25 +2,17 @@ package com.foodbodi.controller
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -55,6 +47,8 @@ class GoogleMapFragment : Fragment(), LocationListener {
     private var userCurrentLocation: Marker? = null
     private lateinit var googleMap: GoogleMap
 
+    private var needMoveCamera = true;
+
 
     val firestore = FirebaseFirestore.getInstance()
 
@@ -67,6 +61,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
     override fun onResume() {
         super.onResume()
+        needMoveCamera = true;
         if (ContextCompat.checkSelfPermission(
                 this.activity!!,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -105,18 +100,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
             }
 
             restaurantMarkers.clear()
-
-            MainActivity.ensureGetCurrentLocation(this.requireContext(), object : Action<Location> {
-                override fun accept(data: Location?) {
-                    afterLocationPermissionGranted(data)
-                }
-
-                override fun deny(data: Location?, reason: String) {
-
-                }
-
-            })
-
+            registerCurrentLocation()
 
 
         });
@@ -136,7 +120,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
 
     @SuppressLint("MissingPermission")
-    private fun afterLocationPermissionGranted(data:Location?) {
+    private fun registerCurrentLocation() {
         if (MainActivity.locationProvider != null) {
             MainActivity.mLocationManager?.requestLocationUpdates(
                 MainActivity.locationProvider,
@@ -145,20 +129,12 @@ class GoogleMapFragment : Fragment(), LocationListener {
                 this@GoogleMapFragment
             )
         }
-
-        loadRestaurant(data)
-        if (data != null) {
-            userCurrentLocation =
-                googleMap.addMarker(MarkerOptions().position(LatLng(data!!.latitude, data.longitude)).title("You"))
-            moveCamera(data.latitude, data.longitude, 12.5f)
-        }
-
     }
 
-    private fun loadRestaurant(location: Location?) {
-        if (location != null) {
+    private fun loadRestaurant() {
+        if (userCurrentLocation != null) {
             findNearbyRestaurant(
-                GoogleMapUtils.LatLng(location.latitude, location.longitude),
+                GoogleMapUtils.LatLng(userCurrentLocation?.position!!.latitude, userCurrentLocation?.position!!.longitude),
                 object : Action<ArrayList<Restaurant>> {
                     override fun accept(list: ArrayList<Restaurant>?) {
                         restaurants = list!!
@@ -178,10 +154,30 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
     override fun onLocationChanged(currentLocation: Location?) {
         print("User current location : " + currentLocation.toString())
-        if (userCurrentLocation != null && currentLocation?.latitude != null) {
-            userCurrentLocation!!.position = LatLng(currentLocation.latitude, currentLocation.longitude)
+        if (userCurrentLocation == null) {
+            userCurrentLocation = googleMap.addMarker(
+                MarkerOptions().position(
+                    LatLng(
+                        currentLocation!!.latitude,
+                        currentLocation.longitude
+                    )
+                ).title("You")
+            )
+        } else {
+            userCurrentLocation?.position = LatLng(currentLocation?.latitude!!, currentLocation.longitude)
+        }
+        loadRestaurant();
+        if (needMoveCamera) {
+            moveCameraToCurrentLocation()
+            needMoveCamera = false
         }
 
+    }
+
+    private fun moveCameraToCurrentLocation() {
+        if (userCurrentLocation != null) {
+            moveCamera(userCurrentLocation?.position!!.latitude, userCurrentLocation?.position!!.longitude, 12.5f)
+        }
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
