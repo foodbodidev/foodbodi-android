@@ -9,11 +9,10 @@ import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +29,6 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -48,7 +46,12 @@ class GoogleMapFragment : Fragment(), LocationListener {
     private var userCurrentLocation: Marker? = null
     private lateinit var googleMap: GoogleMap
 
+    private lateinit var searchBox:EditText
     private var needMoveCamera = true;
+
+    companion object {
+        val SEARCH_REQUEST_CODE = 1
+    }
 
 
     val firestore = FirebaseFirestore.getInstance()
@@ -110,16 +113,35 @@ class GoogleMapFragment : Fragment(), LocationListener {
         getChildFragmentManager().beginTransaction().replace(R.id.map, supportMapFragment).commit();
 
 
-        view.findViewById<FloatingActionButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
+        view.findViewById<ImageButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
             if (CurrentUserProvider.get().isLoggedIn()) {
                 invokeAddRestaurantForm()
             } else {
                 invokeAuthentication()
             }
         })
+
+        searchBox = view.findViewById<EditText>(R.id.edit_text_search_box)
+        searchBox.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+            override fun onFocusChange(p0: View?, focus: Boolean) {
+                if (focus) {
+                    val intent = Intent(this@GoogleMapFragment.requireContext(), SearchRestaurantActivity::class.java)
+                    startActivityForResult(intent, SEARCH_REQUEST_CODE)
+                }
+                searchBox.clearFocus()
+            }
+        })
+
+        view.findViewById<Button>(R.id.btn_su_add).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val intent = Intent(this@GoogleMapFragment.context, RegisterBusinessInformation::class.java)
+                intent.putExtra(RegisterBusinessInformation.SU_MODE_PARAM, true)
+                startActivity(intent)
+            }
+
+        })
         return view;
     }
-
 
     @SuppressLint("MissingPermission")
     private fun registerCurrentLocation() {
@@ -277,25 +299,24 @@ class GoogleMapFragment : Fragment(), LocationListener {
     }
 
     private fun ensureListRestaurantView() {
-        viewAdapter = MyAdapter(restaurants);
-        //TODO : maybe we should cache the recyclerView, to avoid rerender everytime user come back
+        viewAdapter = MyAdapter(restaurants, object : Action<Restaurant> {
+            override fun accept(data: Restaurant?) {
+                gotoMenuInfoRestaurant(data?.id!!)
+            }
+
+            override fun deny(data: Restaurant?, reason: String) {
+            }
+
+        });
+
         val viewManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView = this@GoogleMapFragment.view!!.findViewById<RecyclerView>(R.id.recycler_restaurant_list)?.apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
-
-            // use a linear layout manager
             layoutManager = viewManager
-
-
-            // specify an viewAdapter (see also next example)
             adapter = viewAdapter
-
         }
 
         markRestaurantsOnMap()
-
 
     }
 
@@ -324,7 +345,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
 }
 
-class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
+class MyAdapter(private val myDataset: ArrayList<Restaurant>, val itemClickHandler: Action<Restaurant>) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
 
@@ -339,12 +360,6 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
         // create a new view
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_restaurant_item, parent, false)
-        // set the view's size, margins, paddings and layout parameters
-        itemView.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-
-            }
-        })
         return MyViewHolder(itemView)
     }
 
@@ -367,7 +382,7 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
 
         })
 
-        val time = restaurant.open_hour + " - " + restaurant.close_hour
+        val time = restaurant.open_hour + " ~ " + restaurant.close_hour
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
 
         val imageView: ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)
@@ -375,6 +390,12 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>) :
             Picasso.get().load(restaurant.photos.get(0)).fit().centerInside().into(imageView)
         }
 
+        imageView.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                itemClickHandler.accept(restaurant)
+            }
+
+        })
 
     }
 

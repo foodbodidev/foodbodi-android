@@ -59,6 +59,9 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     lateinit var restaurantPhotoProgressBar:ProgressBar
     lateinit var foodPhotoProgressBar:ProgressBar
 
+    lateinit var addFoodBtn:Button
+    lateinit var addFoodSection:LinearLayout
+
     companion object {
         val DATA_SERIALIZE_NAME:String = "restaurant"
     }
@@ -200,28 +203,36 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         findViewById<TextView>(R.id.input_restaurent_open_hour).setText(restaurantData.open_hour)
         findViewById<TextView>(R.id.input_restaurent_close_hour).setText(restaurantData.close_hour)
 
-        FoodbodiRetrofitHolder.getService().listFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), restaurantData.id!!)
-            .enqueue(object : Callback<FoodBodiResponse<Restaurant>> {
-                override fun onFailure(call: Call<FoodBodiResponse<Restaurant>>, t: Throwable) {
-                    Toast.makeText(this@EditRestaurantActivity, "List foods fail :" + t.message, Toast.LENGTH_LONG).show()
-                }
-
-                override fun onResponse(
-                    call: Call<FoodBodiResponse<Restaurant>>,
-                    response: Response<FoodBodiResponse<Restaurant>>
-                ) {
-                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                        val list:ArrayList<Food> = response.body()?.data()?.foods!!
-                        for (food in list) {
-                            foodListView.addItem("FOOD", food)
-                        }
-
-                    } else {
-                        Toast.makeText(this@EditRestaurantActivity, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+        if (restaurantData.id != null) {
+            FoodbodiRetrofitHolder.getService()
+                .listFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), restaurantData.id!!)
+                .enqueue(object : Callback<FoodBodiResponse<Restaurant>> {
+                    override fun onFailure(call: Call<FoodBodiResponse<Restaurant>>, t: Throwable) {
+                        Toast.makeText(this@EditRestaurantActivity, "List foods fail :" + t.message, Toast.LENGTH_LONG)
+                            .show()
                     }
-                }
 
-            })
+                    override fun onResponse(
+                        call: Call<FoodBodiResponse<Restaurant>>,
+                        response: Response<FoodBodiResponse<Restaurant>>
+                    ) {
+                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                            val list: ArrayList<Food> = response.body()?.data()?.foods!!
+                            for (food in list) {
+                                foodListView.addItem("FOOD", food)
+                            }
+
+                        } else {
+                            Toast.makeText(
+                                this@EditRestaurantActivity,
+                                response.body()?.errorMessage(),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                })
+        }
 
         for (url in capturedRestaurantPhotos) {
             var view:RestaurantPhotoItem = RestaurantPhotoItem(url)
@@ -317,6 +328,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     }
 
     private fun ensureAddMenuView() {
+        addFoodSection = findViewById(R.id.add_food_section)
         foodPhotoGetter = PhotoGetter(this)
         foodListView = object : DynamicLinearLayoutController(findViewById<LinearLayout>(R.id.list_added_food), R.id.food_item_container, R.id.food_item_content) {
             override fun onItemLeftSwipe(pos: Int, view: View) {
@@ -357,7 +369,8 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
         })
 
-        findViewById<Button>(R.id.btn_add_food).setOnClickListener(object : View.OnClickListener {
+        addFoodBtn = findViewById<Button>(R.id.btn_add_food)
+        addFoodBtn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val food = ensureFoodInputData()
                 if (food != null) {

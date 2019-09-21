@@ -27,7 +27,10 @@ import java.util.*
 
 class RegisterBusinessInformation : AppCompatActivity() {
     private val AUTOCOMPLETE_PLACE_CODE = 1
-
+    private var SU_mode = false
+    companion object {
+        val SU_MODE_PARAM:String = "SU"
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (AUTOCOMPLETE_PLACE_CODE == requestCode && data != null) {
@@ -45,6 +48,7 @@ class RegisterBusinessInformation : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_business_information)
+        SU_mode = intent.getBooleanExtra(SU_MODE_PARAM, false)
 
         Places.initialize(this, "AIzaSyDKbAhGAfKDxorYtTW4SWGn05t-K8fKu94") //TODO : secure the api key
         val placesClient: PlacesClient = Places.createClient(this)
@@ -77,19 +81,27 @@ class RegisterBusinessInformation : AppCompatActivity() {
                 info.license = license
 
                 FoodbodiRetrofitHolder.getService().createRestaurant(FoodbodiRetrofitHolder.getHeaders(this@RegisterBusinessInformation), info)
-                    .enqueue(object : Callback<FoodBodiResponse<RestaurantResponse>> {
-                        override fun onFailure(call: Call<FoodBodiResponse<RestaurantResponse>>, t: Throwable) {
+                    .enqueue(object : Callback<FoodBodiResponse<Restaurant>> {
+                        override fun onFailure(call: Call<FoodBodiResponse<Restaurant>>, t: Throwable) {
                             Toast.makeText(this@RegisterBusinessInformation, "Create restaurant fail", Toast.LENGTH_LONG).show()
                         }
 
                         override fun onResponse(
-                            call: Call<FoodBodiResponse<RestaurantResponse>>,
-                            response: Response<FoodBodiResponse<RestaurantResponse>>
+                            call: Call<FoodBodiResponse<Restaurant>>,
+                            response: Response<FoodBodiResponse<Restaurant>>
                         ) {
                             if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                                val intent = Intent(this@RegisterBusinessInformation, NotifyWaitingForApproval::class.java)
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                startActivity(intent)
+                                if (SU_mode) {
+                                    val restaurant = response.body()?.data()
+                                    val intent = Intent(this@RegisterBusinessInformation, EditRestaurantActivity::class.java)
+                                    intent.putExtra(EditRestaurantActivity.DATA_SERIALIZE_NAME, restaurant)
+                                    startActivity(intent)
+                                } else {
+                                    val intent =
+                                        Intent(this@RegisterBusinessInformation, NotifyWaitingForApproval::class.java)
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    startActivity(intent)
+                                }
                             } else {
                                 Toast.makeText(this@RegisterBusinessInformation, response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
                             }

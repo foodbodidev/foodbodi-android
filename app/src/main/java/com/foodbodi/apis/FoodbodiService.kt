@@ -48,7 +48,7 @@ interface FoodbodiService {
 
     @Headers("Content-Type: application/json")
     @POST("restaurant")
-    fun createRestaurant(@HeaderMap headers: Map<String, String?>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<RestaurantResponse>>
+    fun createRestaurant(@HeaderMap headers: Map<String, String?>, @Body restaurant: Restaurant) : Call<FoodBodiResponse<Restaurant>>
 
     @Headers("Content-Type: application/json")
     @PUT("restaurant/{restaurant_id}")

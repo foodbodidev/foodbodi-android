@@ -1,41 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto" android:weightSum="10"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-
-    <FrameLayout
-            android:layout_weight="3.5"
-            android:id="@+id/map"
+    <LinearLayout
+            android:weightSum="10"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:backgroundTint="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_add_white_36dp"
+        <FrameLayout
+                android:layout_weight="3.5"
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:background="@color/colorAccent"
+                    android:text="SU Add"
+                    android:textColor="@color/White"
+                    android:id="@+id/btn_su_add"
+            />
+
+
+        </FrameLayout>
+
+        <LinearLayout
+                android:id="@+id/list_restaurant_scroll_view"
+                android:layout_weight="6.5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:orientation="horizontal"
+                    android:id="@+id/recycler_restaurant_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:padding="@dimen/text_medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/edit_text_search_box"
+                  android:hint="@string/search_box_hint"
+                  android:background="@drawable/fb_textview"
+                  android:layout_marginBottom="@dimen/text_medium"
+
+        />
+        <ImageButton
+                android:background="@android:color/background_dark"
+                app:srcCompat="@drawable/ic_add_circle_black_48dp"
                 android:id="@+id/fab_add_restaurant"
                 android:layout_width="wrap_content"
-                android:layout_height="72dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="end|top"
+
         />
 
 
-    </FrameLayout>
-
-    <LinearLayout
-            android:id="@+id/list_restaurant_scroll_view"
-            android:layout_weight="6.5"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:orientation="horizontal"
-                android:id="@+id/recycler_restaurant_list"
-                android:layout_width="match_parent"
-
-                android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 
-</LinearLayout>
+
+</FrameLayout>
