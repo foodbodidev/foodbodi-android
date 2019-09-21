@@ -63,6 +63,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
     override fun onResume() {
         super.onResume()
         needMoveCamera = true;
+        userCurrentLocation = null;
         if (ContextCompat.checkSelfPermission(
                 this.activity!!,
                 Manifest.permission.ACCESS_FINE_LOCATION

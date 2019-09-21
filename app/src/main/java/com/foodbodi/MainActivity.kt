@@ -132,6 +132,7 @@ class MainActivity : AppCompatActivity() {
 
         CurrentUserProvider.get().registerCallback(object : Action<User> {
             override fun accept(data: User?) {
+                LocalDailyLogDbManager.updateTodayDailyLogRecord(data!!)
                 syncData()
             }
 

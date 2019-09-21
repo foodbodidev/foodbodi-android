@@ -98,8 +98,6 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         } else {
             CurrentUserProvider.get().setApiKey(apiKey, this)
             CurrentUserProvider.get().setUserData(user, this, true)
-            val email = user!!.email
-            LocalDailyLogDbManager.updateTodayDailyLogRecord(email!!, 0)
             finish()
         }
     }

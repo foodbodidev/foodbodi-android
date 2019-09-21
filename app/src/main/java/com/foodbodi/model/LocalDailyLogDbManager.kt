@@ -1,6 +1,7 @@
 package com.foodbodi.model
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
@@ -24,16 +25,18 @@ import java.util.*
 class LocalDailyLogDbManager {
 
     companion object {
+        val TAG = LocalDailyLogDbManager::class.java.simpleName
         val DB_NAME:String = "foodimap-db"
         val DAILYLOG_TABLE:String = "dailylog"
-        val DB_VERSION = 1;
 
         var cachNumOfStep = 0;
 
         var instance:DB? = null
         fun get(context:Context):DB? {
             if (instance == null) {
-                instance = DBMaker.newFileDB(File(context.filesDir.absolutePath + DB_NAME)).make()
+                val path = context.filesDir.absolutePath +"/" + DB_NAME
+                Log.i(TAG, "Opening db at $path"  )
+                instance = DBMaker.newFileDB(File(path)).closeOnJvmShutdown().transactionDisable().make()
             }
 
             return instance
@@ -50,18 +53,34 @@ class LocalDailyLogDbManager {
             val hashMap:HTreeMap<String, DailyLog> =
                 getDefaultDb()!!.getHashMap(DAILYLOG_TABLE)
             if (!hashMap.containsKey(id)) {
+                Log.i(TAG, "Add dailylog $id")
                 hashMap.put(id, log)
+                instance?.commit()
+            } else {
+                Log.i(TAG,"Dailylog $id exists")
             }
             return hashMap.get(id)!!
         }
 
-        fun updateTodayDailyLogRecord(user:String, newValue: Int):DailyLog {
+        fun updateTodayDailyLogRecord(user:User) : DailyLog{
+            return Companion.updateTodayDailyLogRecord(user, null)
+        }
+
+        fun updateTodayDailyLogRecord(user:User, newValue: Int?):DailyLog {
             val calendar:Calendar = Calendar.getInstance()
-            val id = DailyLog.getLocalID(DateString.fromCalendar(calendar), user);
-            val doc = ensureLocalDailyLogRecord(DateString.fromCalendar(calendar), user)
-            doc.step = newValue
+            val id = DailyLog.getLocalID(DateString.fromCalendar(calendar), user.email!!);
+            val doc = ensureLocalDailyLogRecord(DateString.fromCalendar(calendar), user.email!!)
+            Log.i(TAG, "Update step $id to ${newValue}")
+            if (newValue != null) {
+                doc.step = newValue
+            }
+            if (doc.calo_threshold == null) {
+                doc.calo_threshold = user.daily_calo
+                Log.i(TAG, "Update calo threshold $id to ${doc.calo_threshold}")
+            }
             val hashMap:HTreeMap<String, DailyLog> = getDefaultDb()!!.getHashMap(DAILYLOG_TABLE)
             hashMap.put(id, doc)
+            instance?.commit()
             return doc
         }
 

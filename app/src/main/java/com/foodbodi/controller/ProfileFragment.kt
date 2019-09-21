@@ -221,7 +221,7 @@ class ProfileFragment : Fragment() {
     private fun updateCachedStep(delta: Int) {
         val newSteps = cachNumOfStep + delta;
         state.step = newSteps
-        LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()?.email!!, newSteps)
+        LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()!!, newSteps)
         if (isToday()) {
             updateView()
         }

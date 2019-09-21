@@ -30,6 +30,9 @@ class User {
     @SerializedName("password")
     var password:String? = null
 
+    @SerializedName("daily_calo")
+    var daily_calo:Int = 3000
+
     fun isProfileReady():Boolean {
         val hasName = firstName != null && lastName != null && sex != null
         val hasProfile = height > 0 && weight  > 0 && targetWeight > 0
