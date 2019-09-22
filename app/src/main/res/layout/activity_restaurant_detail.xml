@@ -4,6 +4,13 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".RestaurantDetailActivity">
+    <androidx.viewpager.widget.ViewPager
+            android:background="@color/gray_color"
+            android:id="@+id/pager_restaurant_photos"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+    </androidx.viewpager.widget.ViewPager>
 
     <Button
             android:id="@+id/btn_edit_restaurant"
@@ -26,25 +33,41 @@
     <androidx.core.widget.NestedScrollView
             android:layout_marginTop="150dp"
             android:background="@color/White"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:id="@+id/text_restaurant_name"
+                      android:text="bbbb"
             />
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="30dp">
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/text_restaurant_type_food"
+                          android:text="aaa"/>
+                />
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/text_restaurant_kcal"
+                          android:text="kcal"
+                          android:layout_marginLeft="10dp"
+                          android:layout_toRightOf="@+id/text_restaurant_type_food"
+                        />
+                />
+            </RelativeLayout>
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:id="@+id/text_restaurant_address"
+                      android:id="@+id/text_restaurant_time"
+                      android:text="time"
             />
-
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

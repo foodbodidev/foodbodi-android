@@ -17,7 +17,8 @@ import retrofit2.Response
 
 class RestaurantDetailActivity : AppCompatActivity() {
     companion object {
-        val RESTAURANT_ID = "restaurant_id"
+        val RESTAURANT_ID = "restaurant_id";
+
     }
 
     var data: Restaurant? = null;
@@ -52,7 +53,7 @@ class RestaurantDetailActivity : AppCompatActivity() {
     private fun updateView() {
         if (data != null) {
             findViewById<TextView>(R.id.text_restaurant_name).text = data?.name
-            findViewById<TextView>(R.id.text_restaurant_address).text = data?.address
+
 
             var editBtn = findViewById<Button>(R.id.btn_edit_restaurant)
             //editBtn.visibility = is admin account
