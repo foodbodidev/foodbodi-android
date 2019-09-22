@@ -80,4 +80,8 @@ interface FoodbodiService {
     @POST("dailylog/{year}/{month}/{day}")
     fun updateDailyLog(@HeaderMap headers: Map<String, String?>,@Body dailylog: DailyLog,  @Path("year") year: String,  @Path("month") month: String,  @Path("day") day: String ) :Call<FoodBodiResponse<DailyLog>>
 
+    @Headers("Content-Type: application/json")
+    @GET("search")
+    fun searchRestaurant(@HeaderMap headers: Map<String, String?>, @Query("q") query: String): Call<FoodBodiResponse<ArrayList<SearchResultItem>>>
+
 }
