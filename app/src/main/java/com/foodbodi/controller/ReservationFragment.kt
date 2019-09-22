@@ -18,8 +18,11 @@ class ReservationFragment:Fragment() {
 
     private  var myDataset: List<CaloriesIntakeModel> = listOf(
         CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal"),
-            CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal"),
-                CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal")
+        CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal"),
+        CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal"),
+        CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal"),
+        CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal"),
+        CaloriesIntakeModel("Cheese Rice issue Bongcheon", "2019/05/14", "300 kcal")
     )
 
 
