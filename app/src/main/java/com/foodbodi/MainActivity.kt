@@ -36,13 +36,14 @@ import com.foodbodi.controller.ReservationFragment
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.foodbodi.workers.SyncDailyLogWorker
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
     companion object {
         var MY_PERMISSIONS_REQUEST_LOCATION = 99;
         var mLocationManager: LocationManager? = null;
         var locationProvider: String? = null;
-
 
         fun ensureGetLastLocation(context: Context, callback: Action<Location>) {
             if (ActivityCompat.checkSelfPermission(
@@ -112,7 +113,6 @@ class MainActivity : AppCompatActivity() {
 
         mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager;
         locationProvider = mLocationManager?.getBestProvider(Criteria(), true)
-
         LocalDailyLogDbManager.get(this)
 
         RestaurantCategoryProvider.getInstance()

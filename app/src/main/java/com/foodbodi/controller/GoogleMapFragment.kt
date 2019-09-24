@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -24,6 +25,7 @@ import com.foodbodi.apis.*
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.foodbodi.utils.GoogleMapUtils
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -36,7 +38,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 //TODO : cache this View so that no need to re-create when navigate back to this
-class GoogleMapFragment : Fragment(), LocationListener {
+class GoogleMapFragment : Fragment() {
     val TAG = GoogleMapFragment::class.java.simpleName
     private lateinit var supportMapFragment: SupportMapFragment;
     private var recyclerView: RecyclerView? = null;
@@ -48,6 +50,19 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
     private lateinit var searchBox:EditText
     private var needMoveCamera = true;
+
+    var fusedLocationClient: FusedLocationProviderClient? = null
+
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult?) {
+            locationResult ?: return
+            for (location in locationResult.locations){
+                // Update UI with location data
+                // ...
+                onLocationChangedListener(location)
+            }
+        }
+    }
 
     companion object {
         val SEARCH_REQUEST_CODE = 1
@@ -61,6 +76,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         restaurants = ArrayList()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireContext())
     }
 
     override fun onResume() {
@@ -72,8 +88,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            //TODO : update location
-            //locationManager.requestLocationUpdates(provider, 400, 1, this);
+            registerCurrentLocation()
         }
     }
 
@@ -84,7 +99,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-
+            fusedLocationClient?.removeLocationUpdates(locationCallback)
             //TODO : remove update location
             //locationManager.removeUpdates(this);
         }
@@ -145,14 +160,22 @@ class GoogleMapFragment : Fragment(), LocationListener {
 
     @SuppressLint("MissingPermission")
     private fun registerCurrentLocation() {
-        if (MainActivity.locationProvider != null) {
+        /*if (MainActivity.locationProvider != null) {
             MainActivity.mLocationManager?.requestLocationUpdates(
                 MainActivity.locationProvider,
                 3000,
                 7f,
                 this@GoogleMapFragment
             )
+        }*/
+        var locationRequest: LocationRequest = LocationRequest.create().apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
+        fusedLocationClient?.requestLocationUpdates(
+            locationRequest, locationCallback, Looper.getMainLooper()
+        )
     }
 
     private fun loadRestaurant() {
@@ -176,7 +199,7 @@ class GoogleMapFragment : Fragment(), LocationListener {
         }
     }
 
-    override fun onLocationChanged(currentLocation: Location?) {
+    fun onLocationChangedListener(currentLocation: Location?) {
         Log.i(TAG, "User current location : " + currentLocation.toString())
         if (userCurrentLocation == null) {
             userCurrentLocation = googleMap.addMarker(
@@ -204,14 +227,6 @@ class GoogleMapFragment : Fragment(), LocationListener {
         }
     }
 
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-    }
-
-    override fun onProviderEnabled(p0: String?) {
-    }
-
-    override fun onProviderDisabled(p0: String?) {
-    }
 
     private fun moveCamera(lat: Double, lng: Double, zoom: Float) {
         var latlng: LatLng = LatLng(lat, lng)
