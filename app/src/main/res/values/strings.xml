@@ -76,4 +76,7 @@
     <string name="restaurant_name_hint">(Restaurant name)</string>
     <string name="restaurant_address_hint">(Restaurant address)</string>
 
+    <string name="tab_chat_fragment">Chat</string>
+    <string name="tab_Name_Of_Foods_fragment">Name of foods</string>
+
 </resources>
