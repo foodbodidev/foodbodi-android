@@ -135,7 +135,7 @@ class ProfileFragment : Fragment() {
 
     private fun isToday():Boolean {
         return selectedDate.year == myCalendar.get(Calendar.YEAR)
-                && selectedDate.month == myCalendar.get(Calendar.MONTH)
+                && selectedDate.month == myCalendar.get(Calendar.MONTH) + 1
                 && selectedDate.day == myCalendar.get(Calendar.DATE)
     }
 
