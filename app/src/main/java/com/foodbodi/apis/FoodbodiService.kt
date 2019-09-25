@@ -84,4 +84,8 @@ interface FoodbodiService {
     @GET("search")
     fun searchRestaurant(@HeaderMap headers: Map<String, String?>, @Query("q") query: String): Call<FoodBodiResponse<ArrayList<SearchResultItem>>>
 
+    @Headers("Content-Type: application/json")
+    @GET("reservation/mine")
+    fun getReservation(@HeaderMap headers: Map<String, String?>): Call<FoodBodiResponse<ReservationResponse>>
+
 }

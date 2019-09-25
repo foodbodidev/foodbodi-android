@@ -11,8 +11,10 @@ import com.foodbodi.R
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.TextView
+import com.foodbodi.model.Reservation
+import android.graphics.Color
 
-class CaloriesIntakeAdapter(private val myDataset: List<CaloriesIntakeModel>) :
+class CaloriesIntakeAdapter(private var myDataset: List<Reservation>) :
     RecyclerView.Adapter<CaloriesIntakeViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -28,8 +30,13 @@ class CaloriesIntakeAdapter(private val myDataset: List<CaloriesIntakeModel>) :
     }
 
     override fun onBindViewHolder(holder: CaloriesIntakeViewHolder, position: Int) {
-        val data: CaloriesIntakeModel = myDataset[position]
+        val data: Reservation = myDataset[position]
         holder.bind(data)
+    }
+
+    fun reloadData(data : List<Reservation>) {
+        myDataset = data;
+        this.notifyDataSetChanged();
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -51,13 +58,28 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
     }
 
-    fun bind(data: CaloriesIntakeModel) {
-        titleTextView?.text = data.title
-        dateTextView?.text = data.dateTime
-        caloriesButton?.text = data.titleCalories
+    fun bind(data: Reservation) {
+        titleTextView?.text = data.restaurant_name
+        dateTextView?.text = data.date_string
+        caloriesButton?.text = data.total.toString() + "kcal"
+
+        var color = Color.parseColor("#808000")
+
+        val total = data.total
+
+        if (total != null) {
+            if (total < 300) {
+                color =  Color.parseColor("#7398de")
+
+            } else if (total > 500) {
+                color =  Color.parseColor("#e95975")
+            } else {
+                color =  Color.parseColor("#fbd402")
+            }
+        }
+
+        caloriesButton?.setBackgroundColor(color)
     }
-
-
-
+    
 }
 
