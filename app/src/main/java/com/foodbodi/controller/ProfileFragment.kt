@@ -167,7 +167,6 @@ class ProfileFragment : Fragment() {
             // enable rotation of the chart by touch
             pieChart.setRotationEnabled(true);
             pieChart.setHighlightPerTapEnabled(true);
-            pieChart
             val kcalos = ArrayList<PieEntry>()
             kcalos.add(PieEntry(remainKcalo.toFloat(), "Remain calories"))
             kcalos.add(PieEntry(kcaloToConsume.toFloat(), "Calories intake"))
@@ -191,25 +190,29 @@ class ProfileFragment : Fragment() {
         if (stepSensorListener == null) {
             stepSensorListener = OnDataPointListener() {
                 fun onDataPoint(dataPoint: DataPoint) {
+                    Toast.makeText(this@ProfileFragment.requireContext(), "Step sensor called", Toast.LENGTH_SHORT).show()
                     val value = dataPoint.getValue(Field.FIELD_STEPS).asInt()
                     updateCachedStep(value)
                 }
+
             }
             Fitness.getSensorsClient(
                 this.requireActivity(),
                 GoogleSignIn.getLastSignedInAccount(this.requireContext())!!
             )
                 .add(
-                    SensorRequest.Builder().setDataType(DataType.TYPE_STEP_COUNT_DELTA).setSamplingRate(
-                        3,
-                        TimeUnit.SECONDS
+                    SensorRequest.Builder()
+                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setSamplingRate(3, TimeUnit.SECONDS
                     ).build(), stepSensorListener
                 )
                 .addOnCompleteListener(object : OnCompleteListener<Void> {
                     override fun onComplete(task: Task<Void>) {
                         if (task.isSuccessful()) {
+                            Toast.makeText(this@ProfileFragment.requireContext(), "Sensor is registered successfully", Toast.LENGTH_LONG).show()
                             Log.i(TAG, "Listener registered!");
                         } else {
+                            Toast.makeText(this@ProfileFragment.requireContext(), "Sensor fails to registere", Toast.LENGTH_LONG).show()
                             Log.i(TAG, "Listener not registered" + task.exception);
                         }
                     }
