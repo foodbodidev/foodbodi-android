@@ -14,10 +14,10 @@ import com.foodbodi.controller.UpdateCaloriesActivity
 import com.foodbodi.model.Food
 import com.foodbodi.model.Reservation
 
-data class Movie(val title: String, val year: Int, val image: String)
 
 
-class CaloriesCardAdapter(private var myDataset: List<Movie>) :
+
+class CaloriesCardAdapter(private var myDataset: List<Food>) :
     RecyclerView.Adapter<CaloriesIntakeViewHolder>() {
 
 
@@ -27,12 +27,12 @@ class CaloriesCardAdapter(private var myDataset: List<Movie>) :
     }
 
     override fun onBindViewHolder(holder: CaloriesIntakeViewHolder, position: Int) {
-        val data: Movie = myDataset[position]
+        val data: Food = myDataset[position]
         holder.bind(data)
     }
 
 
-    fun reloadData(data : List<Movie>) {
+    fun reloadData(data : List<Food>) {
         myDataset = data;
         this.notifyDataSetChanged();
     }
@@ -48,7 +48,6 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var caloriesButton: Button? = null
 
 
-
     init {
         titleTextView = itemView.findViewById(R.id.nameText)
         dateTextView = itemView.findViewById(R.id.timeText)
@@ -58,10 +57,10 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
     }
 
-    fun bind(data: Movie) {
-        titleTextView?.text = data.title
-        dateTextView?.text = data.title
-        caloriesButton?.text = data.title
+    fun bind(data: Food) {
+        titleTextView?.text = data.name
+        dateTextView?.text = data.name
+        caloriesButton?.text = data.name
     }
 
 }

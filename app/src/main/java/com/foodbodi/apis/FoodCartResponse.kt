@@ -7,6 +7,6 @@ import com.google.gson.annotations.SerializedName
 
 class FoodCardResonse  {
     @SerializedName("foods")
-    lateinit var reservation: ArrayList<Food>
+    lateinit var foods: HashMap<String, Food>
 
 }

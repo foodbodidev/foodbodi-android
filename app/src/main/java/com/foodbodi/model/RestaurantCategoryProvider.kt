@@ -15,7 +15,7 @@ import java.util.function.Consumer
 class RestaurantCategoryProvider private constructor(){
     val TAG = RestaurantCategoryProvider::class.java.simpleName
     private var map:HashMap<String, RestaurantCategory>? = null
-     private var tasks:ArrayList<Action<Map<String, RestaurantCategory>>> = ArrayList()
+    private var tasks:ArrayList<Action<Map<String, RestaurantCategory>>> = ArrayList()
     init {
         FoodbodiRetrofitHolder.getService().getRestaurantCategories()
             .enqueue(object : Callback<FoodBodiResponse<HashMap<String, RestaurantCategory>>> {

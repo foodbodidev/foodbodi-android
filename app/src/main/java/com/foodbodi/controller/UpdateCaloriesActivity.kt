@@ -1,35 +1,34 @@
 package com.foodbodi.controller
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.foodbodi.R
 import com.foodbodi.model.Reservation
 import com.foodbodi.Adapters.CaloriesCardAdapter
-import com.foodbodi.Adapters.Movie
+
 
 import kotlinx.android.synthetic.main.activity_update_calories.*
 import kotlinx.android.synthetic.main.activity_update_calories.card_recycler_view
 import kotlinx.android.synthetic.main.reservation_fragment.*
 import androidx.recyclerview.widget.RecyclerView
+import com.foodbodi.apis.FoodBodiResponse
+import com.foodbodi.apis.FoodCardResonse
+import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.model.Food
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 
 
 
 class UpdateCaloriesActivity : AppCompatActivity() {
 
-    private  var myDataset = listOf(
-        Movie("Raising Arizona", 1987, "raising_arizona.jpg"),
-        Movie("Vampire's Kiss", 1988, "vampires_kiss.png"),
-        Movie("Con Air", 1997, "con_air.jpg"),
-        Movie("Face/Off", 1997, "face_off.jpg"),
-        Movie("National Treasure", 2004, "national_treasure.jpg"),
-        Movie("The Wicker Man", 2006, "wicker_man.jpg"),
-        Movie("Bad Lieutenant", 2009, "bad_lieutenant.jpg"),
-        Movie("Kick-Ass", 2010, "kickass.jpg")
-
-    )
+    private  var myDataset: ArrayList<Food> = ArrayList()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -46,14 +45,47 @@ class UpdateCaloriesActivity : AppCompatActivity() {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
-
             layoutManager = viewManager
-
             adapter = viewAdapter
 
         }
 
+        getReservationById()
 
+
+    }
+
+    fun getReservationById() {
+        FoodbodiRetrofitHolder.getService().getReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), "rsv_IjWbQGWLDCgDC7XlVjOw_phuoc@gmail.com_1569594250670")
+            .enqueue(object : Callback<FoodBodiResponse<FoodCardResonse>> {
+                override fun onFailure(call: Call<FoodBodiResponse<FoodCardResonse>>, t: Throwable) {
+                    // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show()
+                }
+
+                override fun onResponse(
+                    call: Call<FoodBodiResponse<FoodCardResonse>>,
+                    response: Response<FoodBodiResponse<FoodCardResonse>>
+                ) {
+                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+
+                        val data = response.body()?.data
+
+                        val listFood: ArrayList<Food> = ArrayList()
+
+                        val listFoodHasMap = data?.foods?.values
+
+                        listFoodHasMap?.forEach {
+                            listFood.add(it)
+                        }
+
+                        val adapter = recyclerView.adapter as CaloriesCardAdapter
+                        adapter.reloadData(listFood)
+
+
+                    }
+                }
+
+            })
     }
 
 }
