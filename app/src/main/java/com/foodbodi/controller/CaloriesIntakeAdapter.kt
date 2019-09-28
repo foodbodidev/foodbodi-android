@@ -1,5 +1,6 @@
 package com.foodbodi.controller
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.TextView
 import com.foodbodi.model.Reservation
 import android.graphics.Color
+import android.util.Log
 
 class CaloriesIntakeAdapter(private var myDataset: List<Reservation>) :
     RecyclerView.Adapter<CaloriesIntakeViewHolder>() {
@@ -31,6 +33,20 @@ class CaloriesIntakeAdapter(private var myDataset: List<Reservation>) :
 
     override fun onBindViewHolder(holder: CaloriesIntakeViewHolder, position: Int) {
         val data: Reservation = myDataset[position]
+
+
+        holder.itemView.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val context = p0?.context
+                val updateCaloriesIntent = Intent(context, UpdateCaloriesActivity::class.java)
+                updateCaloriesIntent.putExtra("", "")
+                context?.startActivity(updateCaloriesIntent)
+                Log.d("RecyclerView", "CLICK!")
+            }
+
+        })
+
+
         holder.bind(data)
     }
 
@@ -55,6 +71,8 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         titleTextView = itemView.findViewById(R.id.nameText)
         dateTextView = itemView.findViewById(R.id.timeText)
         caloriesButton = itemView.findViewById(R.id.caloriesButton)
+
+
 
     }
 

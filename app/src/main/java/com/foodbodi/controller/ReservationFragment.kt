@@ -1,10 +1,13 @@
 package com.foodbodi.controller
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Adapter
+import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +44,7 @@ class ReservationFragment:Fragment() {
             adapter = CaloriesIntakeAdapter(myDataset)
         }
 
+
         this.getReservation()
     }
 
@@ -57,7 +61,7 @@ class ReservationFragment:Fragment() {
                 ) {
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                         val data = response.body()?.data()?.reservation
-                        if (data != null) {
+                        if (data != null && list_recycler_view != null) {
                             (list_recycler_view.adapter as CaloriesIntakeAdapter).reloadData(data);
                         }
 

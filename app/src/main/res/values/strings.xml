@@ -78,5 +78,6 @@
 
     <string name="tab_chat_fragment">Chat</string>
     <string name="tab_Name_Of_Foods_fragment">Name of foods</string>
+    <string name="title_activity_update_calories">UpdateCaloriesActivity</string>
 
 </resources>
