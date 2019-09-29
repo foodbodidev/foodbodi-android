@@ -3,7 +3,12 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:layout_marginTop="20dp"
+              android:layout_marginBottom="20dp"
+              android:background="@drawable/round_intake_calories">>
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -60,8 +65,8 @@
 
         <ImageView
                 android:id="@+id/item_img"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:background="@color/quantum_lightgreen"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -77,11 +82,13 @@
 
         <Button
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/add_cart"
+                android:layout_height="40dp"
                 android:layout_weight="2"
-                android:background="@color/quantum_googgreen"
+                android:background="@drawable/roound_green_conner"
                 android:text="ADD"
-                android:textColor="@android:color/white" />
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/White" />
 
         <TextView
                 android:layout_width="0dp"
@@ -92,10 +99,12 @@
 
         <Button
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/sub_cart"
+                android:layout_height="40dp"
                 android:layout_weight="2"
-                android:background="@color/White"
+                android:background="@drawable/round_grey_conner"
                 android:text="SUB"
+                android:layout_marginBottom="10dp"
                 android:textColor="@android:color/white" />
     </LinearLayout>
 </LinearLayout>

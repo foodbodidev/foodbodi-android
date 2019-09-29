@@ -11,7 +11,7 @@ import com.foodbodi.Adapters.CaloriesCardAdapter
 
 
 import kotlinx.android.synthetic.main.activity_update_calories.*
-import kotlinx.android.synthetic.main.activity_update_calories.card_recycler_view
+import kotlinx.android.synthetic.main.activity_update_calories.cart_recycler_view
 import kotlinx.android.synthetic.main.reservation_fragment.*
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.apis.FoodBodiResponse
@@ -21,6 +21,12 @@ import com.foodbodi.model.Food
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.content.Intent
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+
+
+
 
 
 
@@ -41,7 +47,7 @@ class UpdateCaloriesActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         viewAdapter = CaloriesCardAdapter(myDataset)
 
-        recyclerView = findViewById<RecyclerView>(R.id.card_recycler_view).apply {
+        recyclerView = findViewById<RecyclerView>(R.id.cart_recycler_view).apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
@@ -50,7 +56,10 @@ class UpdateCaloriesActivity : AppCompatActivity() {
 
         }
 
+
         getReservationById()
+
+
 
 
     }

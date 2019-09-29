@@ -2,10 +2,12 @@ package com.foodbodi.Adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.R
 import com.foodbodi.model.Food
+import android.view.View
 
 
 class CaloriesCardAdapter(private var myDataset: List<Food>) :
@@ -20,6 +22,17 @@ class CaloriesCardAdapter(private var myDataset: List<Food>) :
     override fun onBindViewHolder(holder: CaloriesIntakeViewHolder, position: Int) {
         val data: Food = myDataset[position]
         holder.bind(data)
+
+        holder.addButton?.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                print(position)
+            }
+
+        })
+
+
+
     }
 
 
@@ -38,6 +51,9 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var caloriesTextView: TextView? = null
     private var priceTextView: TextView? = null
 
+    var addButton: Button? = null
+    var subButton: Button? = null
+
 
 
 
@@ -45,7 +61,12 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         titleTextView = itemView.findViewById(R.id.cart_item_title)
         caloriesTextView = itemView.findViewById(R.id.cart_colories)
         priceTextView = itemView.findViewById(R.id.cart_price)
+        addButton = itemView.findViewById(R.id.add_cart)
+        subButton = itemView.findViewById(R.id.sub_cart)
     }
+
+
+
 
     fun bind(data: Food) {
         titleTextView?.text = data.name
