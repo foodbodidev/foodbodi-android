@@ -1,20 +1,11 @@
 package com.foodbodi.Adapters
 
-import android.content.Intent
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.R
-import com.foodbodi.controller.UpdateCaloriesActivity
 import com.foodbodi.model.Food
-import com.foodbodi.model.Reservation
-
-
 
 
 class CaloriesCardAdapter(private var myDataset: List<Food>) :
@@ -42,25 +33,24 @@ class CaloriesCardAdapter(private var myDataset: List<Food>) :
 }
 
 class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
-    RecyclerView.ViewHolder(inflater.inflate(R.layout.list_calories_card_item, parent, false)) {
+    RecyclerView.ViewHolder(inflater.inflate(R.layout.list_calories_cart_item, parent, false)) {
     private var titleTextView: TextView? = null
-    private var dateTextView: TextView? = null
-    private var caloriesButton: Button? = null
+    private var caloriesTextView: TextView? = null
+    private var priceTextView: TextView? = null
+
+
 
 
     init {
-        titleTextView = itemView.findViewById(R.id.nameText)
-        dateTextView = itemView.findViewById(R.id.timeText)
-        caloriesButton = itemView.findViewById(R.id.caloriesButton)
-
-
-
+        titleTextView = itemView.findViewById(R.id.cart_item_title)
+        caloriesTextView = itemView.findViewById(R.id.cart_colories)
+        priceTextView = itemView.findViewById(R.id.cart_price)
     }
 
     fun bind(data: Food) {
         titleTextView?.text = data.name
-        dateTextView?.text = data.name
-        caloriesButton?.text = data.name
+        caloriesTextView?.text = data.name
+        priceTextView?.text = data.name
     }
 
 }
