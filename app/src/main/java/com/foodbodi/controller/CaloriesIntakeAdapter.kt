@@ -39,7 +39,7 @@ class CaloriesIntakeAdapter(private var myDataset: List<Reservation>) :
             override fun onClick(p0: View?) {
                 val context = p0?.context
                 val updateCaloriesIntent = Intent(context, UpdateCaloriesActivity::class.java)
-                updateCaloriesIntent.putExtra("", "")
+                updateCaloriesIntent.putExtra("reservation_id", data.id)
                 context?.startActivity(updateCaloriesIntent)
                 Log.d("RecyclerView", "CLICK!")
             }

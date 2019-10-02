@@ -22,14 +22,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.content.Intent
+import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
-
-
-
-
-
-
+import android.widget.Button
 
 
 class UpdateCaloriesActivity : AppCompatActivity() {
@@ -40,9 +36,14 @@ class UpdateCaloriesActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
+    var reservationButton: Button? = null
+    var reservationId: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_calories)
+        reservationButton = findViewById(R.id.button_reservation)
+        reservationId = intent.getStringExtra("reservation_id")
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = CaloriesCardAdapter(myDataset)
@@ -57,15 +58,25 @@ class UpdateCaloriesActivity : AppCompatActivity() {
         }
 
 
+        setupActionUpdateCart()
+
         getReservationById()
-
-
-
 
     }
 
+    fun setupActionUpdateCart() {
+        reservationButton?.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                val dataList = (viewAdapter as CaloriesCardAdapter).myDataset
+
+                print(dataList[0].amount)
+            }
+
+        })
+    }
+
     fun getReservationById() {
-        FoodbodiRetrofitHolder.getService().getReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), "rsv_IjWbQGWLDCgDC7XlVjOw_phuoc@gmail.com_1569594250670")
+        FoodbodiRetrofitHolder.getService().getReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), reservationId)
             .enqueue(object : Callback<FoodBodiResponse<FoodCardResonse>> {
                 override fun onFailure(call: Call<FoodBodiResponse<FoodCardResonse>>, t: Throwable) {
                     // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show()

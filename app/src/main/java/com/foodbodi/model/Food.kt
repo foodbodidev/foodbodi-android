@@ -21,4 +21,6 @@ class Food {
     @SerializedName("restaurant_id")
     var restaurant_id:String? = null
 
+    var amount: Int = 0
+
 }

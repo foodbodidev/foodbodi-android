@@ -10,7 +10,7 @@ import com.foodbodi.model.Food
 import android.view.View
 
 
-class CaloriesCardAdapter(private var myDataset: List<Food>) :
+class CaloriesCardAdapter(public var myDataset: List<Food>) :
     RecyclerView.Adapter<CaloriesIntakeViewHolder>() {
 
 
@@ -26,10 +26,23 @@ class CaloriesCardAdapter(private var myDataset: List<Food>) :
         holder.addButton?.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
 
+                data.amount += 1
+                holder.amountTextView?.text = data.amount.toString()
                 print(position)
             }
 
         })
+
+        holder.subButton?.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+
+                data.amount -= 1
+                holder.amountTextView?.text = data.amount.toString()
+                print(position)
+            }
+
+        })
+
 
 
 
@@ -51,6 +64,7 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var caloriesTextView: TextView? = null
     private var priceTextView: TextView? = null
 
+    var amountTextView: TextView? = null
     var addButton: Button? = null
     var subButton: Button? = null
 
@@ -63,6 +77,7 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         priceTextView = itemView.findViewById(R.id.cart_price)
         addButton = itemView.findViewById(R.id.add_cart)
         subButton = itemView.findViewById(R.id.sub_cart)
+        amountTextView = itemView.findViewById(R.id.amount_cart)
     }
 
 
