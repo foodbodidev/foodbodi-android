@@ -217,7 +217,7 @@ class ProfileFragment : Fragment() {
         Toast.makeText(this@ProfileFragment.requireContext(), "Ensuring sensor", Toast.LENGTH_SHORT).show();
         Fitness.getSensorsClient(this.requireContext(), GoogleSignIn.getLastSignedInAccount(this.requireContext())!!)
             .findDataSources(DataSourcesRequest.Builder()
-                .setDataSourceTypes(DataSource.TYPE_RAW)
+                .setDataSourceTypes(DataSource.TYPE_DERIVED)
                 .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE).build())
             .addOnSuccessListener(object : OnSuccessListener<List<DataSource>> {
                 override fun onSuccess(dataSources: List<DataSource>?) {
