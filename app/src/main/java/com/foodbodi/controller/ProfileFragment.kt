@@ -32,14 +32,18 @@ import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.*
+import com.google.android.gms.fitness.request.DataSourcesRequest
 import java.util.*
 import com.google.android.gms.fitness.request.OnDataPointListener
 import com.google.android.gms.fitness.request.SensorRequest
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -56,6 +60,8 @@ class ProfileFragment : Fragment() {
 
     var cachNumOfStep = 0;
     var state: DailyLog = DailyLog()
+    var stepSensorListener:OnDataPointListener? = null
+
 
 
     val fitnessOptions: FitnessOptions = FitnessOptions.builder()
@@ -73,7 +79,28 @@ class ProfileFragment : Fragment() {
 
     };
 
-    var stepSensorListener:OnDataPointListener? = null
+    override fun onPause() {
+        super.onPause()
+        if (stepSensorListener != null) {
+            Fitness.getSensorsClient(
+                this.requireContext(),
+                GoogleSignIn.getLastSignedInAccount(this.requireContext())!!
+            )
+                .remove(stepSensorListener)
+                .addOnCompleteListener(object : OnCompleteListener<Boolean> {
+                    override fun onComplete(p0: Task<Boolean>) {
+                        Log.i(TAG, "Remove stepSensorListener success")
+                    }
+
+                })
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ensureSensor()
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View = inflater.inflate(R.layout.profile_fragment, container, false);
@@ -187,7 +214,34 @@ class ProfileFragment : Fragment() {
     }
 
     private fun ensureSensor() {
-        if (stepSensorListener == null) {
+        Fitness.getSensorsClient(this.requireContext(), GoogleSignIn.getLastSignedInAccount(this.requireContext())!!)
+            .findDataSources(DataSourcesRequest.Builder()
+                .setDataSourceTypes(DataSource.TYPE_RAW)
+                .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE).build())
+            .addOnSuccessListener(object : OnSuccessListener<List<DataSource>> {
+                override fun onSuccess(dataSources: List<DataSource>?) {
+                    for (dataSource in dataSources!!) {
+                        Log.i(TAG, "Data source found: " + dataSource.toString());
+                        Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+
+                        if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE) && stepSensorListener == null) {
+                            Log.i(TAG, "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.");
+                            registerFitnessDataListener(dataSource);
+                        }
+
+
+                    }
+                }
+            }).addOnFailureListener(object : OnFailureListener {
+                override fun onFailure(exeption: Exception) {
+                    Log.i(TAG, exeption.message);
+                    Toast.makeText(this@ProfileFragment.requireContext(), exeption.message, Toast.LENGTH_SHORT).show()
+                }
+
+            })
+    }
+
+    private fun registerFitnessDataListener(dataSource: DataSource) {
             stepSensorListener = OnDataPointListener() {
                 fun onDataPoint(dataPoint: DataPoint) {
                     Toast.makeText(this@ProfileFragment.requireContext(), "Step sensor called", Toast.LENGTH_SHORT).show()
@@ -196,15 +250,17 @@ class ProfileFragment : Fragment() {
                 }
 
             }
+
             Fitness.getSensorsClient(
                 this.requireActivity(),
                 GoogleSignIn.getLastSignedInAccount(this.requireContext())!!
             )
                 .add(
                     SensorRequest.Builder()
-                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setDataSource(dataSource)
+                        .setDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE)
                         .setSamplingRate(3, TimeUnit.SECONDS
-                    ).build(), stepSensorListener
+                        ).build(), stepSensorListener
                 )
                 .addOnCompleteListener(object : OnCompleteListener<Void> {
                     override fun onComplete(task: Task<Void>) {
@@ -218,7 +274,6 @@ class ProfileFragment : Fragment() {
                     }
 
                 })
-        }
     }
 
     private fun updateCachedStep(delta: Int) {
