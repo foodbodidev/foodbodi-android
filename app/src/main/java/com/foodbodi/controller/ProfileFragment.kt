@@ -137,6 +137,7 @@ class ProfileFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
                 this.loadDailyLog()
+                ensureSensor();
             }
         }
     }
@@ -149,7 +150,6 @@ class ProfileFragment : Fragment() {
                 override fun accept(data: DailyLog?) {
                     state = data!!
                     updateView()
-                    ensureSensor()
                 }
 
                 override fun deny(data: DailyLog?, reason: String) {
