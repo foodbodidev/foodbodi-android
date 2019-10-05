@@ -214,22 +214,27 @@ class ProfileFragment : Fragment() {
     }
 
     private fun ensureSensor() {
+        Toast.makeText(this@ProfileFragment.requireContext(), "Ensuring sensor", Toast.LENGTH_SHORT).show();
         Fitness.getSensorsClient(this.requireContext(), GoogleSignIn.getLastSignedInAccount(this.requireContext())!!)
             .findDataSources(DataSourcesRequest.Builder()
                 .setDataSourceTypes(DataSource.TYPE_RAW)
                 .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE).build())
             .addOnSuccessListener(object : OnSuccessListener<List<DataSource>> {
                 override fun onSuccess(dataSources: List<DataSource>?) {
-                    for (dataSource in dataSources!!) {
-                        Log.i(TAG, "Data source found: " + dataSource.toString());
-                        Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+                    if (dataSources!!.size > 0) {
+                        for (dataSource in dataSources) {
+                            Log.i(TAG, "Data source found: " + dataSource.toString());
+                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
 
-                        if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE) && stepSensorListener == null) {
-                            Log.i(TAG, "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.");
-                            registerFitnessDataListener(dataSource);
+                            if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE) && stepSensorListener == null) {
+                                Log.i(TAG, "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.");
+                                registerFitnessDataListener(dataSource);
+                            }
+
+
                         }
-
-
+                    } else {
+                        Toast.makeText(this@ProfileFragment.requireContext(), "Not found any datasource", Toast.LENGTH_LONG).show();
                     }
                 }
             }).addOnFailureListener(object : OnFailureListener {
@@ -242,7 +247,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun registerFitnessDataListener(dataSource: DataSource) {
-            stepSensorListener = OnDataPointListener() {
+        Toast.makeText(this@ProfileFragment.requireContext(), "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.", Toast.LENGTH_SHORT).show()
+        stepSensorListener = OnDataPointListener() {
+
                 fun onDataPoint(dataPoint: DataPoint) {
                     Toast.makeText(this@ProfileFragment.requireContext(), "Step sensor called", Toast.LENGTH_SHORT).show()
                     val value = dataPoint.getValue(Field.FIELD_STEPS).asInt()
