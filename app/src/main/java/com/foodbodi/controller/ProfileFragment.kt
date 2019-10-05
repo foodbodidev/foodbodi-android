@@ -277,6 +277,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateCachedStep(delta: Int) {
+        Toast.makeText(this@ProfileFragment.requireContext(), delta.toString(), Toast.LENGTH_SHORT).show()
         val newSteps = cachNumOfStep + delta;
         state.step = newSteps
         LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()!!, newSteps)
