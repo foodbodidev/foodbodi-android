@@ -20,6 +20,7 @@ abstract class SwipeEvent() : View.OnTouchListener {
     var t1:Long = 0
     var t2:Long = 0
     var moving:Boolean = false
+
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         if (moving) {
             onMoveView(view, event)
@@ -28,18 +29,17 @@ abstract class SwipeEvent() : View.OnTouchListener {
         }
         when (event.getAction()) {
             MotionEvent.ACTION_DOWN -> {
-                x1 = event.getX()
-                y1 = event.getY()
+                x1 = event.getRawX()
+                y1 = event.getRawY()
                 t1 = System.currentTimeMillis()
-                moving = true
+                startMoving(view)
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                x2 = event.getX()
-                y2 = event.getY()
+                x2 = event.getRawX()
+                y2 = event.getRawY()
                 t2 = System.currentTimeMillis()
-                moving = false
-
+                stopMoving(view)
                 if (x1 == x2 && y1 == y2 ) {
                     if (t2 - t1 < CLICK_DURATION) {
                         onClick(view, event)
@@ -58,7 +58,6 @@ abstract class SwipeEvent() : View.OnTouchListener {
                     swipeCancel(view, event)
                 }
 
-
                 return true
             }
         }
@@ -67,13 +66,31 @@ abstract class SwipeEvent() : View.OnTouchListener {
     }
 
     private fun onMoveView(view: View, event: MotionEvent) {
-        val offset = event.getX() - x1
-        view.setTranslationX(offset)
+        val distance = (event.getRawX() - x1)
+        view.setTranslationX(distance)
 
     }
 
     fun swipeCancel(view:View, event: MotionEvent) {
+        stopMoving(view)
+        resetValues()
+    }
+
+    private fun resetValues() {
+         x1 = 0f
+         x2 = 0f
+         y1 = 0f
+         y2 = 0f
+         t1 = 0
+         t2 = 0
+    }
+
+    private fun stopMoving(view: View) {
+        moving = false;
         view.setTranslationX(0f)
     }
 
+    private fun startMoving(view: View) {
+        moving = true;
+    }
 }
