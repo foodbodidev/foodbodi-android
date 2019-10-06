@@ -32,10 +32,12 @@ import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.*
+import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import java.util.*
 import com.google.android.gms.fitness.request.OnDataPointListener
 import com.google.android.gms.fitness.request.SensorRequest
+import com.google.android.gms.fitness.result.DataReadResponse
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
@@ -45,6 +47,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 import java.lang.StringBuilder
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
@@ -144,19 +149,55 @@ class ProfileFragment : Fragment() {
 
     private fun loadDailyLog() {
 
-        LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
-            this@ProfileFragment.context!!,
-            object : Action<DailyLog> {
-                override fun accept(data: DailyLog?) {
-                    state = data!!
-                    updateView()
-                }
+        if (isToday()) {
+            LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
+                this@ProfileFragment.context!!,
+                object : Action<DailyLog> {
+                    override fun accept(data: DailyLog?) {
+                        state = data!!
 
-                override fun deny(data: DailyLog?, reason: String) {
-                    Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
-                }
+                        this@ProfileFragment.getTodayStepCountFromFitnessData(object : Action<Int> {
+                            override fun accept(stepCount: Int?) {
+                                if (state.getStep() == null || state.getStep() < stepCount!!) {
+                                    state.step = stepCount
+                                }
+                                cachNumOfStep = data.getStep();
+                                updateView()
+                            }
 
-            })
+                            override fun deny(data: Int?, reason: String) {
+                                Toast.makeText(this@ProfileFragment.requireContext(), reason, Toast.LENGTH_LONG).show()
+                            }
+
+                        })
+                    }
+
+                    override fun deny(data: DailyLog?, reason: String) {
+                        Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
+                    }
+
+                })
+        } else {
+            FoodbodiRetrofitHolder.getService().getDailyLog(FoodbodiRetrofitHolder.getHeaders(this@ProfileFragment.requireContext()), selectedDate.year.toString(), selectedDate.month.toString(), selectedDate.day.toString())
+                .enqueue(object : Callback<FoodBodiResponse<DailyLog>> {
+                    override fun onResponse(
+                        call: Call<FoodBodiResponse<DailyLog>>,
+                        response: Response<FoodBodiResponse<DailyLog>>
+                    ) {
+                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                            state = response.body()!!.data();
+                            updateView()
+                        } else {
+                            Toast.makeText(this@ProfileFragment.requireContext(), response.body()?.errorMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<FoodBodiResponse<DailyLog>>, t: Throwable) {
+                        Toast.makeText(this@ProfileFragment.requireContext(), t.message, Toast.LENGTH_LONG).show()
+                    }
+
+                })
+        }
 
     }
 
@@ -258,29 +299,30 @@ class ProfileFragment : Fragment() {
 
             }
 
-            Fitness.getSensorsClient(
-                this.requireActivity(),
-                GoogleSignIn.getLastSignedInAccount(this.requireContext())!!
-            )
-                .add(
-                    SensorRequest.Builder()
-                        .setDataSource(dataSource)
-                        .setDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-                        .setSamplingRate(3, TimeUnit.SECONDS
-                        ).build(), stepSensorListener
-                )
-                .addOnCompleteListener(object : OnCompleteListener<Void> {
-                    override fun onComplete(task: Task<Void>) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(this@ProfileFragment.requireContext(), "Sensor is registered successfully", Toast.LENGTH_LONG).show()
-                            Log.i(TAG, "Listener registered!");
-                        } else {
-                            Toast.makeText(this@ProfileFragment.requireContext(), "Sensor fails to registere", Toast.LENGTH_LONG).show()
-                            Log.i(TAG, "Listener not registered" + task.exception);
-                        }
-                    }
 
-                })
+        Fitness.getSensorsClient(
+            this.requireActivity(),
+            GoogleSignIn.getLastSignedInAccount(this.requireContext())!!
+        )
+            .add(
+                SensorRequest.Builder()
+                    .setDataSource(dataSource)
+                    .setDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+                    .setSamplingRate(3, TimeUnit.SECONDS
+                    ).build(), stepSensorListener
+            )
+            .addOnCompleteListener(object : OnCompleteListener<Void> {
+                override fun onComplete(task: Task<Void>) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this@ProfileFragment.requireContext(), "Sensor is registered successfully", Toast.LENGTH_LONG).show()
+                        Log.i(TAG, "Listener registered!");
+                    } else {
+                        Toast.makeText(this@ProfileFragment.requireContext(), "Sensor fails to registere", Toast.LENGTH_LONG).show()
+                        Log.i(TAG, "Listener not registered" + task.exception);
+                    }
+                }
+
+            })
     }
 
     private fun updateCachedStep(delta: Int) {
@@ -292,6 +334,44 @@ class ProfileFragment : Fragment() {
             updateView()
         }
 
+    }
+
+    private fun getTodayStepCountFromFitnessData(callback: Action<Int>) {
+        val midnight:Date = Date(); midnight.hours = 0;
+        var dataSource:DataSource = DataSource.Builder().setAppPackageName("com.google.android.gms")
+            .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+            .setType(DataSource.TYPE_DERIVED)
+            .setStreamName("estimated_steps")
+            .build();
+        val dataReadRequest:DataReadRequest = DataReadRequest.Builder()
+            .aggregate(dataSource, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .bucketByTime(1, TimeUnit.DAYS)
+            .setTimeRange(midnight.time, Date().time, TimeUnit.MILLISECONDS)
+            .build();
+        Fitness.getHistoryClient(this@ProfileFragment.requireContext(), GoogleSignIn.getLastSignedInAccount(this.requireContext())!!)
+            .readData(dataReadRequest)
+            .addOnCompleteListener(object : OnCompleteListener<DataReadResponse> {
+                override fun onComplete(dataReadResponse: Task<DataReadResponse>) {
+                    val response:DataReadResponse? = dataReadResponse.getResult()
+                    if (response != null) {
+                        if (response.dataSets.size > 0) {
+                            val count = response.dataSets.get(0).dataPoints.get(0).getValue(Field.FIELD_STEPS).asInt()
+                            callback.accept(count)
+                        } else {
+                            callback.accept(0);
+                        }
+                    } else {
+                        callback.deny(null, "Fitness data on step count return null");
+
+                    }
+                }
+
+            }).addOnFailureListener(object : OnFailureListener {
+                override fun onFailure(ex: Exception) {
+                    callback.deny(null, if (ex.message != null) ex.message!! else "Fitness fail to read step count with no reason")
+                }
+
+            })
     }
 
 }
