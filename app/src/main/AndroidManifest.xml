@@ -16,33 +16,53 @@
         <activity
                 android:name=".controller.UpdateCaloriesActivity"
                 android:label="@string/title_activity_update_calories"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar"
+                android:screenOrientation="portrait"
+        >
         </activity>
-        <activity android:name=".SearchRestaurantActivity">
+        <activity android:name=".SearchRestaurantActivity"
+                  android:screenOrientation="portrait"
+        >
         </activity>
-        <activity android:name=".RestaurantDetailActivity">
+        <activity android:name=".RestaurantDetailActivity"
+                  android:screenOrientation="portrait"
+        >
         </activity>
-        <activity android:name=".SplashScreen">
+        <activity android:name=".SplashScreen"
+                  android:screenOrientation="portrait"
+        >
         </activity>
-        <activity android:name=".NotifyWaitingForApproval">
+        <activity android:name=".NotifyWaitingForApproval"
+                  android:screenOrientation="portrait"
+        >
         </activity>
-        <activity android:name=".RegisterBusinessInformation">
+        <activity android:name=".RegisterBusinessInformation"
+                  android:screenOrientation="portrait"
+        >
         </activity>
         <activity
                 android:name=".EditRestaurantActivity"
-                android:windowSoftInputMode="adjustPan">
+                android:windowSoftInputMode="adjustPan"
+                android:screenOrientation="portrait"
+        >
         </activity>
         <activity
                 android:name=".UpdateBasicInfoActivity"
-                android:windowSoftInputMode="adjustPan">
+                android:windowSoftInputMode="adjustPan"
+                android:screenOrientation="portrait"
+        >
         </activity>
         <activity
                 android:name=".AuthenticateFlowActivity"
-                android:windowSoftInputMode="adjustPan">
+                android:windowSoftInputMode="adjustPan"
+                android:screenOrientation="portrait"
+        >
         </activity>
         <activity
                 android:name=".MainActivity"
-                android:label="@string/title_activity_main">
+                android:label="@string/title_activity_main"
+                android:screenOrientation="portrait"
+        >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
