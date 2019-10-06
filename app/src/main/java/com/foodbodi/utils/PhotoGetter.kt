@@ -64,6 +64,13 @@ class PhotoGetter(context:Activity) {
         return outputFileUri
     }
 
+    fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, photo_name, null)
+        return Uri.parse(path)
+    }
+
     fun getCroppedImageOutputUri() : Uri? {
         val getImage = context.getExternalCacheDir()
         return Uri.fromFile(File(getImage!!.path, "cropped"))
@@ -155,8 +162,13 @@ class PhotoGetter(context:Activity) {
             isCamera = action != null && action == MediaStore.ACTION_IMAGE_CAPTURE
         }
 
-        var uri:Uri? =  if (isCamera) getCaptureImageOutputUri() else data!!.data
-        return uri
+        if (isCamera) {
+             val photo:Bitmap = data?.extras?.get("data") as Bitmap
+            return getImageUri(context, photo)
+        } else {
+            return data!!.data
+        }
+
     }
 
     @Throws(IOException::class)
