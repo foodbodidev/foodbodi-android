@@ -1,9 +1,6 @@
 package com.foodbodi.apis
 
-import com.foodbodi.apis.requests.FacebookSignInRequest
-import com.foodbodi.apis.requests.GoogleSignInRequest
-import com.foodbodi.apis.requests.ImportFoodRequest
-import com.foodbodi.apis.requests.LoginRequest
+import com.foodbodi.apis.requests.*
 import com.foodbodi.model.*
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -92,4 +89,8 @@ interface FoodbodiService {
     @GET("reservation/{reservation_id}")
     fun getReservationById(@HeaderMap headers: Map<String, String?>, @Path("reservation_id") reservation_id: String): Call<FoodBodiResponse<FoodCardResonse>>
 
+
+    @Headers("Content-Type: application/json")
+    @PUT("reservation/{reservation_id}")
+    fun updateReservationById(@HeaderMap headers: Map<String, String?>,@Body request: ReservationRequest,  @Path("reservation_id") reservation_id: String): Call<FoodBodiResponse<UpdateCaloriesResponse>>
 }

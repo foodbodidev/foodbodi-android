@@ -85,8 +85,10 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
     fun bind(data: Food) {
         titleTextView?.text = data.name
-        caloriesTextView?.text = data.name
-        priceTextView?.text = data.name
+        caloriesTextView?.text = data.calo.toString() + "Kcal"
+        priceTextView?.text = data.price.toString() + "$"
+        amountTextView?.text = data.amount.toString()
+
     }
 
 }

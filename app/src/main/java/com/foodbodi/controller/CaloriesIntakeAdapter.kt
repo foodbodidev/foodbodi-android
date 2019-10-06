@@ -40,6 +40,7 @@ class CaloriesIntakeAdapter(private var myDataset: List<Reservation>) :
                 val context = p0?.context
                 val updateCaloriesIntent = Intent(context, UpdateCaloriesActivity::class.java)
                 updateCaloriesIntent.putExtra("reservation_id", data.id)
+                updateCaloriesIntent.putExtra("restaurant_id", data.restaurant_id)
                 context?.startActivity(updateCaloriesIntent)
                 Log.d("RecyclerView", "CLICK!")
             }

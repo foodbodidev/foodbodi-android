@@ -8,16 +8,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.foodbodi.R
 import com.foodbodi.model.Reservation
 import com.foodbodi.Adapters.CaloriesCardAdapter
-
+import com.foodbodi.apis.requests.ReservationRequest
+import com.foodbodi.apis.FoodCardResonse
 
 import kotlinx.android.synthetic.main.activity_update_calories.*
 import kotlinx.android.synthetic.main.activity_update_calories.cart_recycler_view
 import kotlinx.android.synthetic.main.reservation_fragment.*
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.apis.FoodBodiResponse
-import com.foodbodi.apis.FoodCardResonse
+import com.foodbodi.apis.UpdateCaloriesResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
-import com.foodbodi.model.Food
+import com.foodbodi.model.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,6 +27,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.Button
+import android.widget.TextView
+import com.foodbodi.utils.DateString
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class UpdateCaloriesActivity : AppCompatActivity() {
@@ -37,13 +42,18 @@ class UpdateCaloriesActivity : AppCompatActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     var reservationButton: Button? = null
+    var totalTextView: TextView? = null
     var reservationId: String = ""
+    var restaurantId: String = ""
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_calories)
-        reservationButton = findViewById(R.id.button_reservation)
+        setupOutLet()
         reservationId = intent.getStringExtra("reservation_id")
+        restaurantId = intent.getStringExtra("restaurant_id")
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = CaloriesCardAdapter(myDataset)
@@ -64,15 +74,61 @@ class UpdateCaloriesActivity : AppCompatActivity() {
 
     }
 
+    fun setupOutLet() {
+        reservationButton = findViewById(R.id.button_reservation)
+        totalTextView = findViewById(R.id.total_calories)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
     fun setupActionUpdateCart() {
         reservationButton?.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val dataList = (viewAdapter as CaloriesCardAdapter).myDataset
 
-                print(dataList[0].amount)
+
+                val request = ReservationRequest()
+
+
+               // request.date_string = Date().toString()
+                request.date_string = "2019-10-06"
+                request.restaurantId = restaurantId
+                for (element in dataList) {
+                    var foodCart = FoodCartModel()
+                    foodCart.food_id = element.id
+                    foodCart.amount = element.amount
+                    request.foods.add(foodCart)
+                }
+
+
+                updateReservationById(request)
+
             }
 
         })
+    }
+
+    fun updateReservationById(request: ReservationRequest) {
+        FoodbodiRetrofitHolder.getService().updateReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), request, reservationId)
+            .enqueue(object : Callback<FoodBodiResponse<UpdateCaloriesResponse>> {
+                override fun onFailure(call: Call<FoodBodiResponse<UpdateCaloriesResponse>>, t: Throwable) {
+                    // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show
+                    print(t.message)
+                }
+
+                override fun onResponse(
+                    call: Call<FoodBodiResponse<UpdateCaloriesResponse>>,
+                    response: Response<FoodBodiResponse<UpdateCaloriesResponse>>
+                ) {
+                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+
+                        onBackPressed()
+
+                    }
+                }
+            })
     }
 
     fun getReservationById() {
@@ -94,13 +150,26 @@ class UpdateCaloriesActivity : AppCompatActivity() {
 
                         val listFoodHasMap = data?.foods?.values
 
+                        val amountFoodList = data?.reservation?.foods
+
                         listFoodHasMap?.forEach {
                             listFood.add(it)
                         }
 
+                        for (i in 0..listFood.size - 1) {
+
+                            for (j in 0..amountFoodList!!.size - 1) {
+
+                                if (listFood[i].id == amountFoodList[j].food_id) {
+                                    listFood[i].amount = amountFoodList[j].amount
+                                }
+                            }
+                        }
+
+                        // bind data
                         val adapter = recyclerView.adapter as CaloriesCardAdapter
                         adapter.reloadData(listFood)
-
+                        totalTextView?.text = data?.reservation?.total.toString()
 
                     }
                 }
