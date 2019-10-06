@@ -289,9 +289,9 @@ class ProfileFragment : Fragment() {
 
     private fun registerFitnessDataListener(dataSource: DataSource) {
         Toast.makeText(this@ProfileFragment.requireContext(), "Data source for TYPE_STEP_COUNT_CUMULATIVE found!  Registering.", Toast.LENGTH_SHORT).show()
-        stepSensorListener = OnDataPointListener() {
+        stepSensorListener = object : OnDataPointListener {
 
-                fun onDataPoint(dataPoint: DataPoint) {
+                override fun onDataPoint(dataPoint: DataPoint) {
                     Toast.makeText(this@ProfileFragment.requireContext(), "Step sensor called", Toast.LENGTH_SHORT).show()
                     val value = dataPoint.getValue(Field.FIELD_STEPS).asInt()
                     updateCachedStep(value)
