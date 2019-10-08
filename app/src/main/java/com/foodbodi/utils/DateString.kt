@@ -3,6 +3,7 @@ package com.foodbodi.utils
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
+import java.text.SimpleDateFormat
 
 class DateString(var year: Int, var month: Int, var day: Int) {
     fun getString(): String {
@@ -23,5 +24,13 @@ class DateString(var year: Int, var month: Int, var day: Int) {
                 return DateString(parts.get(0).toInt(), parts.get(1).toInt(), parts.get(2).toInt())
             }
         }
+    }
+}
+
+object DateUtils {
+    @JvmStatic
+    fun toSimpleString(date: Date) : String {
+        val format = SimpleDateFormat("yyyy-mm-dd")
+        return format.format(date)
     }
 }

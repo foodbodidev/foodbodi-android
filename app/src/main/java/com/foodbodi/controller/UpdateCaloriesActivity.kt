@@ -31,9 +31,18 @@ import android.widget.TextView
 import com.foodbodi.utils.DateString
 import java.util.*
 import kotlin.collections.ArrayList
+import com.foodbodi.utils.DateUtils
+import android.app.AlertDialog
+import android.R.layout
+import android.app.Dialog
+import android.view.animation.RotateAnimation
+import android.widget.ProgressBar
+import com.foodbodi.Base.BaseActivity
+import android.app.ProgressDialog
+import android.os.Message
 
 
-class UpdateCaloriesActivity : AppCompatActivity() {
+class UpdateCaloriesActivity : BaseActivity() {
 
     private  var myDataset: ArrayList<Food> = ArrayList()
 
@@ -45,7 +54,6 @@ class UpdateCaloriesActivity : AppCompatActivity() {
     var totalTextView: TextView? = null
     var reservationId: String = ""
     var restaurantId: String = ""
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,9 +99,7 @@ class UpdateCaloriesActivity : AppCompatActivity() {
 
                 val request = ReservationRequest()
 
-
-               // request.date_string = Date().toString()
-                request.date_string = "2019-10-06"
+                request.date_string = DateUtils.toSimpleString(Date())
                 request.restaurantId = restaurantId
                 for (element in dataList) {
                     var foodCart = FoodCartModel()
@@ -101,20 +107,20 @@ class UpdateCaloriesActivity : AppCompatActivity() {
                     foodCart.amount = element.amount
                     request.foods.add(foodCart)
                 }
-
-
                 updateReservationById(request)
-
             }
 
         })
     }
 
     fun updateReservationById(request: ReservationRequest) {
+        showLoading(this)
         FoodbodiRetrofitHolder.getService().updateReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), request, reservationId)
             .enqueue(object : Callback<FoodBodiResponse<UpdateCaloriesResponse>> {
+
                 override fun onFailure(call: Call<FoodBodiResponse<UpdateCaloriesResponse>>, t: Throwable) {
                     // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show
+                    hideLoading()
                     print(t.message)
                 }
 
@@ -122,6 +128,8 @@ class UpdateCaloriesActivity : AppCompatActivity() {
                     call: Call<FoodBodiResponse<UpdateCaloriesResponse>>,
                     response: Response<FoodBodiResponse<UpdateCaloriesResponse>>
                 ) {
+                    hideLoading()
+
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
 
                         onBackPressed()
@@ -132,16 +140,22 @@ class UpdateCaloriesActivity : AppCompatActivity() {
     }
 
     fun getReservationById() {
+
+        showLoading(this)
+
         FoodbodiRetrofitHolder.getService().getReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), reservationId)
             .enqueue(object : Callback<FoodBodiResponse<FoodCardResonse>> {
+
                 override fun onFailure(call: Call<FoodBodiResponse<FoodCardResonse>>, t: Throwable) {
                     // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show()
+                    hideLoading()
                 }
 
                 override fun onResponse(
                     call: Call<FoodBodiResponse<FoodCardResonse>>,
                     response: Response<FoodBodiResponse<FoodCardResonse>>
                 ) {
+                    hideLoading()
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
 
                         val data = response.body()?.data
@@ -175,6 +189,7 @@ class UpdateCaloriesActivity : AppCompatActivity() {
                 }
 
             })
+
     }
 
 }
