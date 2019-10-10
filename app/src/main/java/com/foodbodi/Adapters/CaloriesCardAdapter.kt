@@ -10,8 +10,17 @@ import com.foodbodi.model.Food
 import android.view.View
 
 
-class CaloriesCardAdapter(public var myDataset: List<Food>) :
-    RecyclerView.Adapter<CaloriesIntakeViewHolder>() {
+open interface CaloriesCartDelegate {
+    fun didCaculateTotalCalories(totalCalories: Int)
+}
+
+
+class CaloriesCardAdapter(public var myDataset: List<Food>, public var delegate: CaloriesCartDelegate) :
+    RecyclerView.Adapter<CaloriesIntakeViewHolder>(), CaloriesCartDelegate by delegate {
+
+
+//    open var delegate: CaloriesCartDelegate? = null
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CaloriesIntakeViewHolder {
@@ -23,12 +32,16 @@ class CaloriesCardAdapter(public var myDataset: List<Food>) :
         val data: Food = myDataset[position]
         holder.bind(data)
 
+
+
+
         holder.addButton?.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
 
                 data.amount += 1
                 holder.amountTextView?.text = data.amount.toString()
-                print(position)
+
+                delegate.didCaculateTotalCalories(caculateTotalCalories().toInt())
             }
 
         })
@@ -38,7 +51,8 @@ class CaloriesCardAdapter(public var myDataset: List<Food>) :
 
                 data.amount -= 1
                 holder.amountTextView?.text = data.amount.toString()
-                print(position)
+
+                delegate.didCaculateTotalCalories(caculateTotalCalories().toInt())
             }
 
         })
@@ -46,6 +60,15 @@ class CaloriesCardAdapter(public var myDataset: List<Food>) :
 
 
 
+    }
+
+
+    fun caculateTotalCalories(): Double {
+        var totalCalories: Double = 0.0
+        for (it in myDataset) {
+            totalCalories = totalCalories + it.amount.toDouble()*it.calo!!
+        }
+        return totalCalories
     }
 
 

@@ -31,6 +31,7 @@ import android.widget.TextView
 import com.foodbodi.utils.DateString
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 import com.foodbodi.utils.DateUtils
 import android.app.AlertDialog
 import android.R.layout
@@ -40,9 +41,10 @@ import android.widget.ProgressBar
 import com.foodbodi.Base.BaseActivity
 import android.app.ProgressDialog
 import android.os.Message
+import com.foodbodi.Adapters.CaloriesCartDelegate
 
 
-class UpdateCaloriesActivity : BaseActivity() {
+class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
 
     private  var myDataset: ArrayList<Food> = ArrayList()
 
@@ -64,7 +66,7 @@ class UpdateCaloriesActivity : BaseActivity() {
         restaurantId = intent.getStringExtra("restaurant_id")
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = CaloriesCardAdapter(myDataset)
+        viewAdapter = CaloriesCardAdapter(myDataset, this)
 
         recyclerView = findViewById<RecyclerView>(R.id.cart_recycler_view).apply {
             // use this setting to improve performance if you know that changes
@@ -183,6 +185,7 @@ class UpdateCaloriesActivity : BaseActivity() {
                         // bind data
                         val adapter = recyclerView.adapter as CaloriesCardAdapter
                         adapter.reloadData(listFood)
+
                         totalTextView?.text = data?.reservation?.total.toString()
 
                     }
@@ -192,4 +195,12 @@ class UpdateCaloriesActivity : BaseActivity() {
 
     }
 
+    // confront interface to listen action calculate calories
+
+    override fun didCaculateTotalCalories(totalCalories: Int) {
+        totalTextView?.text = totalCalories.toString()
+    }
+
 }
+
+
