@@ -108,33 +108,12 @@ class LocalDailyLogDbManager {
                     call: Call<FoodBodiResponse<DailyLog>>,
                     response: Response<FoodBodiResponse<DailyLog>>
                 ) {
-                    if (isToday(year, month, date)) {
-                        getTodayTotalStep(context, object : Action<Int> {
-                            override fun accept(step: Int?) {
-                                val lastCachedCount = getTodayStepCount(CurrentUserProvider.get().getUser()!!.email!!)
-                                if (lastCachedCount > step!!) {
-                                    cachNumOfStep = lastCachedCount
-                                } else cachNumOfStep = step
-                                val result = DailyLog()
-                                result.calo_threshold = response.body()!!.data().calo_threshold;
-                                result.step = cachNumOfStep
-                                result.total_eat = response.body()!!.data.total_eat
-                                callback.accept(result)
 
-                            }
-
-                            override fun deny(data: Int?, reason: String) {
-                                callback.deny(null, reason)
-                            }
-
-                        })
-                    } else {
-                        val result = DailyLog()
-                        result.calo_threshold = response.body()!!.data().calo_threshold;
-                        result.step = response.body()!!.data.step
-                        result.total_eat = response.body()!!.data.total_eat
-                        callback.accept(result)
-                    }
+                    val result = DailyLog()
+                    result.calo_threshold = response.body()!!.data().calo_threshold;
+                    result.step = response.body()!!.data.step
+                    result.total_eat = response.body()!!.data.total_eat
+                    callback.accept(result)
 
                 }
 
@@ -146,24 +125,6 @@ class LocalDailyLogDbManager {
             return year == myCalendar.get(Calendar.YEAR)
                     && month == myCalendar.get(Calendar.MONTH)
                     && date == myCalendar.get(Calendar.DATE)
-        }
-
-        private fun getTodayTotalStep(context: Context, callback: Action<Int>) {
-            val fitnessOptions: FitnessOptions = FitnessOptions.builder()
-                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                .build()
-            val googleSignInAccount = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
-            Fitness.getHistoryClient(context, googleSignInAccount)
-                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
-                .addOnSuccessListener { dataSet ->
-                    if (dataSet.dataPoints.size > 0) {
-                        callback.accept(dataSet.dataPoints.get(0).getValue(Field.FIELD_STEPS).asInt())
-                    } else {
-                        callback.accept(0)
-                    }
-                }
-                .addOnCanceledListener { callback.deny(null, "Can not extract total step from GoogleFit") }
         }
 
 
