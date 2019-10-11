@@ -2,6 +2,7 @@ package com.foodbodi.workers
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.foodbodi.apis.FoodBodiResponse
@@ -9,7 +10,9 @@ import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.DailyLog
 import com.foodbodi.model.LocalDailyLogDbManager
+import com.foodbodi.utils.Action
 import com.foodbodi.utils.DateString
+import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import org.mapdb.DB
 import org.mapdb.HTreeMap
 import retrofit2.Response
@@ -19,9 +22,11 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
     val TAG = SyncDailyLogWorker::class.java.simpleName
+    var fitnessAPI = FitnessAPIFactory.googleFit();
 
     override fun doWork(): Result {
         Log.i(TAG,"Begin sync up daily log...")
+        Toast.makeText(this.applicationContext, "Begin sync up daily log..", Toast.LENGTH_SHORT).show()
         val db:DB? = LocalDailyLogDbManager.get(this.applicationContext)
         if (db != null) {
             val hashMap: HTreeMap<String, DailyLog> =
@@ -35,26 +40,43 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
                     val todayId = DailyLog.getLocalID(DateString.fromCalendar(calendar), user.email!!)
                     if (todayId.equals(key)) {
                         Log.i(TAG, "Ignore today record " + key)
+                        Toast.makeText(this.applicationContext, "Ignore today record", Toast.LENGTH_SHORT).show()
                     } else {
                         Log.i(TAG, "Update remote record " + key)
+                        Toast.makeText(this.applicationContext, "Upload record $key", Toast.LENGTH_SHORT).show()
                         val dateString = DateString.fromString(key);
                         if (dateString != null) {
-                             val response:Response<FoodBodiResponse<DailyLog>> = FoodbodiRetrofitHolder.getService()
-                                .updateDailyLog(
-                                    FoodbodiRetrofitHolder.getHeaders(applicationContext),
-                                    hashMap.get(key)!!, dateString.year.toString(), dateString.month.toString(), dateString.day.toString()
-                                ).execute()
-                            if (response.isSuccessful) {
-                                val code:Number = response.body()!!.statusCode()
-                                if (FoodBodiResponse.SUCCESS_CODE == code) {
-                                    hashMap.remove(key)
-                                } else {
-                                    Log.i(TAG, response.body()?.errorMessage())
-                                }
+                            val log = hashMap.get(key);
 
-                            } else {
-                                Log.i(TAG, response.toString())
+                            if (0 == log?.getStep()) {
+                                fitnessAPI.getStepCountOnDate(dateString.year, dateString.month, dateString.day, object : Action<Int> {
+                                    override fun accept(data: Int?) {
+                                        log.step = data
+                                        val response:Response<FoodBodiResponse<DailyLog>> = FoodbodiRetrofitHolder.getService()
+                                            .updateDailyLog(
+                                                FoodbodiRetrofitHolder.getHeaders(applicationContext),
+                                                hashMap.get(key)!!, dateString.year.toString(), dateString.month.toString(), dateString.day.toString()
+                                            ).execute()
+                                        if (response.isSuccessful) {
+                                            val code:Number = response.body()!!.statusCode()
+                                            if (FoodBodiResponse.SUCCESS_CODE == code) {
+                                                hashMap.remove(key)
+                                            } else {
+                                                Log.i(TAG, response.body()?.errorMessage())
+                                            }
+
+                                        } else {
+                                            Log.i(TAG, response.toString())
+                                        }
+                                    }
+
+                                    override fun deny(data: Int?, reason: String) {
+                                        Toast.makeText(this@SyncDailyLogWorker.applicationContext, reason, Toast.LENGTH_LONG).show()
+                                    }
+
+                                })
                             }
+
                         }
                     }
                 }
