@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.R
 import com.foodbodi.model.Food
 import android.view.View
+import com.bumptech.glide.Glide
 
 
 open interface CaloriesCartDelegate {
@@ -86,6 +88,7 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var titleTextView: TextView? = null
     private var caloriesTextView: TextView? = null
     private var priceTextView: TextView? = null
+    private var imageView: ImageView? = null
 
     var amountTextView: TextView? = null
     var addButton: Button? = null
@@ -101,6 +104,7 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         addButton = itemView.findViewById(R.id.add_cart)
         subButton = itemView.findViewById(R.id.sub_cart)
         amountTextView = itemView.findViewById(R.id.amount_cart)
+        imageView = itemView.findViewById(R.id.item_img)
     }
 
 
@@ -111,6 +115,12 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         caloriesTextView?.text = data.calo.toString() + "Kcal"
         priceTextView?.text = data.price.toString() + "$"
         amountTextView?.text = data.amount.toString()
+
+        Glide.with(itemView.context)
+            .load(data.photo) // Image URL
+            .placeholder(R.drawable.place_hoder) // Place holder image
+            .error(R.drawable.place_hoder) // On error image
+            .into(imageView!!); // ImageView to display image
 
     }
 

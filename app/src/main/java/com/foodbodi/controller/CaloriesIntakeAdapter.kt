@@ -80,7 +80,7 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     fun bind(data: Reservation) {
         titleTextView?.text = data.restaurant_name
         dateTextView?.text = data.date_string
-        caloriesButton?.text = data.total.toString() + "kcal"
+        caloriesButton?.text = data.total.toString() + " kcal"
 
         var color = Color.parseColor("#808000")
 
