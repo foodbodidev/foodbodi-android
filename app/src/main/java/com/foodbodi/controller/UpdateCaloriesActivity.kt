@@ -186,7 +186,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                         val adapter = recyclerView.adapter as CaloriesCardAdapter
                         adapter.reloadData(listFood)
 
-                        totalTextView?.text = data?.reservation?.total.toString()
+                        totalTextView?.text = data?.reservation?.total.toString() + " Kcal"
 
                     }
                 }
@@ -198,7 +198,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
     // confront interface to listen action calculate calories
 
     override fun didCaculateTotalCalories(totalCalories: Int) {
-        totalTextView?.text = totalCalories.toString()
+        totalTextView?.text = totalCalories.toString() + " Kcal"
     }
 
 }

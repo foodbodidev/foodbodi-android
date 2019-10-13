@@ -40,6 +40,7 @@
                         android:layout_marginBottom="10dp"
                         android:layout_marginTop="10dp"
                         android:text="Total calories"
+                        android:textColor="@color/title_text_color"
                         android:textSize="17sp"/>
 
                 <View android:id="@+id/tile_divider"

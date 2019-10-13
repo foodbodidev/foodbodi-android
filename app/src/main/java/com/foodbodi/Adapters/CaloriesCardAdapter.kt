@@ -52,8 +52,12 @@ class CaloriesCardAdapter(public var myDataset: List<Food>, public var delegate:
             override fun onClick(v: View?) {
 
                 data.amount -= 1
-                holder.amountTextView?.text = data.amount.toString()
 
+                if (data.amount < 0) { // validate data >= 0
+                    data.amount = 0
+                }
+
+                holder.amountTextView?.text = data.amount.toString()
                 delegate.didCaculateTotalCalories(caculateTotalCalories().toInt())
             }
 
