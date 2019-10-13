@@ -325,7 +325,7 @@ class GoogleMapFragment : Fragment() {
         });
 
         val viewManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView = this@GoogleMapFragment.view!!.findViewById<RecyclerView>(R.id.recycler_restaurant_list)?.apply {
+        recyclerView = this@GoogleMapFragment.view?.findViewById<RecyclerView>(R.id.recycler_restaurant_list)?.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
