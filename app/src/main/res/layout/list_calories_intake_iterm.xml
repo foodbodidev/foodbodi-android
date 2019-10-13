@@ -17,8 +17,9 @@
               android:layout_marginLeft="20dp"
               android:layout_marginRight="20dp"
               android:layout_marginTop="5dp"
-              android:id="@+id/nameText" android:layout_height="30dp" android:textColor="#193E52"
-              android:textSize="16sp"/>
+              android:id="@+id/nameText" android:layout_height="30dp"
+              android:textColor="@color/title_text_color"
+              android:textSize="20sp"/>
       <TextView
               android:text="TextView"
               android:layout_width="match_parent"
@@ -32,7 +33,7 @@
               android:layout_marginRight="20dp"
               android:layout_marginBottom="20dp"
               android:id="@+id/caloriesButton" android:layout_height="50dp" android:background="#FF9800"
-              android:textColor="#FFFFFF"/>
+              android:textColor="#FFFFFF" android:clickable="false"/>
 
    </LinearLayout>
 
