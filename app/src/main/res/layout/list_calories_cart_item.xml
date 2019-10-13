@@ -7,13 +7,12 @@
               android:layout_marginLeft="20dp"
               android:layout_marginRight="20dp"
               android:layout_marginTop="20dp"
-              android:layout_marginBottom="20dp"
               android:background="@drawable/round_intake_calories">>
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="32dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -67,7 +66,7 @@
                 android:id="@+id/item_img"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:background="@color/quantum_lightgreen"
+                android:background="@drawable/round_intake_calories"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>

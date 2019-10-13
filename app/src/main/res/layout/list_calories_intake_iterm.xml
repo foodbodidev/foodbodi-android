@@ -9,7 +9,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
                  android:orientation="vertical"
                  android:background="@drawable/round_intake_calories">
       <TextView
@@ -17,7 +16,7 @@
               android:layout_width="match_parent"
               android:layout_marginLeft="20dp"
               android:layout_marginRight="20dp"
-              android:layout_marginTop="20dp"
+              android:layout_marginTop="5dp"
               android:id="@+id/nameText" android:layout_height="30dp" android:textColor="#193E52"
               android:textSize="16sp"/>
       <TextView
