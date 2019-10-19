@@ -15,6 +15,7 @@ interface FitnessAPI {
 
     fun useRequestCode(code:Int) :FitnessAPI
 
+    //ask permission then
     fun ensurePermission()
 
     //must call this function in onActivityResult
@@ -24,9 +25,13 @@ interface FitnessAPI {
 
     fun getStepCountDelta() : FitnessAPI
 
+    //call in Activity.onPause / Fragment.onStop
     fun onStop()
 
+    //start register sensor listeners
     fun getTodayStepCount(callback:Action<Int>)
 
     fun getStepCountOnDate(year:Int, month:Int, day:Int, callback: Action<Int>)
+
+    fun getStepCountOnDateSync(year: Int, month: Int, day: Int) : Int
 }

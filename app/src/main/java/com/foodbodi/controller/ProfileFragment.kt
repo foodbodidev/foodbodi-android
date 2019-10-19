@@ -211,7 +211,7 @@ class ProfileFragment : Fragment() {
             view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
 
             val maximum = state.getThreshold()
-            val kcaloToConsume = state.getTotalEat() - state.getBurnedCalo()
+            val kcaloToConsume = if (state.getTotalEat() > state.getBurnedCalo()) state.getTotalEat() - state.getBurnedCalo() else 0.0
             val remainKcalo = maximum - kcaloToConsume
 
             val pieChart: PieChart = view!!.findViewById(R.id.pie_chart_kcalo)
