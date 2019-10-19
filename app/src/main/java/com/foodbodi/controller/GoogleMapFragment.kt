@@ -351,6 +351,25 @@ class GoogleMapFragment : Fragment() {
 
             }
 
+            if (RestaurantType.RESTAURANT == r.type) {
+                when (r.getCaloSegment()) {
+                    CaloSegment.LOW -> {
+
+                    }
+                    CaloSegment.MEDIUM -> {}
+                    CaloSegment.HIGH -> {}
+                }
+
+            } else if (RestaurantType.FOOD_TRUCK == r.type) {
+                when (r.getCaloSegment()) {
+                    CaloSegment.LOW -> {
+
+                    }
+                    CaloSegment.MEDIUM -> {}
+                    CaloSegment.HIGH -> {}
+                }
+            }
+
         }
 
     }
