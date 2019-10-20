@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.foodbodi.R
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
@@ -25,34 +23,13 @@ import com.foodbodi.utils.DateString
 import com.foodbodi.utils.fitnessAPI.FitnessAPI
 import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.google.android.gms.fitness.FitnessOptions
-import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.data.*
-import com.google.android.gms.fitness.request.DataReadRequest
-import com.google.android.gms.fitness.request.DataSourcesRequest
 import java.util.*
-import com.google.android.gms.fitness.request.OnDataPointListener
-import com.google.android.gms.fitness.request.SensorRequest
-import com.google.android.gms.fitness.result.DataReadResponse
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.gms.tasks.Task
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Exception
-import java.lang.StringBuilder
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 
@@ -67,11 +44,6 @@ class ProfileFragment : Fragment() {
 
     var cachNumOfStep = 0;
     var state: DailyLog = DailyLog()
-
-    val fitnessOptions: FitnessOptions = FitnessOptions.builder()
-        .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-        .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-        .build()
 
 
     val onDateSetListener: DatePickerDialog.OnDateSetListener = object : DatePickerDialog.OnDateSetListener {
@@ -107,7 +79,7 @@ class ProfileFragment : Fragment() {
         })
 
         fitnessAPI.setActivity(this.requireActivity())
-            .fitnessOption(fitnessOptions)
+            .readStepCount()
             .useRequestCode(GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
             .onPermissionGranted(object : Action<Any> {
                 override fun accept(data: Any?) {
@@ -158,7 +130,7 @@ class ProfileFragment : Fragment() {
                                 updateView()
 
                                 if (!isRegisterSensor) {
-                                    fitnessAPI.getStepCountDelta()
+                                    fitnessAPI.startListenOnStepCountDelta()
                                     isRegisterSensor = true
                                 }
                             }

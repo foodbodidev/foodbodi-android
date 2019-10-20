@@ -29,9 +29,10 @@ import java.util.concurrent.TimeUnit
 
 class GoogleFitnessAPI() : FitnessAPI {
 
+
     val TAG = GoogleFitnessAPI::class.java.simpleName
     private var activity:Activity? = null;
-    private var fitnessOptions:FitnessOptions? = null;
+    private var fitnessOptionBuilder =  FitnessOptions.builder();
     private var onPermissionGranted:Action<Any>? = null;
     private var requestCode:Int? = null;
     private var onStepCountDelta:Action<Int>? = null;
@@ -47,12 +48,14 @@ class GoogleFitnessAPI() : FitnessAPI {
 
     }
 
+    override fun readStepCount() : GoogleFitnessAPI {
+        fitnessOptionBuilder.addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+        return this
+    }
+
     override fun setActivity(activity: Activity):GoogleFitnessAPI {
         this.activity = activity;
-        return this;
-    }
-    override fun fitnessOption(option:FitnessOptions) : GoogleFitnessAPI {
-        this.fitnessOptions = option;
         return this;
     }
 
@@ -68,12 +71,12 @@ class GoogleFitnessAPI() : FitnessAPI {
 
 
     override fun ensurePermission() {
-        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), this.fitnessOptions!!)) {
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this.activity), this.fitnessOptionBuilder.build()!!)) {
             GoogleSignIn.requestPermissions(
                 this.activity!!, // your activity
                 requestCode!!,
                 GoogleSignIn.getLastSignedInAccount(this.activity),
-                this.fitnessOptions!!
+                this.fitnessOptionBuilder.build()!!
                 );
         } else {
             onPermissionGranted!!.accept(null)
@@ -95,7 +98,7 @@ class GoogleFitnessAPI() : FitnessAPI {
         return this;
     }
 
-    override fun getStepCountDelta() : GoogleFitnessAPI {
+    override fun startListenOnStepCountDelta() : GoogleFitnessAPI {
         Fitness.getSensorsClient(this.activity!!, GoogleSignIn.getLastSignedInAccount(this.activity!!)!!)
             .findDataSources(
                 DataSourcesRequest.Builder()

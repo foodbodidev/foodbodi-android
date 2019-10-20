@@ -6,5 +6,9 @@ class FitnessAPIFactory {
            return GoogleFitnessAPI()
         }
 
+        fun samsung() : FitnessAPI {
+            return SamsungFitnessAPI()
+        }
+
     }
 }
