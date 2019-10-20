@@ -1,38 +1,46 @@
 {
   "project_info": {
-    "project_number": "513844011252",
-    "firebase_url": "https://foodbodi.firebaseio.com",
-    "project_id": "foodbodi",
-    "storage_bucket": "foodbodi.appspot.com"
+    "project_number": "367920415756",
+    "firebase_url": "https://foodbodi-prod.firebaseio.com",
+    "project_id": "foodbodi-prod",
+    "storage_bucket": "foodbodi-prod.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:513844011252:android:f9b36645bb945b25",
+        "mobilesdk_app_id": "1:367920415756:android:3321ff3405341b66c39a29",
         "android_client_info": {
           "package_name": "com.foodbodi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "513844011252-s14v7j52hq6quj6e89sl3sfcb1lgrbjl.apps.googleusercontent.com",
+          "client_id": "367920415756-pelugd377o02aq3v4pk1e796leu5smpu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.foodbodi",
+            "certificate_hash": "f4539d8d78d9ad65561cc2489f54714af9fab86e"
+          }
+        },
+        {
+          "client_id": "367920415756-j1dvq158nana47a3lp6592d3p3hbrsqa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC9oAUU7lhbGRLy1Vg1l19VBOJE7nKFrFM"
+          "current_key": "AIzaSyBKX-tIzMJUWNdli4zru34WHrN97pzRIa4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "513844011252-s14v7j52hq6quj6e89sl3sfcb1lgrbjl.apps.googleusercontent.com",
+              "client_id": "367920415756-j1dvq158nana47a3lp6592d3p3hbrsqa.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "513844011252-k6keale0or7hu3m84nuhb2hpfp5ieeo7.apps.googleusercontent.com",
+              "client_id": "367920415756-be1vln9fajttpon358fbc5rgtu94h99h.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "KPT.FoodBodi.dev"
