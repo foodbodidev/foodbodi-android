@@ -51,9 +51,9 @@
     <string name="logout">Logout</string>
 
     <string name="google_oauth_server_client_id">
-        513844011252-0220ffhr75mivnrv0jub2ue1kkkgckfr.apps.googleusercontent.com
+        367920415756-pelugd377o02aq3v4pk1e796leu5smpu.apps.googleusercontent.com
     </string>
-    <string name="google_map_key">AIzaSyDKbAhGAfKDxorYtTW4SWGn05t-K8fKu94</string>
+    <string name="google_map_key">AIzaSyDblkDUFb2PtNU_hg4YSp4ceBprpM8HG0A</string>
     <string name="facebook_app_id">727165344366619</string>
     <string name="fb_login_protocol_scheme">fb727165344366619</string>
 
