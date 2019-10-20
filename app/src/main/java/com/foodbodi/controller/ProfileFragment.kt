@@ -54,7 +54,7 @@ class ProfileFragment : Fragment() {
 
     };
 
-    val fitnessAPI:FitnessAPI = FitnessAPIFactory.googleFit()
+    val fitnessAPI:FitnessAPI = FitnessAPIFactory.getByProvider()
     var isRegisterSensor = false;
 
     override fun onStop() {
