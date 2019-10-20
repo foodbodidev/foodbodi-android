@@ -9,7 +9,7 @@ import retrofit2.http.*
 interface FoodbodiService {
 
     @GET("profile")
-    fun getProfile(@HeaderMap headers:Map<String, String?>):Call<FoodBodiResponse<User>>
+    fun getProfile(@HeaderMap headers:Map<String, String?>, @Query("include_restaurant") includeRestaurant:Boolean):Call<FoodBodiResponse<User>>
 
     @GET("restaurant/list")
     fun listRestaurant():Call<FoodBodiResponse<RestaurantsResponse>>;

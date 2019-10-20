@@ -28,7 +28,7 @@ class CurrentUserProvider private constructor(){
         registerCallback(callback)
         if (apiKey != null) {
             status = Status.RUNNING
-            FoodbodiRetrofitHolder.getService().getProfile(mapOf(Pair<String, String>("token", apiKey!!)))
+            FoodbodiRetrofitHolder.getService().getProfile(mapOf(Pair<String, String>("token", apiKey!!)), true)
                 .enqueue(object : Callback<FoodBodiResponse<User>> {
                     override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
                         System.out.println(t)
