@@ -20,6 +20,7 @@ import com.foodbodi.model.DailyLog
 import com.foodbodi.utils.Action
 import com.foodbodi.model.LocalDailyLogDbManager
 import com.foodbodi.utils.DateString
+import com.foodbodi.utils.ProgressHUD
 import com.foodbodi.utils.fitnessAPI.FitnessAPI
 import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import com.github.mikephil.charting.charts.PieChart
@@ -112,6 +113,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadDailyLog() {
+        ProgressHUD.instance.showLoading(getActivity())
 
         if (isToday()) {
             LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
@@ -163,6 +165,7 @@ class ProfileFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<FoodBodiResponse<DailyLog>>, t: Throwable) {
+                        ProgressHUD.instance.hideLoading()
                         Toast.makeText(this@ProfileFragment.requireContext(), t.message, Toast.LENGTH_LONG).show()
                     }
 
@@ -178,6 +181,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateView() {
+        ProgressHUD.instance.hideLoading()
         if (view != null) {
             view!!.findViewById<TextView>(R.id.text_num_of_step).text = state.getStep().toString() + " steps"
             view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
@@ -200,6 +204,7 @@ class ProfileFragment : Fragment() {
             pieChart.setHoleRadius(60f);
 
             pieChart.setDrawCenterText(true);
+            pieChart.setCenterTextSize(15f)
 
             pieChart.setRotationAngle(0f);
             // enable rotation of the chart by touch
@@ -215,10 +220,11 @@ class ProfileFragment : Fragment() {
                     ContextCompat.getColor(this.requireContext(), R.color.colorPrimary)
                 )
             )
+
             pieData.dataSet = dataSet
 
             pieChart.data = pieData
-            pieChart.centerText = "$remainKcalo kcal left"
+            pieChart.centerText = "$remainKcalo \n KCAL LEFT"
             pieChart.animateXY(0, 0)
         }
     }
