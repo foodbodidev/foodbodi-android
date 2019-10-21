@@ -179,7 +179,7 @@ class ProfileFragment : Fragment() {
 
     private fun updateView() {
         if (view != null) {
-            view!!.findViewById<TextView>(R.id.text_num_of_step).text = state.getStep().toString()
+            view!!.findViewById<TextView>(R.id.text_num_of_step).text = state.getStep().toString() + " steps"
             view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
 
             val maximum = state.getThreshold()
@@ -211,7 +211,7 @@ class ProfileFragment : Fragment() {
             val pieData: PieData = PieData()
             val dataSet = PieDataSet(kcalos, "Calories (kcalo)")
             dataSet.setColors(Arrays.asList(
-                    Color.GRAY,
+                ContextCompat.getColor(this.requireContext(), R.color.edit_text_color),
                     ContextCompat.getColor(this.requireContext(), R.color.colorPrimary)
                 )
             )
