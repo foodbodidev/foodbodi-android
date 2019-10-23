@@ -2,10 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
-    <TextView
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:text="@string/tab_chat_fragment" />
+            android:layout_height="80dp"
+            android:id="@+id/idChat"
+    >
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:id="@+id/etChat"
+                  android:inputType="text"
+        />
+
+    </LinearLayout>
+
+
 </FrameLayout>
