@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitHolder private constructor() {
     private var retrofit:Retrofit = retrofit2.Retrofit.Builder()
-    .baseUrl("https://foodbodi.appspot.com/api/")
+    .baseUrl("https://foodbodi-prod.appspot.com/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

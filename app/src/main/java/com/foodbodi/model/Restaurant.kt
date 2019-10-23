@@ -48,8 +48,36 @@ class Restaurant : Serializable {
     @SerializedName("license")
     var license:License? = null
 
+    @SerializedName("calo_values")
+    var calo_values:ArrayList<Double> = ArrayList<Double>()
+
+
+    fun getCaloSegment() : CaloSegment {
+        var sum = 0.0;
+        var avg = 0.0;
+        if (calo_values.size > 0) {
+            for (value in calo_values) {
+                sum += value
+            }
+            avg = sum / calo_values.size
+            if (avg >= 600) {
+                return CaloSegment.HIGH
+            } else if (avg >= 400) {
+                return CaloSegment.MEDIUM
+            } else {
+                return CaloSegment.LOW
+            }
+        } else {
+            return CaloSegment.LOW
+        }
+
+    }
 }
 
 enum class RestaurantType {
     RESTAURANT, FOOD_TRUCK
+}
+
+enum class CaloSegment {
+    LOW, MEDIUM, HIGH
 }

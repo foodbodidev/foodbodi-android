@@ -33,6 +33,9 @@ class User {
     @SerializedName("daily_calo")
     var daily_calo:Int = 3000
 
+    @SerializedName("restaurants")
+    var restaurants:ArrayList<Restaurant> = ArrayList()
+
     fun isProfileReady():Boolean {
         val hasName = firstName != null && lastName != null && sex != null
         val hasProfile = height > 0 && weight  > 0 && targetWeight > 0

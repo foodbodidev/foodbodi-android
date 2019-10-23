@@ -9,12 +9,11 @@ interface FitnessAPI {
 
     fun setActivity(activity: Activity): FitnessAPI
 
-    fun fitnessOption(option: FitnessOptions) : FitnessAPI
-
     fun onPermissionGranted(cb : Action<Any>) : FitnessAPI
 
     fun useRequestCode(code:Int) :FitnessAPI
 
+    //ask permission then
     fun ensurePermission()
 
     //must call this function in onActivityResult
@@ -22,11 +21,17 @@ interface FitnessAPI {
 
     fun onStepCountDelta(cb:Action<Int>) : FitnessAPI
 
-    fun getStepCountDelta() : FitnessAPI
+    fun startListenOnStepCountDelta() : FitnessAPI
 
+    //call in Activity.onPause / Fragment.onStop
     fun onStop()
 
+    //start register sensor listeners
     fun getTodayStepCount(callback:Action<Int>)
 
     fun getStepCountOnDate(year:Int, month:Int, day:Int, callback: Action<Int>)
+
+    fun getStepCountOnDateSync(year: Int, month: Int, day: Int) : Int
+
+    fun readStepCount() : FitnessAPI
 }
