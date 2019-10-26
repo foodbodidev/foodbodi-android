@@ -263,6 +263,11 @@ class GoogleFitnessAPI() : FitnessAPI {
 
     }
 
+    override fun onStepCountTotal(cb: Action<Int>): FitnessAPI {
+        return this;
+    }
+
+
 
 
 
