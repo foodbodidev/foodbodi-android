@@ -20,7 +20,7 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
     val TAG = SyncDailyLogWorker::class.java.simpleName
-    var fitnessAPI = FitnessAPIFactory.googleFit();
+    var fitnessAPI = FitnessAPIFactory.getByProvider();
 
     override fun doWork(): Result {
         Log.i(TAG,"Begin sync up daily log...")
