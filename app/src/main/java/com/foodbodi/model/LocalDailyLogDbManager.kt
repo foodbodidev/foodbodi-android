@@ -114,25 +114,25 @@ class LocalDailyLogDbManager {
             })
         }
 
-        public fun isToday(year: Int, month: Int, date: Int):Boolean {
+        fun isToday(year: Int, month: Int, date: Int):Boolean {
             val myCalendar:Calendar = Calendar.getInstance()
             return year == myCalendar.get(Calendar.YEAR)
                     && month == myCalendar.get(Calendar.MONTH)
                     && date == myCalendar.get(Calendar.DATE)
         }
 
-        public fun setNextSyncDate(year: Int, month: Int, date: Int, username: String) {
+        fun setNextSyncDate(year: Int, month: Int, date: Int, username: String) {
             var map:HTreeMap<String, DateString> = getDefaultDb()!!.getHashMap<String, DateString>(SYNC_TABLE)
             map.put(username, DateString(year, month, date))
 
             getDefaultDb()!!.commit()
         }
 
-        public fun setNextSyncDate(dateString: DateString, username: String) {
+        fun setNextSyncDate(dateString: DateString, username: String) {
             Companion.setNextSyncDate(dateString.year, dateString.month, dateString.day, username)
         }
 
-        public fun getNextSyncDate(username: String) : DateString? {
+         fun getNextSyncDate(username: String) : DateString? {
             return getDefaultDb()!!.getHashMap<String, DateString>(SYNC_TABLE).get(username)
         }
 
