@@ -8,11 +8,19 @@ import com.foodbodi.utils.Action
 import com.foodbodi.utils.Logger
 import com.google.android.gms.fitness.FitnessOptions
 import android.content.DialogInterface
+import android.net.Uri
+import android.os.AsyncTask
+import android.util.Log
 import com.foodbodi.MainActivity
 import com.samsung.android.sdk.healthdata.*
 import com.samsung.android.sdk.healthdata.HealthPermissionManager.PermissionKey
 import java.util.*
 import kotlin.collections.HashSet
+import com.samsung.android.sdk.shealth.Shealth
+import androidx.core.content.ContextCompat.startActivity
+import com.samsung.android.sdk.shealth.tracker.TrackerManager
+import com.samsung.android.sdk.shealth.tracker.TrackerInfo
+
 
 class SamsungFitnessAPI : FitnessAPI {
     private var activity:Activity? = null;
@@ -22,6 +30,12 @@ class SamsungFitnessAPI : FitnessAPI {
     private val TAG = SamsungFitnessAPI::class.java.simpleName
     private var onPermissionGranted:Action<Any>? = null;
     private var onStepCountDelta:Action<Int>? = null;
+    private var onStepCountTotal:Action<Int>? = null;
+    private val STORE_URL = "market://details?id=com.sec.android.app.shealth"
+    private val TRACKER_ID = "foodbodi.com"
+    var getStepCountTask:GetStepCountTask? = null;
+
+
 
     private var mConnectionListener:HealthDataStore.ConnectionListener = object : HealthDataStore.ConnectionListener {
         override fun onConnected() {
@@ -109,12 +123,21 @@ class SamsungFitnessAPI : FitnessAPI {
         return this
     }
 
-    override fun startListenOnStepCountDelta(): FitnessAPI {
+    override fun onStepCountTotal(cb: Action<Int>): FitnessAPI {
+        this.onStepCountTotal = cb
+        return this
+    }
 
+    override fun startListenOnStepCountDelta(): FitnessAPI {
+        this.getStepCountTask = GetStepCountTask(this.healthDataStore!!, this.onStepCountTotal!!)
+        this.getStepCountTask!!.execute()
         return this
     }
 
     override fun onStop() {
+        if (this.getStepCountTask != null) {
+            this.getStepCountTask!!.cancel(true)
+        }
         if (healthDataStore != null) {
             healthDataStore!!.disconnectService()
         }
@@ -196,7 +219,29 @@ class SamsungFitnessAPI : FitnessAPI {
     }
 
     override fun getStepCountOnDateSync(year: Int, month: Int, day: Int): Int {
-        return 0;
+        val r: RunnableCallback<Int> = object : RunnableCallback<Int>() {
+            override fun run() {
+                getStepCountOnDate(year, month, day, object : Action<Int> {
+                    override fun accept(data: Int?) {
+                        if (data != null) value = data;
+                        else {
+                            Logger.error(TAG, "Read Samsung step count fail : data is null", this@SamsungFitnessAPI.activity!!)
+                        }
+                    }
+
+                    override fun deny(data: Int?, reason: String) {
+                        Logger.error(TAG, "Read Samsung step count fail : $reason", this@SamsungFitnessAPI.activity!!)
+                    }
+
+                })
+            }
+
+        }
+        val thread:Thread = Thread(r)
+
+        thread.start();
+        thread.join();
+        return if (r.value == null) 0 else r.value!!
 
     }
 
@@ -229,6 +274,63 @@ class SamsungFitnessAPI : FitnessAPI {
         }
 
         alert.show()
+    }
+
+    abstract class RunnableCallback<T> : Runnable {
+        var value: T? = null;
+
+    }
+
+    class GetStepCountTask(val heathDataStore: HealthDataStore, val callback: Action<Int>) : AsyncTask<Void, Int, Int>() {
+        override fun onProgressUpdate(vararg values: Int?) {
+            var value = values.get(0)
+            if (value != null) {
+                this.callback.accept(value)
+            } else {
+                this.callback.deny(null, "Step count is null")
+            }
+        }
+
+        override fun doInBackground(vararg p0: Void?): Int {
+
+            val today = Date(); today.hours = 0; today.minutes = 0; today.seconds = 0;
+            // Create a filter for today's steps from all source devices
+            val filter:HealthDataResolver.Filter = HealthDataResolver.Filter.and(
+                HealthDataResolver.Filter.eq("day_time",today.time),
+                HealthDataResolver.Filter.eq("source_type", -2));
+
+            val request:HealthDataResolver.ReadRequest = HealthDataResolver.ReadRequest.Builder()
+                .setDataType("com.samsung.shealth.step_daily_trend")
+                .setFilter(filter)
+                .build();
+
+            val mResolver = HealthDataResolver(this.heathDataStore, null);
+            var totalCount = 0;
+            while(!isCancelled) {
+                try {
+                    val result:HealthDataResolver.ReadResult = mResolver.read(request).await()
+                    try {
+                        val iterator:Iterator<HealthData> = result.iterator();
+                        if (iterator.hasNext()) {
+                            val data:HealthData = iterator.next();
+                            totalCount = data.getInt("count");
+                        }
+                        publishProgress(totalCount)
+                    } catch (e:java.lang.Exception) {
+                        Log.d("GetStepCountTask", "Process Samsung read result fail: ${e.message}")
+                        publishProgress(null)
+                    } finally {
+                        result.close();
+                    }
+
+                } catch ( e:Exception) {
+                    Log.d("GetStepCountTask", "Read Samsung step count fail")
+                }
+            }
+
+            return 0;
+        }
+
     }
 
 }

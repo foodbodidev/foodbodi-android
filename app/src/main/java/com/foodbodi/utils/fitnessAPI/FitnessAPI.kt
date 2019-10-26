@@ -21,6 +21,8 @@ interface FitnessAPI {
 
     fun onStepCountDelta(cb:Action<Int>) : FitnessAPI
 
+    fun onStepCountTotal(cb:Action<Int>) : FitnessAPI
+
     fun startListenOnStepCountDelta() : FitnessAPI
 
     //call in Activity.onPause / Fragment.onStop

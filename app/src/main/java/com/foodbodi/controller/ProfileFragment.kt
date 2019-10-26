@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.foodbodi.R
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.graphics.Color
 import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
@@ -92,7 +91,17 @@ class ProfileFragment : Fragment() {
                 }
 
             })
-            .onStepCountDelta(object : Action<Int> {
+            .onStepCountDelta(object : Action<Int> {//GoogleFit fire this
+                override fun accept(data: Int?) {
+                    updateCachedStepByDelta(data!!)
+                }
+
+                override fun deny(data: Int?, reason: String) {
+                    Toast.makeText(this@ProfileFragment.requireContext(), reason, Toast.LENGTH_LONG).show()
+
+                }
+
+            }).onStepCountTotal(object : Action<Int> {//Samsung Health fire this
                 override fun accept(data: Int?) {
                     updateCachedStep(data!!)
                 }
@@ -229,9 +238,14 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun updateCachedStepByDelta(delta: Int) {
+        Toast.makeText(this@ProfileFragment.requireContext(), delta.toString(), Toast.LENGTH_SHORT).show()
+        updateCachedStep(cachNumOfStep + delta)
+    }
+
     private fun updateCachedStep(delta: Int) {
         Toast.makeText(this@ProfileFragment.requireContext(), delta.toString(), Toast.LENGTH_SHORT).show()
-        cachNumOfStep += delta;
+        cachNumOfStep = delta;
         state.step = cachNumOfStep
         LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()!!, cachNumOfStep)
         if (isToday()) {
