@@ -50,7 +50,7 @@ class RegisterBusinessInformation : AppCompatActivity() {
         setContentView(R.layout.activity_register_business_information)
         SU_mode = intent.getBooleanExtra(SU_MODE_PARAM, false)
 
-        Places.initialize(this, "AIzaSyDKbAhGAfKDxorYtTW4SWGn05t-K8fKu94") //TODO : secure the api key
+        Places.initialize(this, this.getString(R.string.google_map_key)) //TODO : secure the api key
         val placesClient: PlacesClient = Places.createClient(this)
         findViewById<EditText>(R.id.input_restaurant_address).setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {

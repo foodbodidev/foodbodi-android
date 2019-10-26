@@ -2,16 +2,10 @@ package com.foodbodi.model
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.utils.Action
 import com.foodbodi.utils.DateString
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.FitnessOptions
-import com.google.android.gms.fitness.data.DataType
-import com.google.android.gms.fitness.data.Field
 import org.mapdb.DB
 import org.mapdb.DBMaker
 import org.mapdb.HTreeMap
@@ -19,7 +13,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-import java.time.Year
 import java.util.*
 
 class LocalDailyLogDbManager {
@@ -28,6 +21,7 @@ class LocalDailyLogDbManager {
         val TAG = LocalDailyLogDbManager::class.java.simpleName
         val DB_NAME:String = "foodimap-db"
         val DAILYLOG_TABLE:String = "dailylog"
+        val SYNC_TABLE:String = "dailylog_sync"
 
         var cachNumOfStep = 0;
 
@@ -125,6 +119,21 @@ class LocalDailyLogDbManager {
             return year == myCalendar.get(Calendar.YEAR)
                     && month == myCalendar.get(Calendar.MONTH)
                     && date == myCalendar.get(Calendar.DATE)
+        }
+
+        public fun setNextSyncDate(year: Int, month: Int, date: Int, username: String) {
+            var map:HTreeMap<String, DateString> = getDefaultDb()!!.getHashMap<String, DateString>(SYNC_TABLE)
+            map.put(username, DateString(year, month, date))
+
+            getDefaultDb()!!.commit()
+        }
+
+        public fun setNextSyncDate(dateString: DateString, username: String) {
+            Companion.setNextSyncDate(dateString.year, dateString.month, dateString.day, username)
+        }
+
+        public fun getNextSyncDate(username: String) : DateString? {
+            return getDefaultDb()!!.getHashMap<String, DateString>(SYNC_TABLE).get(username)
         }
 
 
