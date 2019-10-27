@@ -7,6 +7,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ListView
+import com.foodbodi.Adapters.NamesOfFoodsAdapter
+import com.foodbodi.model.Food
+import com.foodbodi.model.Restaurant
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,7 +36,14 @@ class NameOfFoodsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    var restaurant_id = "NwpoauRh3RDKtMNp2EaY";
     private var listener: OnFragmentInteractionListener? = null
+    var foods:ArrayList<Food> = ArrayList();
+    //Outlet.
+    private lateinit var lvForyou:ListView;
+    private lateinit var lvMenu: ListView;
+
+    val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,14 +51,37 @@ class NameOfFoodsFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_name_of_foods, container, false)
+        // Inflate the layout for this fragment.
+        var view:View = inflater.inflate(R.layout.fragment_name_of_foods, container, false);
+        lvForyou = view.findViewById(R.id.lvForYou);
+        lvMenu = view.findViewById(R.id.lvMenu);
+        this.getNameOfFoodsFromFirbase();
+        return view;
+    }
+    private fun  getNameOfFoodsFromFirbase(){
+        firestore.collection("foods").whereEqualTo("restaurant_id",restaurant_id).
+            get().addOnSuccessListener { querySnapshot ->
+
+            for (document in querySnapshot.documents) {
+                val r = document.toObject(Food::class.java);
+                foods.add(r!!)
+            }
+            if (foods.size > 0){
+                val adapter = NamesOfFoodsAdapter(this.requireContext(),foods);
+                lvMenu.adapter = adapter;
+                adapter.notifyDataSetChanged();
+            }
+        }
+            .addOnFailureListener(OnFailureListener {
+
+            })
     }
 
     // TODO: Rename method, update argument and hook method into UI event
