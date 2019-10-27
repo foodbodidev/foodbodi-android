@@ -114,6 +114,13 @@ class ProfileFragment : Fragment() {
             })
         fitnessAPI.ensurePermission()
 
+        val manufacturer = android.os.Build.MANUFACTURER
+        if (manufacturer.equals("samsung")) {
+            view.findViewById<TextView>(R.id.step_count_help_text).setText(R.string.step_count_help_text_samsung_health)
+        } else {
+            view.findViewById<TextView>(R.id.step_count_help_text).setText(R.string.step_count_help_text_google_fit)
+        }
+
         return view;
     }
 
