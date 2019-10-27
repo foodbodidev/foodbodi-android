@@ -83,5 +83,5 @@
     <string name="step_count_help_text_samsung_health">Your step count is fetched from your Samsung Health account</string>
     <string name="calories_configuration">Calories Configuration</string>
     <string name="calo_threshold_helptext">Maximum amount of calories (kcal) you want to intake per day: </string>
-
+    <string name="for_you">For You</string>
 </resources>
