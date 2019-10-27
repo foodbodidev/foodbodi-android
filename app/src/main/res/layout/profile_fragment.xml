@@ -74,6 +74,16 @@
 
         </LinearLayout>
 
+        <TextView
+                android:layout_marginTop="5dp"
+                android:textColor="@color/White"
+                android:textSize="@dimen/text_small"
+                android:textAlignment="center"
+                android:text="@string/step_count_help_text"
+                android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+
+
 
     </LinearLayout>
 
