@@ -4,12 +4,10 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-//apply plugin: 'kotlinx-serialization'
-
 android {
     signingConfigs {
         debug {
-            storeFile file('../keystores/keystore')
+            storeFile file('/Users/toantran/Desktop/ToanTV/Hong/github/android/foodbodi-android/keystores/keystore')
             storePassword 'foodbodi2019'
             keyAlias = 'build'
             keyPassword 'foodbodi2019'
