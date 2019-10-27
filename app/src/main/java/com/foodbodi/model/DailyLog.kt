@@ -7,6 +7,9 @@ import java.lang.StringBuilder
 import java.util.*
 
 class DailyLog : Serializable {
+    init {
+
+    }
 
     @SerializedName("id")
     var id:String? = null

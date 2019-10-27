@@ -19,7 +19,7 @@ class LocalDailyLogDbManager {
 
     companion object {
         val TAG = LocalDailyLogDbManager::class.java.simpleName
-        val DB_NAME:String = "foodimap-db"
+        val DB_NAME:String = "foodbodi-db"
         val DAILYLOG_TABLE:String = "dailylog"
         val SYNC_TABLE:String = "dailylog_sync"
 
@@ -122,8 +122,8 @@ class LocalDailyLogDbManager {
         }
 
         fun setNextSyncDate(year: Int, month: Int, date: Int, username: String) {
-            var map:HTreeMap<String, DateString> = getDefaultDb()!!.getHashMap<String, DateString>(SYNC_TABLE)
-            map.put(username, DateString(year, month, date))
+            var map:HTreeMap<String, String> = getDefaultDb()!!.getHashMap<String, String>(SYNC_TABLE)
+            map.put(username, DateString(year, month, date).getString())
 
             getDefaultDb()!!.commit()
         }
@@ -133,7 +133,12 @@ class LocalDailyLogDbManager {
         }
 
          fun getNextSyncDate(username: String) : DateString? {
-            return getDefaultDb()!!.getHashMap<String, DateString>(SYNC_TABLE).get(username)
+             try {
+                 return DateString.fromString(getDefaultDb()!!.getHashMap<String, String>(SYNC_TABLE).get(username) as String)
+             } catch (e:Exception) {
+                 Log.i(TAG, e.message)
+                 return null;
+             }
         }
 
 

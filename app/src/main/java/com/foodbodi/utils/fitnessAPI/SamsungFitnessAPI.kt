@@ -326,6 +326,8 @@ class SamsungFitnessAPI : FitnessAPI {
                 } catch ( e:Exception) {
                     Log.d("GetStepCountTask", "Read Samsung step count fail")
                 }
+
+                Thread.sleep(30000L)
             }
 
             return 0;

@@ -63,8 +63,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-     val LOCAL_DB_USER = "foodbodi-db-user"
-     val LOCAL_DB_NAME = "foodbodi-local-db"
     private lateinit var googleMapFragment: GoogleMapFragment;
     lateinit var navView: BottomNavigationView
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->

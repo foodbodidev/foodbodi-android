@@ -3,12 +3,14 @@ package com.foodbodi.utils.fitnessAPI
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.util.Log
 import android.widget.Toast
 import com.foodbodi.controller.ProfileFragment
 import com.foodbodi.utils.Action
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
@@ -17,6 +19,7 @@ import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.OnDataPointListener
 import com.google.android.gms.fitness.request.SensorRequest
+import com.google.android.gms.fitness.result.DailyTotalResult
 import com.google.android.gms.fitness.result.DataReadResponse
 import com.google.android.gms.fitness.result.DataReadResult
 import com.google.android.gms.tasks.OnCompleteListener
@@ -36,6 +39,9 @@ class GoogleFitnessAPI() : FitnessAPI {
     private var onPermissionGranted:Action<Any>? = null;
     private var requestCode:Int? = null;
     private var onStepCountDelta:Action<Int>? = null;
+    private var onStepCountTotal:Action<Int>? = null;
+    var getStepCountTask:GetStepCountTask? = null;
+
 
     val stepSensorListener:OnDataPointListener = object : OnDataPointListener {
 
@@ -98,6 +104,7 @@ class GoogleFitnessAPI() : FitnessAPI {
         return this;
     }
 
+    /* Sensor return so wrong data
     override fun startListenOnStepCountDelta() : GoogleFitnessAPI {
         Fitness.getSensorsClient(this.activity!!, GoogleSignIn.getLastSignedInAccount(this.activity!!)!!)
             .findDataSources(
@@ -152,9 +159,20 @@ class GoogleFitnessAPI() : FitnessAPI {
 
             })
         return this;
+    }*/
+
+    override fun startListenOnStepCountDelta() : GoogleFitnessAPI {
+        this.getStepCountTask = GetStepCountTask(this.activity!!, this.onStepCountTotal!!)
+        this.getStepCountTask!!.execute()
+        return this
     }
 
     override fun onStop() {
+        if (getStepCountTask != null) {
+            this.getStepCountTask!!.cancel(true)
+        }
+
+        /* Not use sensor anymore
         Fitness.getSensorsClient(
             this.activity!!,
             GoogleSignIn.getLastSignedInAccount(this.activity)!!
@@ -165,7 +183,7 @@ class GoogleFitnessAPI() : FitnessAPI {
                     Log.i(TAG, "Remove stepSensorListener success")
                 }
 
-            })
+            })*/
     }
 
     override fun getTodayStepCount(callback:Action<Int>) {
@@ -264,8 +282,51 @@ class GoogleFitnessAPI() : FitnessAPI {
     }
 
     override fun onStepCountTotal(cb: Action<Int>): FitnessAPI {
+        this.onStepCountTotal = cb
         return this;
     }
+
+    class GetStepCountTask(val activity: Activity, val callback: Action<Int>) : AsyncTask<Void, Int, Int>() {
+        override fun onProgressUpdate(vararg values: Int?) {
+            var value = values.get(0)
+            if (value != null) {
+                this.callback.accept(value)
+            } else {
+                this.callback.deny(null, "Step count is null")
+            }
+        }
+
+        override fun doInBackground(vararg p0: Void?): Int {
+            val midnight: Date = Date(); midnight.hours = 0; midnight.minutes = 0; midnight.seconds = 0
+            val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(this.activity)
+                .addApi(Fitness.HISTORY_API)
+                .build()
+            googleApiClient.connect()
+
+            val dataReadRequest:DataReadRequest = DataReadRequest.Builder()
+                .read(DataType.TYPE_STEP_COUNT_DELTA)
+                .setTimeRange(midnight.time, Date().time, TimeUnit.MILLISECONDS)
+                .build()
+
+            while (!isCancelled) {
+                val result:PendingResult<DailyTotalResult>  = Fitness.HistoryApi.readDailyTotal(googleApiClient, DataType.TYPE_STEP_COUNT_DELTA);
+                val totalResult = result.await(10, TimeUnit.SECONDS)
+                if (totalResult.getStatus().isSuccess()) {
+                    val totalSet:DataSet? = totalResult.getTotal();
+                    val total = if (totalSet == null || totalSet?.isEmpty())  0 else totalSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+                    Log.i("GetStepCountTask", "Total steps: " + total);
+                    publishProgress(total)
+                } else {
+                    publishProgress(null)
+                    Log.w("GetStepCountTask", "There was a problem getting the step count.");
+                }
+                Thread.sleep(30000L)
+            }
+            return 0;
+        }
+
+    }
+
 
 
 
