@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.foodbodi.R
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Intent
+import android.view.MotionEvent
+import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
@@ -18,6 +21,7 @@ import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.DailyLog
 import com.foodbodi.utils.Action
 import com.foodbodi.model.LocalDailyLogDbManager
+import com.foodbodi.model.User
 import com.foodbodi.utils.DateString
 import com.foodbodi.utils.ProgressHUD
 import com.foodbodi.utils.fitnessAPI.FitnessAPI
@@ -26,6 +30,8 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.listener.ChartTouchListener
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import java.util.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +40,7 @@ import kotlin.collections.ArrayList
 
 
 class ProfileFragment : Fragment() {
+
     val TAG = ProfileFragment::class.java.simpleName
     val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE: Int = 10
 
@@ -53,6 +60,39 @@ class ProfileFragment : Fragment() {
         }
 
     };
+
+    private val pieChartClickListener: OnChartGestureListener? = object : OnChartGestureListener {
+        override fun onChartGestureEnd(
+            me: MotionEvent?,
+            lastPerformedGesture: ChartTouchListener.ChartGesture?
+        ) {
+        }
+
+        override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {
+        }
+
+        override fun onChartGestureStart(
+            me: MotionEvent?,
+            lastPerformedGesture: ChartTouchListener.ChartGesture?
+        ) {
+        }
+
+        override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {
+        }
+
+        override fun onChartLongPressed(me: MotionEvent?) {
+        }
+
+        override fun onChartDoubleTapped(me: MotionEvent?) {
+        }
+
+        override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
+        }
+
+        override fun onChartSingleTapped(me: MotionEvent?) {
+            this@ProfileFragment.showUserCaloConfiguration()
+        }
+    }
 
     val fitnessAPI:FitnessAPI = FitnessAPIFactory.getByProvider()
     var isRegisterSensor = false;
@@ -203,7 +243,8 @@ class ProfileFragment : Fragment() {
             view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
 
             val maximum = state.getThreshold()
-            val kcaloToConsume = if (state.getTotalEat() > state.getBurnedCalo()) state.getTotalEat() - state.getBurnedCalo() else 0.0
+            val kcaloToConsume =
+                if (state.getTotalEat() > state.getBurnedCalo()) state.getTotalEat() - state.getBurnedCalo() else 0.0
             val remainKcalo = maximum - kcaloToConsume
 
             val pieChart: PieChart = view!!.findViewById(R.id.pie_chart_kcalo)
@@ -231,8 +272,9 @@ class ProfileFragment : Fragment() {
             kcalos.add(PieEntry(kcaloToConsume.toFloat(), "Calories intake"))
             val pieData: PieData = PieData()
             val dataSet = PieDataSet(kcalos, "Calories (kcalo)")
-            dataSet.setColors(Arrays.asList(
-                ContextCompat.getColor(this.requireContext(), R.color.edit_text_color),
+            dataSet.setColors(
+                Arrays.asList(
+                    ContextCompat.getColor(this.requireContext(), R.color.edit_text_color),
                     ContextCompat.getColor(this.requireContext(), R.color.colorPrimary)
                 )
             )
@@ -242,6 +284,8 @@ class ProfileFragment : Fragment() {
             pieChart.data = pieData
             pieChart.centerText = "$remainKcalo \n KCAL LEFT"
             pieChart.animateXY(0, 0)
+
+            pieChart.onChartGestureListener = pieChartClickListener
         }
     }
 
@@ -259,6 +303,51 @@ class ProfileFragment : Fragment() {
             updateView()
         }
 
+    }
+
+    private fun showUserCaloConfiguration() {
+        var myDialog = Dialog(this.requireContext())
+        myDialog.setContentView(R.layout.calo_configuration)
+        val caloThresholdInput = myDialog.findViewById<TextView>(R.id.input_calo_threshold)
+        val submitBtn = myDialog.findViewById<Button>(R.id.btn_submit_calo_config)
+        caloThresholdInput.setText(CurrentUserProvider.get().getUser()?.daily_calo.toString())
+        submitBtn.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val currentUser = CurrentUserProvider.get().getUser();
+                if (currentUser != null) {
+                    currentUser.daily_calo = caloThresholdInput.text.toString().toInt()
+                    val updateData = User()
+                    updateData.daily_calo = currentUser.daily_calo
+
+                    FoodbodiRetrofitHolder.getService().updateProfile(
+                        FoodbodiRetrofitHolder.getHeaders(this@ProfileFragment.requireContext()),
+                        updateData
+                    ).enqueue(object : Callback<FoodBodiResponse<User>> {
+                        override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
+                            Toast.makeText(this@ProfileFragment.requireContext(), t.message, Toast.LENGTH_LONG ).show()
+                        }
+
+                        override fun onResponse(
+                            call: Call<FoodBodiResponse<User>>,
+                            response: Response<FoodBodiResponse<User>>
+                        ) {
+                            if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                                myDialog.hide()
+                                state.calo_threshold = currentUser.daily_calo
+                                updateView()
+                            } else {
+                                Toast.makeText(this@ProfileFragment.requireContext(), response.body()?.errorMessage, Toast.LENGTH_LONG ).show()
+                            }
+                        }
+
+                    })
+                } else {
+
+                }
+            }
+
+        })
+        myDialog.show()
     }
 
 }

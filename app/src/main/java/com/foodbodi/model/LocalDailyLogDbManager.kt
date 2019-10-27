@@ -68,10 +68,9 @@ class LocalDailyLogDbManager {
             if (newValue != null) {
                 doc.step = newValue
             }
-            if (doc.calo_threshold == null) {
-                doc.calo_threshold = user.daily_calo
-                Log.i(TAG, "Update calo threshold $id to ${doc.calo_threshold}")
-            }
+            doc.calo_threshold = user.daily_calo
+            Log.i(TAG, "Update calo threshold $id to ${doc.calo_threshold}")
+
             val hashMap:HTreeMap<String, DailyLog> = getDefaultDb()!!.getHashMap(DAILYLOG_TABLE)
             hashMap.put(id, doc)
             instance?.commit()

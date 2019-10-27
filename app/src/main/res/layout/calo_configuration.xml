@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_gravity="center"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/text_small"
+            android:layout_marginRight="@dimen/text_small"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <TextView
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/text_large"
+                android:textSize="@dimen/text_medium"
+                android:text="@string/calories_configuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+        </TextView>
+
+        <TextView
+                android:text="@string/calo_threshold_helptext"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/text_small"
+                android:layout_height="wrap_content"/>
+
+        <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/input_calo_threshold"
+                  android:inputType="number"
+                  android:layout_marginBottom="@dimen/text_medium"
+                  android:background="@drawable/fb_textview"
+        />
+
+        <Button
+                android:id="@+id/btn_submit_calo_config"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_small"
+
+
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:background="@drawable/fb_button"
+                android:textColor="@color/White"
+                android:text="@string/submit"
+        />
+    </LinearLayout>
+
+
+</LinearLayout>

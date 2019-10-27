@@ -79,6 +79,9 @@
     <string name="tab_chat_fragment">Chat</string>
     <string name="tab_Name_Of_Foods_fragment">Name of foods</string>
     <string name="title_activity_update_calories">UpdateCaloriesActivity</string>
-    <string name="step_count_help_text">Your step count is fetched from your Google Fit account</string>
+    <string name="step_count_help_text_google_fit">Your step count is fetched from your Google Fit account</string>
+    <string name="step_count_help_text_samsung_health">Your step count is fetched from your Samsung Health account</string>
+    <string name="calories_configuration">Calories Configuration</string>
+    <string name="calo_threshold_helptext">Maximum amount of calories (kcal) you want to intake per day: </string>
 
 </resources>
