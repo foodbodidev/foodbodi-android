@@ -1,6 +1,7 @@
 package com.foodbodi.utils.fitnessAPI
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.foodbodi.utils.Action
 import com.google.android.gms.fitness.FitnessOptions
@@ -8,6 +9,8 @@ import com.google.android.gms.fitness.FitnessOptions
 interface FitnessAPI {
 
     fun setActivity(activity: Activity): FitnessAPI
+
+    fun setContext(context: Context): FitnessAPI
 
     fun onPermissionGranted(cb : Action<Any>) : FitnessAPI
 

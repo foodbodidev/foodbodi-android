@@ -2,6 +2,7 @@ package com.foodbodi.utils.fitnessAPI
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.foodbodi.utils.Action
@@ -23,7 +24,10 @@ import com.samsung.android.sdk.shealth.tracker.TrackerInfo
 
 
 class SamsungFitnessAPI : FitnessAPI {
+
+
     private var activity:Activity? = null;
+    private var context:Context? = null;
     private var healthDataStore:HealthDataStore? = null;
     private var connectionError:HealthConnectionErrorResult? = null
     private var permissionKeys:HashSet<HealthPermissionManager.PermissionKey> = HashSet<HealthPermissionManager.PermissionKey>()
@@ -96,7 +100,13 @@ class SamsungFitnessAPI : FitnessAPI {
 
     override fun setActivity(activity: Activity): FitnessAPI {
         this.activity = activity;
+        this.setContext(activity.applicationContext)
         return this
+    }
+
+    override fun setContext(context: Context): FitnessAPI {
+        this.context = context;
+        return this;
     }
 
     override fun onPermissionGranted(cb: Action<Any>): FitnessAPI {

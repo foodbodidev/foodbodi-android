@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 
 class DateString(var year: Int, var month: Int, var day: Int) : Serializable {
     fun getString(): String {
-        return StringBuilder().append(year.toString()).append("-").append((month + 1).toString()).append("-")
+        return StringBuilder().append(year.toString()).append("-").append((month).toString()).append("-")
             .append(day.toString()).toString()
     }
 
@@ -32,9 +32,10 @@ class DateString(var year: Int, var month: Int, var day: Int) : Serializable {
         }
 
         fun getNextDate(date:DateString) : DateString {
-            val ts = date.getTimeStamp() + DAY_OFFSET
-            val nextDate = Date(ts)
-            return DateString(nextDate.year, nextDate.month + 1, nextDate.day)
+            var calendar = Calendar.getInstance();
+            calendar.set(date.year, date.month - 1, date.day);
+            calendar.add(Calendar.DATE, 1)
+            return DateString.fromCalendar(calendar)
         }
     }
 }

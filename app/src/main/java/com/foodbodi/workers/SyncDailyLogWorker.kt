@@ -9,6 +9,7 @@ import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.DailyLog
 import com.foodbodi.model.LocalDailyLogDbManager
+import com.foodbodi.utils.Action
 import com.foodbodi.utils.DateString
 import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import org.mapdb.DB
@@ -21,6 +22,10 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
 
     val TAG = SyncDailyLogWorker::class.java.simpleName
     var fitnessAPI = FitnessAPIFactory.getByProvider();
+
+    init {
+        fitnessAPI.setContext(appContext);
+    }
 
     override fun doWork(): Result {
         Log.i(TAG,"Begin sync up daily log...")
@@ -47,7 +52,7 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
                     return Result.success();
                 } else {
                     var dateToSync = firstDateToSync;
-                    while (dateToSync!!.getTimeStamp() < today.getTimeStamp()) {
+                    while (dateToSync!!.getTimeStamp() <= today.getTimeStamp()) {
                         Log.i(TAG, "Update remote record " + dateToSync.getString())
                         var log = hashMap.get(dateToSync.getString());
                         if (log == null) {
@@ -63,18 +68,18 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
                             FoodbodiRetrofitHolder.getService()
                                 .updateDailyLog(
                                     FoodbodiRetrofitHolder.getHeaders(applicationContext),
-                                    hashMap.get(dateToSync.getString())!!,
+                                    log,
                                     dateToSync.year.toString(),
                                     dateToSync.month.toString(),
                                     dateToSync.day.toString()
                                 ).execute()
                         if (response.isSuccessful) {
                             val code: Number = response.body()!!.statusCode()
-                            if (FoodBodiResponse.SUCCESS_CODE == code) {
+                            if (FoodBodiResponse.SUCCESS_CODE == code.toInt()) {
                                 hashMap.remove(dateToSync.getString())
                                 Log.i(TAG, "Update dailylog of ${dateToSync.getString()} success")
                             } else {
-                                Log.i(TAG, response.body()?.errorMessage())
+                                Log.i(TAG, response.body()?.errorMessage)
                             }
 
                         } else {
