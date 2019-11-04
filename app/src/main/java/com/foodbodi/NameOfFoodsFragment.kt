@@ -9,9 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ListView
+import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.Adapters.NamesOfFoodsAdapter
 import com.foodbodi.model.Food
 import com.foodbodi.model.Restaurant
+import com.foodbodi.utils.ProgressHUD
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,8 +42,8 @@ class NameOfFoodsFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
     var foods:ArrayList<Food> = ArrayList();
     //Outlet.
-    private lateinit var lvForyou:ListView;
-    private lateinit var lvMenu: ListView;
+    private lateinit var rvForyou:RecyclerView;
+
 
     val firestore = FirebaseFirestore.getInstance()
 
@@ -60,27 +62,45 @@ class NameOfFoodsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment.
         var view:View = inflater.inflate(R.layout.fragment_name_of_foods, container, false);
-        lvForyou = view.findViewById(R.id.lvForYou);
-        lvMenu = view.findViewById(R.id.lvMenu);
+        rvForyou = view.findViewById(R.id.rvForYou);
         this.getNameOfFoodsFromFirbase();
         return view;
     }
     private fun  getNameOfFoodsFromFirbase(){
+        ProgressHUD.instance.showLoading(getActivity())
         firestore.collection("foods").whereEqualTo("restaurant_id",restaurant_id).
             get().addOnSuccessListener { querySnapshot ->
+            ProgressHUD.instance.hideLoading()
+            var limit:Double = 300.0;
+            var foryou:Food = Food();
+            foryou.name = "For you";
+            foods.add(0,foryou);
 
+            for (document in querySnapshot.documents) {
+                val r = document.toObject(Food::class.java);
+                if (r != null) {
+                    if (r.calo?.compareTo(limit) == 1) {
+                        foods.add(r!!)
+                    }
+                }
+            }
+
+            var menu:Food = Food();
+            menu.name = "Menu";
+            foods.add(menu);
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
                 foods.add(r!!)
             }
+
             if (foods.size > 0){
-                val adapter = NamesOfFoodsAdapter(this.requireContext(),foods);
-                lvMenu.adapter = adapter;
+                val adapter = NamesOfFoodsAdapter(foods);
+                rvForyou.adapter = adapter;
                 adapter.notifyDataSetChanged();
             }
         }
             .addOnFailureListener(OnFailureListener {
-
+                ProgressHUD.instance.hideLoading()
             })
     }
 

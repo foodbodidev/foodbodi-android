@@ -63,9 +63,6 @@ class CaloriesCardAdapter(public var myDataset: List<Food>, public var delegate:
 
         })
 
-
-
-
     }
 
 
