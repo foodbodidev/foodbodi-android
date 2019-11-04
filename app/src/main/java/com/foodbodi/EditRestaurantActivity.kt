@@ -332,7 +332,6 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         foodPhotoGetter = PhotoGetter(this)
         foodListView = object : DynamicLinearLayoutController(findViewById<LinearLayout>(R.id.list_added_food), R.id.food_item_container, R.id.food_item_content) {
             override fun onItemLeftSwipe(pos: Int, view: View) {
-                askToDeleteFood(pos, view)
             }
 
             override fun onItemRightSwipe(pos: Int, view: View) {

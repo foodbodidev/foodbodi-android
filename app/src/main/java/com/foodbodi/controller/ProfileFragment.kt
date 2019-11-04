@@ -103,6 +103,7 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onResume() {
+        updateView()
         super.onResume()
     }
 
@@ -118,6 +119,18 @@ class ProfileFragment : Fragment() {
             }
         })
 
+        val manufacturer = android.os.Build.MANUFACTURER
+        if (manufacturer.equals("samsung")) {
+            view.findViewById<TextView>(R.id.step_count_help_text).setText(R.string.step_count_help_text_samsung_health)
+        } else {
+            view.findViewById<TextView>(R.id.step_count_help_text).setText(R.string.step_count_help_text_google_fit)
+        }
+
+        return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         fitnessAPI.setActivity(this.requireActivity())
             .readStepCount()
             .useRequestCode(GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
@@ -132,9 +145,9 @@ class ProfileFragment : Fragment() {
 
             })
             .onStepCountDelta(object : Action<Int> {//GoogleFit fire this
-                override fun accept(data: Int?) {
-                    updateCachedStepByDelta(data!!)
-                }
+            override fun accept(data: Int?) {
+                updateCachedStepByDelta(data!!)
+            }
 
                 override fun deny(data: Int?, reason: String) {
                     Toast.makeText(this@ProfileFragment.requireContext(), reason, Toast.LENGTH_LONG).show()
@@ -142,9 +155,9 @@ class ProfileFragment : Fragment() {
                 }
 
             }).onStepCountTotal(object : Action<Int> {//Samsung Health fire this
-                override fun accept(data: Int?) {
-                    updateCachedStep(data!!)
-                }
+            override fun accept(data: Int?) {
+                updateCachedStep(data!!)
+            }
 
                 override fun deny(data: Int?, reason: String) {
                     Toast.makeText(this@ProfileFragment.requireContext(), reason, Toast.LENGTH_LONG).show()
@@ -153,16 +166,12 @@ class ProfileFragment : Fragment() {
 
             })
         fitnessAPI.ensurePermission()
-
-        val manufacturer = android.os.Build.MANUFACTURER
-        if (manufacturer.equals("samsung")) {
-            view.findViewById<TextView>(R.id.step_count_help_text).setText(R.string.step_count_help_text_samsung_health)
-        } else {
-            view.findViewById<TextView>(R.id.step_count_help_text).setText(R.string.step_count_help_text_google_fit)
-        }
-
-        return view;
     }
+
+
+
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         fitnessAPI.consumePermissionGrantResult(requestCode, resultCode, data)

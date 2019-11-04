@@ -64,6 +64,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private lateinit var googleMapFragment: GoogleMapFragment;
+    private  var profileFragment =  ProfileFragment()
+    private var reservationFragment =  ReservationFragment()
+
     lateinit var navView: BottomNavigationView
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         updateActionBar(item.itemId)
@@ -73,13 +76,12 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_reservation -> {
-                val reservationFragment:ReservationFragment = ReservationFragment();
-                loadFragment(reservationFragment);
+                loadFragment(reservationFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_profile -> {
                 if (CurrentUserProvider.get().isLoggedIn()) {
-                    loadFragment(ProfileFragment());
+                    loadFragment(profileFragment)
                 } else {
                     startActivity(Intent(this, AuthenticateFlowActivity::class.java))
                 }

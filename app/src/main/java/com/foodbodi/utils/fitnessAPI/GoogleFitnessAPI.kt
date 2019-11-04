@@ -35,6 +35,7 @@ class GoogleFitnessAPI() : FitnessAPI {
 
     val TAG = GoogleFitnessAPI::class.java.simpleName
     private var activity:Activity? = null;
+    private var context:Context? = null;
     private var fitnessOptionBuilder =  FitnessOptions.builder();
     private var onPermissionGranted:Action<Any>? = null;
     private var requestCode:Int? = null;
@@ -62,6 +63,12 @@ class GoogleFitnessAPI() : FitnessAPI {
 
     override fun setActivity(activity: Activity):GoogleFitnessAPI {
         this.activity = activity;
+        this.setContext(activity.baseContext)
+        return this;
+    }
+
+    override fun setContext(context: Context): FitnessAPI {
+        this.context = context;
         return this;
     }
 
@@ -219,11 +226,15 @@ class GoogleFitnessAPI() : FitnessAPI {
     }
 
     override fun getStepCountOnDate(year: Int, month: Int, day: Int, callback: Action<Int>) {
-        val date = Date(year, month, day)
-        val endOfDate = Date(year, month, day); endOfDate.hours = 23; endOfDate.minutes = 59; endOfDate.seconds = 59;
+        var calendar:Calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, day, 0,0, 0);
+        val date = calendar.time
+
+        calendar.set(year, month - 1, day, 23,59,59)
+        val endOfDate = calendar.time;
 
         Log.i(TAG,"Getting step count from $date to $endOfDate ...")
-        val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(this.activity!!)
+        val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(this.context!!)
             .addApi(Fitness.HISTORY_API)
             .build()
         googleApiClient.connect()
@@ -252,11 +263,15 @@ class GoogleFitnessAPI() : FitnessAPI {
     }
 
     override fun getStepCountOnDateSync(year: Int, month: Int, day: Int) : Int {
-        val date = Date(year, month, day)
-        val endOfDate = Date(year, month, day); endOfDate.hours = 23; endOfDate.minutes = 59; endOfDate.seconds = 59;
+        var calendar:Calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, day, 0,0, 0);
+        val date = calendar.time
+
+        calendar.set(year, month - 1, day, 23,59,59)
+        val endOfDate = calendar.time;
 
         Log.i(TAG,"Getting step count from $date to $endOfDate ...")
-        val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(this.activity!!)
+        val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(this.context!!)
             .addApi(Fitness.HISTORY_API)
             .build()
         googleApiClient.connect()
@@ -264,9 +279,12 @@ class GoogleFitnessAPI() : FitnessAPI {
         val dataReadRequest:DataReadRequest = DataReadRequest.Builder()
             .read(DataType.TYPE_STEP_COUNT_DELTA)
             .setTimeRange(date.time, endOfDate.time, TimeUnit.MILLISECONDS)
+            .enableServerQueries()
             .build()
 
-        val dataSet:DataSet = Fitness.HistoryApi.readData(googleApiClient ,dataReadRequest).await(10, TimeUnit.MILLISECONDS).getDataSet(DataType.TYPE_STEP_COUNT_DELTA)
+        val pendingResult:PendingResult<DataReadResult> = Fitness.HistoryApi.readData(googleApiClient ,dataReadRequest)
+        val dataReadResult = pendingResult.await(10, TimeUnit.SECONDS)
+        val dataSet = dataReadResult.getDataSet(DataType.TYPE_STEP_COUNT_DELTA)
         if (dataSet != null && dataSet.dataPoints.size > 0) {
             val dataPoints: List<DataPoint> = dataSet.dataPoints
             var total = 0
