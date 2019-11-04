@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ListView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.Adapters.NamesOfFoodsAdapter
 import com.foodbodi.model.Food
@@ -63,6 +64,11 @@ class NameOfFoodsFragment : Fragment() {
         // Inflate the layout for this fragment.
         var view:View = inflater.inflate(R.layout.fragment_name_of_foods, container, false);
         rvForyou = view.findViewById(R.id.rvForYou);
+        rvForyou.apply {
+            layoutManager = LinearLayoutManager(activity)
+
+            adapter = NamesOfFoodsAdapter(foods);
+        }
         this.getNameOfFoodsFromFirbase();
         return view;
     }
@@ -74,19 +80,21 @@ class NameOfFoodsFragment : Fragment() {
             var limit:Double = 300.0;
             var foryou:Food = Food();
             foryou.name = "For you";
+            foryou.restaurant_id = "";
             foods.add(0,foryou);
 
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
                 if (r != null) {
                     if (r.calo?.compareTo(limit) == 1) {
-                        foods.add(r!!)
+                        foods.add(r)
                     }
                 }
             }
 
             var menu:Food = Food();
             menu.name = "Menu";
+            menu.restaurant_id = "";
             foods.add(menu);
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
@@ -96,7 +104,8 @@ class NameOfFoodsFragment : Fragment() {
             if (foods.size > 0){
                 val adapter = NamesOfFoodsAdapter(foods);
                 rvForyou.adapter = adapter;
-                adapter.notifyDataSetChanged();
+                (rvForyou.adapter as NamesOfFoodsAdapter).reloadData(foods);
+
             }
         }
             .addOnFailureListener(OnFailureListener {

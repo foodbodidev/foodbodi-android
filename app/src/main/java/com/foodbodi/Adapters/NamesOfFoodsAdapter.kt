@@ -13,22 +13,25 @@ import com.squareup.picasso.Picasso
 
 class NamesOfFoodsAdapter(foods:ArrayList<Food>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var foods:ArrayList<Food> = ArrayList();
+    var foodDisplay:ArrayList<Food> = ArrayList();
     private var TYPE_TEXT = 1;
     private  var TYPE_FOOD = 2;
 
     init {
-        this.foods = foods;
-        notifyDataSetChanged();
+        this.foodDisplay = foods;
+    }
+    fun reloadData(food:ArrayList<Food>){
+        this.foodDisplay = food;
+        this.notifyDataSetChanged();
     }
 
     override fun getItemCount(): Int {
 
-        return foods.size;
+        return foodDisplay.size;
     }
 
     override fun getItemViewType(position: Int): Int {
-        var food:Food =  foods.get(position);
+        var food:Food =  foodDisplay.get(position);
         if (food.restaurant_id!!.length > 0){
             return TYPE_FOOD;
         }else{
@@ -39,17 +42,15 @@ class NamesOfFoodsAdapter(foods:ArrayList<Food>): RecyclerView.Adapter<RecyclerV
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        var food: Food = foods.get(position);
+        var food: Food = foodDisplay.get(position);
         if (food.restaurant_id!!.length > 0) {
-            var viewType = holder as ViewHeaderHolder;
-            viewType.showDetails(food);
+//            var viewType = holder as ViewHeaderHolder;
+//            viewType.showDetails(food);
+            (holder as ViewHeaderHolder).showDetails(food)
 
         }else {
-            var viewType2 = holder as ViewFoodHolder;
-            viewType2.showDetails(food);
+            (holder as ViewFoodHolder).showDetails(food)
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -80,7 +81,7 @@ class ViewHeaderHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
 
 class ViewFoodHolder(inflater: LayoutInflater, parent: ViewGroup) :
-    RecyclerView.ViewHolder(inflater.inflate(R.layout.fragment_name_of_foods, parent, false))  {
+    RecyclerView.ViewHolder(inflater.inflate(R.layout.list_food_item, parent, false))  {
         lateinit var food_item_price:TextView
         lateinit var food_item_name : TextView
         lateinit var food_item_kcalo : TextView;
@@ -90,7 +91,7 @@ class ViewFoodHolder(inflater: LayoutInflater, parent: ViewGroup) :
             this.food_item_price = itemView.findViewById(R.id.food_item_price);
             this.food_item_name = itemView.findViewById(R.id.food_item_name);
             this.food_item_kcalo = itemView.findViewById(R.id.food_item_kcalo);
-            this.photo = itemView.findViewById(R.id.image_food_image);
+            this.photo = itemView.findViewById(R.id.food_item_photo);
         }
         fun showDetails(food:Food){
             food_item_price.text = food.price.toString();
