@@ -11,24 +11,6 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"/>
 
-<!--    <Button-->
-<!--            android:id="@+id/btn_edit_restaurant"-->
-<!--            android:background="@color/colorAccent"-->
-<!--            android:text="Edit"-->
-<!--            android:textColor="@color/White"-->
-<!--            android:layout_gravity="bottom|right"-->
-<!--            android:layout_marginBottom="200px"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"/>-->
-
-<!--    <androidx.viewpager.widget.ViewPager-->
-<!--            android:background="@color/gray_color"-->
-<!--            android:id="@+id/pager_restaurant_photo"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="200dp">-->
-
-<!--    </androidx.viewpager.widget.ViewPager>-->
-
     <androidx.core.widget.NestedScrollView
             android:layout_marginTop="150dp"
             android:background="@color/White"
@@ -38,26 +20,26 @@
             android:layout_height="match_parent">
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:id="@+id/text_restaurant_name"
-                      android:text="bbbb"
+                      android:text=""
             />
             <RelativeLayout android:layout_width="match_parent" android:layout_height="30dp">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:id="@+id/text_restaurant_type_food"
-                          android:text="aaa"/>
+                          android:text=""/>
                 />
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:id="@+id/text_restaurant_kcal"
-                          android:text="kcal"
+                          android:text=""
                           android:layout_marginLeft="10dp"
                           android:layout_toRightOf="@+id/text_restaurant_type_food"
                         />

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -23,13 +24,17 @@ import retrofit2.Response
 class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInteractionListener, NameOfFoodsFragment.OnFragmentInteractionListener {
     companion object {
         val RESTAURANT_ID = "restaurant_id";
-
     }
+
 
 
     var data: Restaurant? = null;
     var tabLayout: TabLayout? = null
     var viewPager: ViewPager? = null
+    var eName:TextView? = null
+    var eFood:TextView? = null
+    var eKcal:TextView? = null
+    var eTime:TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +126,14 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
 
     private fun updateView() {
         if (data != null) {
-            findViewById<TextView>(R.id.text_restaurant_name).text = data?.name
+            this.eFood = findViewById<TextView>(R.id.text_restaurant_type_food);
+            this.eKcal = findViewById<TextView>(R.id.text_restaurant_kcal);
+            this.eName = findViewById<TextView>(R.id.text_restaurant_name);
+            this.eTime = findViewById<TextView>(R.id.text_restaurant_time);
+            //bind data.
+            this.eFood!!.text = data!!.category;
+            this.eName!!.text = data!!.name;
+            this.eTime!!.text = data!!.open_hour + " ~ " + data!!.close_hour;
 
         } else {
 
