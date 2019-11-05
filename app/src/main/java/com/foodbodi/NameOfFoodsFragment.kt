@@ -81,6 +81,8 @@ class NameOfFoodsFragment : Fragment() {
             var foryou:Food = Food();
             foryou.name = "For you";
             foryou.restaurant_id = "";
+            foryou.amount = 0;
+            foryou.calo = 0.0;
             foods.add(0,foryou);
 
             for (document in querySnapshot.documents) {
@@ -95,6 +97,8 @@ class NameOfFoodsFragment : Fragment() {
             var menu:Food = Food();
             menu.name = "Menu";
             menu.restaurant_id = "";
+            menu.amount = 0;
+            menu.calo = 0.0;
             foods.add(menu);
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
@@ -105,7 +109,6 @@ class NameOfFoodsFragment : Fragment() {
                 val adapter = NamesOfFoodsAdapter(foods);
                 rvForyou.adapter = adapter;
                 (rvForyou.adapter as NamesOfFoodsAdapter).reloadData(foods);
-
             }
         }
             .addOnFailureListener(OnFailureListener {

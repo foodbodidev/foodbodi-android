@@ -4,31 +4,30 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".RestaurantDetailActivity">
+
     <androidx.viewpager.widget.ViewPager
             android:background="@color/gray_color"
             android:id="@+id/pager_restaurant_photos"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="200dp"/>
 
-    </androidx.viewpager.widget.ViewPager>
+<!--    <Button-->
+<!--            android:id="@+id/btn_edit_restaurant"-->
+<!--            android:background="@color/colorAccent"-->
+<!--            android:text="Edit"-->
+<!--            android:textColor="@color/White"-->
+<!--            android:layout_gravity="bottom|right"-->
+<!--            android:layout_marginBottom="200px"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"/>-->
 
-    <Button
-            android:id="@+id/btn_edit_restaurant"
-            android:background="@color/colorAccent"
-            android:text="Edit"
-            android:textColor="@color/White"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="200px"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--            android:background="@color/gray_color"-->
+<!--            android:id="@+id/pager_restaurant_photo"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="200dp">-->
 
-    <androidx.viewpager.widget.ViewPager
-            android:background="@color/gray_color"
-            android:id="@+id/pager_restaurant_photo"
-            android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-    </androidx.viewpager.widget.ViewPager>
+<!--    </androidx.viewpager.widget.ViewPager>-->
 
     <androidx.core.widget.NestedScrollView
             android:layout_marginTop="150dp"
@@ -43,6 +42,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:id="@+id/text_restaurant_name"
@@ -64,7 +64,7 @@
                 />
             </RelativeLayout>
             <TextView android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
+                      android:layout_height="match_parent"
                       android:id="@+id/text_restaurant_time"
                       android:text="time"
             />
@@ -80,11 +80,9 @@
             <androidx.viewpager.widget.ViewPager
                     android:id="@+id/viewPagerRestaurant"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="500dp"
                    >
-
             </androidx.viewpager.widget.ViewPager>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

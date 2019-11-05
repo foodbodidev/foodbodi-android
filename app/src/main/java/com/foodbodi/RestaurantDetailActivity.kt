@@ -123,17 +123,6 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
         if (data != null) {
             findViewById<TextView>(R.id.text_restaurant_name).text = data?.name
 
-
-            var editBtn = findViewById<Button>(R.id.btn_edit_restaurant)
-            //editBtn.visibility = is admin account
-            editBtn.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-                    val intent: Intent = Intent( this@RestaurantDetailActivity, EditRestaurantActivity::class.java)
-                    intent.putExtra(EditRestaurantActivity.DATA_SERIALIZE_NAME, data)
-                    startActivity(intent)
-                }
-            })
-
         } else {
 
         }

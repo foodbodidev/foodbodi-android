@@ -46,10 +46,10 @@ class NamesOfFoodsAdapter(foods:ArrayList<Food>): RecyclerView.Adapter<RecyclerV
         if (food.restaurant_id!!.length > 0) {
 //            var viewType = holder as ViewHeaderHolder;
 //            viewType.showDetails(food);
-            (holder as ViewHeaderHolder).showDetails(food)
 
-        }else {
             (holder as ViewFoodHolder).showDetails(food)
+        }else {
+            (holder as ViewHeaderHolder).showDetails(food)
         }
     }
 
