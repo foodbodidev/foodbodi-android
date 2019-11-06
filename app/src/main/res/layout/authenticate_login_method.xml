@@ -7,9 +7,24 @@
               android:layout_height="match_parent">
 
     <TextView
-            android:layout_weight="4"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
+            android:text="Register Your"
+            android:textSize="35dp"
+            android:textColor="@color/title_text_color"
+            android:layout_marginLeft="24sp"
             android:layout_height="wrap_content">
+
+    </TextView>
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24sp"
+            android:text="Account"
+            android:textColor="@color/title_text_color"
+            android:textSize="35dp"
+            android:textStyle="bold">
 
     </TextView>
 
@@ -17,9 +32,10 @@
             android:orientation="vertical"
             android:layout_marginLeft="@dimen/text_large"
             android:layout_marginRight="@dimen/text_large"
+            android:layout_marginTop="20dp"
             android:layout_weight="6"
             android:layout_width="match_parent" android:layout_height="wrap_content">
-        <com.facebook.login.widget.LoginButton
+        <Button
                 android:id="@+id/btn_continue_with_facebook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -27,12 +43,19 @@
                 android:paddingBottom="@dimen/text_small"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/text_large"
+                android:background="@drawable/facebook_button"
+                android:text="@string/continue_with_facebook"
+                android:textColor="@color/White"
                 android:layout_marginBottom="@dimen/text_large" />
 
-        <com.google.android.gms.common.SignInButton
+        <Button
                 android:id="@+id/btn_continue_with_google"
                 android:layout_width="match_parent"
+                android:background="@drawable/google_button"
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/text_large"
+                android:text="@string/continue_with_google"
+                android:textColor="@color/White"
                 android:layout_height="wrap_content"/>
 
 

@@ -20,6 +20,13 @@ import com.foodbodi.R
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.SignInButton
+import android.widget.TextView
+import com.facebook.login.LoginManager
+import java.util.Arrays
+
+
+
+
 
 
 
@@ -36,7 +43,8 @@ class LoginMethodFragment(parent: AuthenticateFlowController) : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view:View = inflater.inflate(com.foodbodi.R.layout.authenticate_login_method, container, false);
-        val currentContext = this.context;
+        val currentContext = this.context
+
         view.findViewById<Button>(com.foodbodi.R.id.btn_continue_with_email).setOnClickListener(object : View.OnClickListener{
             override fun onClick(p0: View?) {
                 parent.onSelectLoginMethod(LoginMethod.MANUAL, null)
@@ -44,29 +52,19 @@ class LoginMethodFragment(parent: AuthenticateFlowController) : Fragment() {
 
         })
 
+        var googleLoginButton :Button = view.findViewById<Button>(com.foodbodi.R.id.btn_continue_with_google)
 
-        view.findViewById<SignInButton>(com.foodbodi.R.id.btn_continue_with_google).setOnClickListener(object : View.OnClickListener{
+        googleLoginButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 parent.onSelectLoginMethod(LoginMethod.GOOGLE, null)
             }
 
         })
 
-
-        var fbLoginBtn:LoginButton = view.findViewById<Button>(R.id.btn_continue_with_facebook)!! as LoginButton
-        fbLoginBtn.setReadPermissions("email");
-        fbLoginBtn.setFragment(this)
-        fbLoginBtn.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(result: LoginResult?) {
-                parent.onSelectLoginMethod(LoginMethod.FACEBOOK, result)
-            }
-
-            override fun onCancel() {
-
-            }
-
-            override fun onError(error: FacebookException?) {
-                parent.onLoginFail(error?.message)
+        var fbLoginBtn: Button = view.findViewById<Button>(R.id.btn_continue_with_facebook)
+        fbLoginBtn.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                loginWithFacebook()
             }
 
         })
@@ -74,6 +72,32 @@ class LoginMethodFragment(parent: AuthenticateFlowController) : Fragment() {
 
         return view
     }
+
+
+    private fun loginWithFacebook() {
+
+        // Login
+        callbackManager = CallbackManager.Factory.create()
+        LoginManager.getInstance()
+            .logInWithReadPermissions(this, Arrays.asList("public_profile", "email"))
+        LoginManager.getInstance().registerCallback(callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
+                    parent.onSelectLoginMethod(LoginMethod.FACEBOOK, loginResult)
+                }
+
+                override fun onCancel() {
+
+
+                }
+
+                override fun onError(error: FacebookException) {
+                    parent.onLoginFail(error?.message)
+                }
+            })
+    }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         callbackManager.onActivityResult(requestCode, resultCode, data)

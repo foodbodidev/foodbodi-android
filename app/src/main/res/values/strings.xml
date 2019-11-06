@@ -6,6 +6,8 @@
     <string name="title_profile">Profile</string>
     <string name="not_updated">Not updated</string>
     <string name="continue_with_email">Continue With Email</string>
+    <string name="continue_with_google">Continue With Google</string>
+    <string name="continue_with_facebook">Continue With Facebook</string>
     <string name="continue_to">Continue</string>
     <string name="login">Login</string>
     <string name="register">Sign Up</string>
