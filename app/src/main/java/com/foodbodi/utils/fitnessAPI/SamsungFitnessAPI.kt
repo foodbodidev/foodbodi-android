@@ -100,7 +100,7 @@ class SamsungFitnessAPI : FitnessAPI {
 
     override fun setActivity(activity: Activity): FitnessAPI {
         this.activity = activity;
-        this.setContext(activity.applicationContext)
+        this.setContext(activity.baseContext)
         return this
     }
 
@@ -177,9 +177,9 @@ class SamsungFitnessAPI : FitnessAPI {
                         val data:HealthData = iterator.next();
                         totalCount = data.getInt("count");
                     }
-                    callback!!.accept(totalCount)
+                    callback.accept(totalCount)
                 } catch (e:java.lang.Exception) {
-                    callback!!.deny(null, "Process Samsung read result fail")
+                    callback.deny(null, "Process Samsung read result fail")
                 } finally {
                     result.close();
                 }
@@ -189,7 +189,7 @@ class SamsungFitnessAPI : FitnessAPI {
         try {
             mResolver.read(request).setResultListener(mRdResult)
         } catch ( e:Exception) {
-            Logger.error(TAG, "Read Samsung step count fail", this@SamsungFitnessAPI.activity!!)
+            Logger.error(TAG, "Read Samsung step count fail ${e.message}", this@SamsungFitnessAPI.context!!)
         }
     }
 
@@ -213,9 +213,9 @@ class SamsungFitnessAPI : FitnessAPI {
                         val stepDelta = data.getInt(HealthConstants.StepCount.HEALTH_DATA_TYPE)
                         total += stepDelta
                     }
-                    callback!!.accept(total)
+                    callback.accept(total)
                 } catch (e: Exception) {
-                    callback!!.deny(null, "Process Samsung read result fail")
+                    callback.deny(null, "Process Samsung read result fail")
                 } finally {
                     result.close()
                 }
@@ -224,7 +224,7 @@ class SamsungFitnessAPI : FitnessAPI {
         try {
             healhDataResolver.read(request).setResultListener(mRdResult)
         } catch (e:java.lang.Exception) {
-            Logger.error(TAG, "Read Samsung step count fail", this@SamsungFitnessAPI.activity!!)
+            Log.e(TAG, "Read Samsung step count fail ${e.message}")
         }
     }
 
@@ -235,12 +235,12 @@ class SamsungFitnessAPI : FitnessAPI {
                     override fun accept(data: Int?) {
                         if (data != null) value = data;
                         else {
-                            Logger.error(TAG, "Read Samsung step count fail : data is null", this@SamsungFitnessAPI.activity!!)
+                            Log.e(TAG, "Read Samsung step count fail : data is null")
                         }
                     }
 
                     override fun deny(data: Int?, reason: String) {
-                        Logger.error(TAG, "Read Samsung step count fail : $reason", this@SamsungFitnessAPI.activity!!)
+                        Log.e(TAG, "Read Samsung step count fail : $reason")
                     }
 
                 })

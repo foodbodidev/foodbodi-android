@@ -57,12 +57,14 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
                         var log = hashMap.get(dateToSync.getString());
                         if (log == null) {
                             log = DailyLog()
+                            log.calo_threshold = user.daily_calo
                         }
                         val stepCount = fitnessAPI.getStepCountOnDateSync(
                             dateToSync.year,
                             dateToSync.month,
                             dateToSync.day
                         )
+                        Log.i(TAG, "Step count $stepCount")
                         log.step = stepCount
                         val response: Response<FoodBodiResponse<DailyLog>> =
                             FoodbodiRetrofitHolder.getService()
@@ -74,8 +76,7 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
                                     dateToSync.day.toString()
                                 ).execute()
                         if (response.isSuccessful) {
-                            val code: Number = response.body()!!.statusCode()
-                            if (FoodBodiResponse.SUCCESS_CODE == code.toInt()) {
+                            if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode) {
                                 hashMap.remove(dateToSync.getString())
                                 Log.i(TAG, "Update dailylog of ${dateToSync.getString()} success")
                             } else {
