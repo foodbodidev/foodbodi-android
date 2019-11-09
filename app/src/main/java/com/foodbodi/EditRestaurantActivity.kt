@@ -113,11 +113,11 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (TAKE_PHOTO_CODE == requestCode && data != null) {
+        if (TAKE_PHOTO_CODE == requestCode) {
             UCrop.of(restaurantPhotoGetter!!.getPickImageResultUri(data)!!, restaurantPhotoGetter!!.getCroppedImageOutputUri()!!)
                 .withAspectRatio(3f,2f)
                 .start(this, CROP_RESTAURANT_PHOTO_CODE)
-        } else if (TAKE_FOOD_PHOTO_CODE == requestCode && data != null) {
+        } else if (TAKE_FOOD_PHOTO_CODE == requestCode) {
             UCrop.of(restaurantPhotoGetter!!.getPickImageResultUri(data)!!, restaurantPhotoGetter!!.getCroppedImageOutputUri()!!)
                 .withAspectRatio(1f,1f)
                 .start(this, CROP_FOOD_PHOTO_CODE)

@@ -52,7 +52,7 @@ class SyncDailyLogWorker(appContext: Context, workerParams: WorkerParameters)
                     return Result.success();
                 } else {
                     var dateToSync = firstDateToSync;
-                    while (dateToSync!!.getTimeStamp() <= today.getTimeStamp()) {
+                    while (dateToSync!!.getTimeStamp() < today.getTimeStamp()) {
                         Log.i(TAG, "Update remote record " + dateToSync.getString())
                         var log = hashMap.get(dateToSync.getString());
                         if (log == null) {

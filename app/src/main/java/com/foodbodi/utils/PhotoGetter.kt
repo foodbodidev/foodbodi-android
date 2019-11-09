@@ -156,15 +156,11 @@ class PhotoGetter(context:Activity) {
     }
 
     fun getPickImageResultUri(data: Intent?): Uri? {
-        var isCamera = true
-        if (data != null) {
-            val action = data.action
-            isCamera = action != null && action == MediaStore.ACTION_IMAGE_CAPTURE
-        }
+        var isCamera = data == null; //from camera, data is null, nnot sure why, but it works that way
 
         if (isCamera) {
-             val photo:Bitmap = data?.extras?.get("data") as Bitmap
-            return getImageUri(context, photo)
+            // val photo:Bitmap = data?.extras?.get("data") as Bitmap
+            return getCaptureImageOutputUri()
         } else {
             return data!!.data
         }
