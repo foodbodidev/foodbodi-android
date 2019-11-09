@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
+import com.foodbodi.Base.BaseActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.controller.UpdateBasicInfoActivity.SelectGenderFragment
@@ -15,7 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UpdateBasicInfoActivity : AppCompatActivity(), UpdateBasicInfoController {
+class UpdateBasicInfoActivity : BaseActivity(), UpdateBasicInfoController {
     val profile = User()
 
     override fun onNext(from: Section) {
@@ -42,16 +43,19 @@ class UpdateBasicInfoActivity : AppCompatActivity(), UpdateBasicInfoController {
         } else {
             val headers = HashMap<String, String>()
             headers.put("token", token)
+            showLoading(this)
             FoodbodiRetrofitHolder.getService().updateProfile(headers, profile)
                 .enqueue(object : Callback<FoodBodiResponse<User>> {
                     override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
                         //TODO : //system failure
+                        hideLoading()
                     }
 
                     override fun onResponse(
                         call: Call<FoodBodiResponse<User>>,
                         response: Response<FoodBodiResponse<User>>
                     ) {
+                        hideLoading()
                         if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                             val intent = Intent(this@UpdateBasicInfoActivity, MainActivity::class.java)
                             startActivity(intent)

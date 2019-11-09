@@ -16,29 +16,33 @@ import com.foodbodi.apis.requests.LoginRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.foodbodi.Base.BaseFragment
 
-class LoginFragment(parent:AuthenticateFlowController):Fragment() {
+class LoginFragment(parent:AuthenticateFlowController): BaseFragment() {
     private var parent:AuthenticateFlowController = parent
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view:View = inflater.inflate(R.layout.authenticate_login, container, false);
+        var view:View = inflater.inflate(R.layout.authenticate_login, container, false)
         view.findViewById<Button>(R.id.btn_login).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
+                showLoading(getActivity())
                 val email = view.findViewById<EditText>(R.id.input_email_login).text.toString()
                 val password = view.findViewById<EditText>(R.id.input_password_login).text.toString()
                 FoodbodiRetrofitHolder.getService().login(LoginRequest(email, password))
                     .enqueue(object : Callback<FoodBodiResponse<LoginResponse>> {
                         override fun onFailure(call: Call<FoodBodiResponse<LoginResponse>>, t: Throwable) {
                             //TODO : system failure
+                            hideLoading()
                         }
 
                         override fun onResponse(
                             call: Call<FoodBodiResponse<LoginResponse>>,
                             response: Response<FoodBodiResponse<LoginResponse>>
                         ) {
+                            hideLoading()
                             if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                                 parent.onLoginSuccess(response.body()?.data()?.token, response.body()?.data()?.user);
                             } else {
