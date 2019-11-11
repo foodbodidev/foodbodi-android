@@ -13,9 +13,4 @@ class CommentRequest {
     @SerializedName("message")
     var message:String? = null
 
-    constructor(restaurant_id: String, content: String) {
-        this.restaurant_id = restaurant_id;
-        this.message = content;
-
-    }
 }

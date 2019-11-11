@@ -9,7 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.foodbodi.Adapters.NamesOfFoodsAdapter
 import com.foodbodi.model.CommentRequest
+import com.foodbodi.model.Food
+import com.foodbodi.utils.ProgressHUD
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,6 +40,8 @@ class ChatFragment : Fragment() {
     private lateinit var txtEnterText:EditText;
     private lateinit var btnSend:Button;
     private var listChat = ArrayList<CommentRequest>()
+    var restaurant_id = "v3c73HZridTeUVUdcYSW";
+    val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +58,23 @@ class ChatFragment : Fragment() {
 
         var view: View = inflater.inflate(R.layout.fragment_chat, container, false);
         lvChat = view.findViewById(R.id.lvChat);
-        listChat.add(CommentRequest("AAA", "JavaSampleApproach"));
-        var notesAdapter = NotesAdapter(this.requireContext(), listChat)
-        lvChat.adapter = notesAdapter;
-        notesAdapter.notifyDataSetChanged();
+        ProgressHUD.instance.showLoading(this.requireActivity());
+        firestore.collection("comments").whereEqualTo("restaurant_id",restaurant_id).
+            get().addOnSuccessListener { querySnapshot ->
+            ProgressHUD.instance.hideLoading()
+            for (document in querySnapshot.documents) {
+                val commentData = document.toObject(CommentRequest::class.java);
+                if (commentData != null) {
+                    listChat.add(commentData);
+                }
+            }
+            var notesAdapter = NotesAdapter(this.requireContext(), listChat)
+            lvChat.adapter = notesAdapter;
+            notesAdapter.notifyDataSetChanged();
+        }
+            .addOnFailureListener(OnFailureListener {
+                ProgressHUD.instance.hideLoading()
+            })
 
         return view;
     }
