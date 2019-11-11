@@ -96,5 +96,5 @@ interface FoodbodiService {
 
     @Headers("Content-Type: application/json")
     @POST("comment")
-    fun updateDailyLog(@HeaderMap headers: Map<String, String?>,@Body comment: CommentRequest) :Call<FoodBodiResponse<CommentRequest>>
+    fun addCommentRestaurant(@HeaderMap headers: Map<String, String?>,@Body comment: CommentRequest) :Call<FoodBodiResponse<CommentRequest>>
 }

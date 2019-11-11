@@ -9,12 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.foodbodi.Adapters.NamesOfFoodsAdapter
+import com.foodbodi.apis.FoodBodiResponse
+import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.model.CommentRequest
-import com.foodbodi.model.Food
 import com.foodbodi.utils.ProgressHUD
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.firestore.FirebaseFirestore
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,6 +46,7 @@ class ChatFragment : Fragment() {
     var restaurant_id = "v3c73HZridTeUVUdcYSW";
     val firestore = FirebaseFirestore.getInstance()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -58,6 +62,8 @@ class ChatFragment : Fragment() {
 
         var view: View = inflater.inflate(R.layout.fragment_chat, container, false);
         lvChat = view.findViewById(R.id.lvChat);
+        btnSend = view.findViewById(R.id.btnSend);
+        txtEnterText = view.findViewById(R.id.txtTen);
         ProgressHUD.instance.showLoading(this.requireActivity());
         firestore.collection("comments").whereEqualTo("restaurant_id",restaurant_id).
             get().addOnSuccessListener { querySnapshot ->
@@ -75,7 +81,41 @@ class ChatFragment : Fragment() {
             .addOnFailureListener(OnFailureListener {
                 ProgressHUD.instance.hideLoading()
             })
+        btnSend.setOnClickListener { view ->
+            if (txtEnterText.text.toString().length > 0){
+                var comment:CommentRequest = CommentRequest();
+                comment.restaurant_id = restaurant_id;
+                comment.message = txtEnterText.text.toString();
+                FoodbodiRetrofitHolder.getService().
+                    addCommentRestaurant(FoodbodiRetrofitHolder.getHeaders(this.requireContext()),comment).enqueue(object :
+                    Callback<FoodBodiResponse<CommentRequest>> {
+                    override fun onFailure(call: Call<FoodBodiResponse<CommentRequest>>, t: Throwable) {
+                        Toast.makeText(context,"text is empty",Toast.LENGTH_LONG).show();
+                    }
 
+                    override fun onResponse(
+                        call: Call<FoodBodiResponse<CommentRequest>>,
+                        response: Response<FoodBodiResponse<CommentRequest>>
+                    ) {
+                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                            var message = response.body()?.data()?.message;
+                            var resId = response.body()?.data?.restaurant_id;
+
+                            listChat.add(comment);
+
+                            var notesAdapter = NotesAdapter(context, listChat)
+                            lvChat.adapter = notesAdapter;
+                            notesAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+                });
+            }else{
+                Toast.makeText(this.context,"text is empty",Toast.LENGTH_LONG).show();
+            }
+
+
+        }
         return view;
     }
     // TODO: Rename method, update argument and hook method into UI event
@@ -138,7 +178,7 @@ class ChatFragment : Fragment() {
         private var notesList = ArrayList<CommentRequest>()
         private var context: Context? = null
 
-        constructor(context: Context, notesList: ArrayList<CommentRequest>) : super() {
+        constructor(context: Context?, notesList: ArrayList<CommentRequest>) : super() {
             this.notesList = notesList
             this.context = context
         }
@@ -181,5 +221,4 @@ class ChatFragment : Fragment() {
         }
     }
 }
-
 

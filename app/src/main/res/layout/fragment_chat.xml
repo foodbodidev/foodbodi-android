@@ -16,21 +16,21 @@
             android:layout_alignParentLeft="true"
             android:background="#deb887"
             android:text="Enter text" />
-    <Button  android:id="@+id/btnNhap"
+    <Button  android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignRight="@+id/txtTen"
             android:layout_below="@+id/txtTen"
             android:layout_toRightOf="@+id/textView1"
             android:textAlignment="center"
-            android:text="Nhập" />
+            android:text="Send" />
 
     <TextView
             android:id="@+id/txtselection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/btnNhap"
+            android:layout_below="@+id/btnSend"
             android:background="#007380" />
 
     <ListView  android:id="@+id/lvChat"
