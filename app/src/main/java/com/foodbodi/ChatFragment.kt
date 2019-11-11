@@ -3,13 +3,13 @@ package com.foodbodi
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.*
+import com.foodbodi.model.CommentRequest
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,6 +34,7 @@ class ChatFragment : Fragment() {
     private lateinit var lvChat:ListView;
     private lateinit var txtEnterText:EditText;
     private lateinit var btnSend:Button;
+    private var listChat = ArrayList<CommentRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +48,14 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         var view: View = inflater.inflate(R.layout.fragment_chat, container, false);
+        lvChat = view.findViewById(R.id.lvChat);
+        listChat.add(CommentRequest("AAA", "JavaSampleApproach"));
+        var notesAdapter = NotesAdapter(this.requireContext(), listChat)
+        lvChat.adapter = notesAdapter;
+        notesAdapter.notifyDataSetChanged();
+
         return view;
     }
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,4 +112,54 @@ class ChatFragment : Fragment() {
                 }
             }
     }
+
+    inner class NotesAdapter : BaseAdapter {
+
+        private var notesList = ArrayList<CommentRequest>()
+        private var context: Context? = null
+
+        constructor(context: Context, notesList: ArrayList<CommentRequest>) : super() {
+            this.notesList = notesList
+            this.context = context
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
+
+            val view: View?
+            val vh: ViewHolder
+
+            if (convertView == null) {
+                view = layoutInflater.inflate(R.layout.list_comment_restaurant, parent, false)
+                vh = ViewHolder(view)
+                view.tag = vh
+                Log.i("JSA", "set Tag for ViewHolder, position: " + position)
+            } else {
+                view = convertView
+                vh = view.tag as ViewHolder
+            }
+            vh.tvContent.text = notesList[position].message.toString()
+            return view
+        }
+
+        override fun getItem(position: Int): Any {
+            return notesList[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getCount(): Int {
+            return notesList.size
+        }
+    }
+
+    private class ViewHolder(view: View?) {
+        val tvContent: TextView
+        init {
+            this.tvContent = view?.findViewById(R.id.tvContent) as TextView
+        }
+    }
 }
+
+

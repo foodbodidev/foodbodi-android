@@ -15,7 +15,7 @@
             android:layout_alignBottom="@+id/txtTen"
             android:layout_alignParentLeft="true"
             android:background="#deb887"
-            android:text="Nhập tên:" />
+            android:text="Enter text" />
     <Button  android:id="@+id/btnNhap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
