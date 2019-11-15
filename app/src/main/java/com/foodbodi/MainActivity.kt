@@ -35,6 +35,7 @@ import com.foodbodi.controller.ProfileFragment
 import com.foodbodi.controller.ReservationFragment
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
+import com.foodbodi.utils.AlertDiaLogUtils
 import com.foodbodi.workers.SyncDailyLogWorker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -153,19 +154,23 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_logout -> {
-                this@MainActivity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
-                    ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
-                CurrentUserProvider.get().logout(this@MainActivity, object : Action<User> {
-                    override fun accept(data: User?) {
-                        navView.findViewById<View>(R.id.navigation_fodimap).performClick();
-                        LoginManager.getInstance().logOut()
-                    }
+                AlertDiaLogUtils.showAlert("Do you want to logout?", this) {
+                    this@MainActivity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
+                        ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
+                    CurrentUserProvider.get().logout(this@MainActivity, object : Action<User> {
+                        override fun accept(data: User?) {
+                            navView.findViewById<View>(R.id.navigation_fodimap).performClick();
+                            LoginManager.getInstance().logOut()
+                        }
 
-                    override fun deny(data: User?, reason: String) {
-                    }
+                        override fun deny(data: User?, reason: String) {
+                        }
 
-                })
+                    })
+                }
+
                 return true
+
             } else -> {
             return super.onOptionsItemSelected(item)
         }
@@ -174,7 +179,7 @@ class MainActivity : AppCompatActivity() {
 
     fun loadFragment(fragment: Fragment) {
         var transaction:FragmentTransaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_container, fragment);
+        transaction.replace(R.id.frame_container, fragment)
         transaction.addToBackStack(null);
         transaction.commit();
     }
