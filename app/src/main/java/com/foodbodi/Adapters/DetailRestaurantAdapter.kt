@@ -13,7 +13,9 @@ class DetailRestaurantAdapter(private val myContext: Context, fm: FragmentManage
     // this is for fragment tabs
     override fun getItem(position: Int): Fragment {
         if (position == 0){
-            return NameOfFoodsFragment()
+            var nameOfFoodsFragment = NameOfFoodsFragment()
+            nameOfFoodsFragment.restaurant_id = ""
+            return nameOfFoodsFragment
         }else{
             return ChatFragment()
         }

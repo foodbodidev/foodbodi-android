@@ -43,7 +43,7 @@ class ChatFragment : Fragment() {
     private lateinit var txtEnterText:EditText;
     private lateinit var btnSend:Button;
     private var listChat = ArrayList<CommentRequest>()
-    var restaurant_id = "v3c73HZridTeUVUdcYSW";
+    var restaurant_id = "0Dz6nrjaLPGcQiGBV3ZG";
     val firestore = FirebaseFirestore.getInstance()
 
 

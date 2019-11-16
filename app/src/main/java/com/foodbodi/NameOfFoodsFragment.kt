@@ -39,7 +39,7 @@ class NameOfFoodsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    var restaurant_id = "NwpoauRh3RDKtMNp2EaY";
+    var restaurant_id = "0Dz6nrjaLPGcQiGBV3ZG";
     private var listener: OnFragmentInteractionListener? = null
     var foods:ArrayList<Food> = ArrayList();
     //Outlet.

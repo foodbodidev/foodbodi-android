@@ -62,7 +62,6 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
 
             }
         })
-//        initUI();
         getDataRestaurant();
 
     }
@@ -73,28 +72,7 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
     }
 
     private  fun initUI(){
-//        tabLayout = findViewById<TabLayout>(R.id.tabLayout)
-//        viewPager = findViewById<ViewPager>(R.id.viewPager)
-//        //Add Tab.
-//        tabLayout!!.addTab(tabLayout!!.newTab().setText("Home"))
-//        tabLayout!!.addTab(tabLayout!!.newTab().setText("Sport"))
-//        tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL
-//        val adapter = DetailRestaurantAdapter(this, supportFragmentManager, tabLayout!!.tabCount)
-//        viewPager!!.adapter = adapter
-//
-//        viewPager!!.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-//
-//        tabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-//            override fun onTabSelected(tab: TabLayout.Tab) {
-//                viewPager!!.currentItem = tab.position
-//            }
-//            override fun onTabUnselected(tab: TabLayout.Tab) {
-//
-//            }
-//            override fun onTabReselected(tab: TabLayout.Tab) {
-//
-//            }
-//        })
+
     }
 
     override fun onFragmentInteraction(uri: Uri) {
