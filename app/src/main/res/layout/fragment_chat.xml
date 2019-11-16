@@ -1,43 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:tools="http://schemas.android.com/tools"  android:layout_width="match_parent"  android:layout_height="match_parent"  tools:context=".MainActivity" >
     <EditText
-            android:id="@+id/txtTen"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtMessage"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:inputType="text"
-            android:layout_toRightOf="@+id/textView1"
+            android:hint="Enter text"
             android:ems="10" />
-    <TextView  android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/txtTen"
-            android:layout_alignBottom="@+id/txtTen"
-            android:layout_alignParentLeft="true"
-            android:background="#deb887"
-            android:text="Enter text" />
     <Button  android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/txtTen"
-            android:layout_below="@+id/txtTen"
-            android:layout_toRightOf="@+id/textView1"
+            android:layout_below="@+id/txtMessage"
+            android:layout_centerHorizontal="true"
             android:textAlignment="center"
-            android:text="Send" />
-
-    <TextView
-            android:id="@+id/txtselection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/btnSend"
-            android:background="#007380" />
-
+            android:text="Send"
+            />
     <ListView  android:id="@+id/lvChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/txtselection"
-            android:background="#cccccc" >
+            android:layout_below="@+id/btnSend"
+            android:background="@color/White" >
     </ListView>
 </RelativeLayout>

@@ -63,7 +63,7 @@ class ChatFragment : Fragment() {
         var view: View = inflater.inflate(R.layout.fragment_chat, container, false);
         lvChat = view.findViewById(R.id.lvChat);
         btnSend = view.findViewById(R.id.btnSend);
-        txtEnterText = view.findViewById(R.id.txtTen);
+        txtEnterText = view.findViewById(R.id.txtMessage);
         ProgressHUD.instance.showLoading(this.requireActivity());
         firestore.collection("comments").whereEqualTo("restaurant_id",restaurant_id).
             get().addOnSuccessListener { querySnapshot ->
