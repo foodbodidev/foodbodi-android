@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.foodbodi.Base.BaseActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.SearchResultItem
@@ -23,7 +24,7 @@ import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SearchRestaurantActivity : AppCompatActivity() {
+class SearchRestaurantActivity : BaseActivity() {
 
     val delay:Long = 1000
     var lastTextChangeMoment:Long? = null;

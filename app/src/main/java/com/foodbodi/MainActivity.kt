@@ -35,7 +35,7 @@ import com.foodbodi.controller.ProfileFragment
 import com.foodbodi.controller.ReservationFragment
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
-import com.foodbodi.utils.AlertDiaLogUtils
+import com.foodbodi.utils.Utils
 import com.foodbodi.workers.SyncDailyLogWorker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_logout -> {
-                AlertDiaLogUtils.showAlert("Do you want to logout?", this) {
+                Utils.showAlert("Do you want to logout?", this) {
                     this@MainActivity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
                         ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
                     CurrentUserProvider.get().logout(this@MainActivity, object : Action<User> {

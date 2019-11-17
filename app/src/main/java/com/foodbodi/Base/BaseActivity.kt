@@ -3,11 +3,15 @@ package com.foodbodi.Base
 import android.app.Activity
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.Adapters.CaloriesCardAdapter
@@ -20,6 +24,7 @@ import com.foodbodi.apis.requests.ReservationRequest
 import com.foodbodi.model.Food
 import com.foodbodi.model.FoodCartModel
 import com.foodbodi.utils.DateUtils
+import com.foodbodi.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,16 +43,36 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.layout_loading_dialog)
-
-
+        val view = window.decorView.rootView
+        if ( view != null && this != null) {
+            setupLayout(view!!)
+        }
 
     }
 
-//    fun setupProgressBar() {
-//        progressBar = findViewById<ProgressBar>(R.id.progressBarBase)
-//        progressBar?.visibility = View.VISIBLE
-//    }
+    //dismiss keyboard when clicking outside
+    private fun setupLayout(view: View) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view is EditText)) {
+            view.setOnTouchListener(object : View.OnTouchListener {
+                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                    if (this != null ) {
+                        Utils.hideSoftKeyboard(this@BaseActivity)
+                    }
+                    return false
+                }
+            })
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view is ViewGroup) {
+
+            for(viewElement in view.children) {
+                setupLayout(viewElement)
+            }
+        }
+    }
+
 
     fun showLoading(context: Activity) {
         progressDialog = ProgressDialog(context)

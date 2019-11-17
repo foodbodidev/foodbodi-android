@@ -4,9 +4,10 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import androidx.fragment.app.FragmentActivity
+import android.view.inputmethod.InputMethodManager
 
 
-class AlertDiaLogUtils {
+class Utils {
 
     companion object {
         fun showAlert(message: String, context: FragmentActivity, completion: () -> Unit) {
@@ -30,6 +31,20 @@ class AlertDiaLogUtils {
             alert.setTitle("Warning")
             // show alert dialog
             alert.show()
+        }
+
+        fun hideSoftKeyboard(activity: Activity) {
+
+            val inputMethodManager = activity.getSystemService(
+                Activity.INPUT_METHOD_SERVICE
+            ) as? InputMethodManager
+
+            val inputMethodManagerUr = inputMethodManager ?: return
+            var currentFocus = activity.currentFocus ?: return
+
+            inputMethodManagerUr.hideSoftInputFromWindow(
+                currentFocus.windowToken, 0
+            )
         }
     }
 }
