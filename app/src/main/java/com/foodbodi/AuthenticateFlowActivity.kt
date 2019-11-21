@@ -25,6 +25,7 @@ import com.facebook.login.LoginResult
 import com.foodbodi.apis.requests.FacebookSignInRequest
 import com.foodbodi.apis.requests.GoogleSignInRequest
 import com.foodbodi.model.LocalDailyLogDbManager
+import com.foodbodi.utils.Utils
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
@@ -64,6 +65,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
                 }
 
                 override fun onFailure(call: Call<FoodBodiResponse<LoginResponse>>, t: Throwable) {
+                    Utils.showAlert(t.message!!, this@AuthenticateFlowActivity)
                     //TODO : system failure
                 }
 

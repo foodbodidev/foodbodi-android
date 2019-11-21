@@ -42,6 +42,7 @@ import com.foodbodi.Base.BaseActivity
 import android.app.ProgressDialog
 import android.os.Message
 import com.foodbodi.Adapters.CaloriesCartDelegate
+import com.foodbodi.utils.Utils
 
 
 class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
@@ -121,7 +122,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
             .enqueue(object : Callback<FoodBodiResponse<UpdateCaloriesResponse>> {
 
                 override fun onFailure(call: Call<FoodBodiResponse<UpdateCaloriesResponse>>, t: Throwable) {
-                    // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show
+                    Utils.showAlert(t.message!!, this@UpdateCaloriesActivity)
                     hideLoading()
                     print(t.message)
                 }
@@ -141,7 +142,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
             })
     }
 
-    fun getReservationById() {
+    private  fun getReservationById() {
 
         showLoading(this)
 
@@ -151,6 +152,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                 override fun onFailure(call: Call<FoodBodiResponse<FoodCardResonse>>, t: Throwable) {
                     // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show()
                     hideLoading()
+                    Utils.showAlert(t.message!!, this@UpdateCaloriesActivity)
                 }
 
                 override fun onResponse(

@@ -17,6 +17,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.foodbodi.Base.BaseFragment
+import com.foodbodi.utils.Utils
 
 class LoginFragment(parent:AuthenticateFlowController): BaseFragment() {
     private var parent:AuthenticateFlowController = parent
@@ -35,6 +36,7 @@ class LoginFragment(parent:AuthenticateFlowController): BaseFragment() {
                     .enqueue(object : Callback<FoodBodiResponse<LoginResponse>> {
                         override fun onFailure(call: Call<FoodBodiResponse<LoginResponse>>, t: Throwable) {
                             //TODO : system failure
+                            Utils.showAlert(t.message!!, requireActivity())
                             hideLoading()
                         }
 
@@ -49,7 +51,6 @@ class LoginFragment(parent:AuthenticateFlowController): BaseFragment() {
                                 parent.onLoginFail(response.body()?.errorMessage());
                             }
                         }
-
                     })
             }
 

@@ -376,6 +376,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
                     FoodbodiRetrofitHolder.getService().createFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), food)
                         .enqueue(object : Callback<FoodBodiResponse<FoodResponse>> {
                             override fun onFailure(call: Call<FoodBodiResponse<FoodResponse>>, t: Throwable) {
+                                Utils.showAlert(t.message!!, this@EditRestaurantActivity)
 
                             }
 
@@ -410,6 +411,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
                     FoodbodiRetrofitHolder.getService().deleteFood(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), food.id!!, food.restaurant_id!!)
                         .enqueue(object : Callback<FoodBodiResponse<FoodResponse>> {
                             override fun onFailure(call: Call<FoodBodiResponse<FoodResponse>>, t: Throwable) {
+                                Utils.showAlert(t.message!!, this@EditRestaurantActivity)
 
                             }
 

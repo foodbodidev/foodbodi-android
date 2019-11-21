@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager
 class Utils {
 
     companion object {
-        fun showAlert(message: String, context: FragmentActivity, completion: () -> Unit) {
+        fun showAlert(message: String, context: FragmentActivity, completion: (() -> Unit)? = null) {
             val dialogBuilder = AlertDialog.Builder(context)
             // set message of alert dialog
             dialogBuilder.setMessage(message)
@@ -18,7 +18,7 @@ class Utils {
                 .setCancelable(false)
                 // positive button text and action
                 .setPositiveButton("Ok", DialogInterface.OnClickListener {
-                        dialog, id -> completion.invoke()
+                        dialog, id -> completion?.invoke()
                 })
                 // negative button text and action
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener {

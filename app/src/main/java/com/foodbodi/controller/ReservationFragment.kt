@@ -20,6 +20,7 @@ import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.ReservationResponse
 import com.foodbodi.apis.RestaurantResponse
 import com.foodbodi.model.Reservation
+import com.foodbodi.utils.Utils
 import kotlinx.android.synthetic.main.reservation_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,7 +53,7 @@ class ReservationFragment: BaseFragment() {
         FoodbodiRetrofitHolder.getService().getReservation(FoodbodiRetrofitHolder.getHeaders(this.requireContext()))
             .enqueue(object : Callback<FoodBodiResponse<ReservationResponse>> {
                 override fun onFailure(call: Call<FoodBodiResponse<ReservationResponse>>, t: Throwable) {
-                   // Toast.makeText(this.require`, t.message, Toast.LENGTH_LONG).show()
+                    Utils.showAlert(t.message!!, requireActivity())
                     hideLoading()
                 }
 

@@ -12,6 +12,7 @@ import com.foodbodi.controller.UpdateBasicInfoActivity.SelectGenderFragment
 import com.foodbodi.controller.UpdateBasicInfoActivity.UpdateBasicInfoFragment
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.User
+import com.foodbodi.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,7 +48,7 @@ class UpdateBasicInfoActivity : BaseActivity(), UpdateBasicInfoController {
             FoodbodiRetrofitHolder.getService().updateProfile(headers, profile)
                 .enqueue(object : Callback<FoodBodiResponse<User>> {
                     override fun onFailure(call: Call<FoodBodiResponse<User>>, t: Throwable) {
-                        //TODO : //system failure
+                        Utils.showAlert(t.message!!, this@UpdateBasicInfoActivity)
                         hideLoading()
                     }
 
