@@ -33,6 +33,11 @@ import com.yalantis.ucrop.UCrop
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.util.*
+import android.app.TimePickerDialog
+import android.text.InputType
+import org.checkerframework.checker.nullness.compatqual.NullableType
+import java.text.SimpleDateFormat
 
 
 class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -112,6 +117,50 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
 
         fillData()
+
+        actionClickOnTextView()
+
+
+    }
+
+
+    private fun actionClickOnTextView() {
+
+        val openHourTextView = findViewById<TextView>(R.id.input_restaurent_open_hour)
+        val closeHourTextView = findViewById<TextView>(R.id.input_restaurent_close_hour)
+
+        openHourTextView.inputType = InputType.TYPE_NULL
+        closeHourTextView.inputType = InputType.TYPE_NULL
+
+
+        openHourTextView.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val cal = Calendar.getInstance()
+                val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+                    cal.set(Calendar.HOUR_OF_DAY, hour)
+                    cal.set(Calendar.MINUTE, minute)
+                    TimePickerDialog.BUTTON_NEGATIVE
+                    openHourTextView.text = SimpleDateFormat("HH:mm").format(cal.time)
+                }
+                TimePickerDialog(this@EditRestaurantActivity, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            }
+
+        })
+
+
+        findViewById<TextView>(R.id.input_restaurent_close_hour).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val cal = Calendar.getInstance()
+                val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+                    cal.set(Calendar.HOUR_OF_DAY, hour)
+                    cal.set(Calendar.MINUTE, minute)
+                    TimePickerDialog.BUTTON_NEGATIVE
+                    closeHourTextView.text = SimpleDateFormat("HH:mm").format(cal.time)
+                }
+                TimePickerDialog(this@EditRestaurantActivity, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            }
+
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
