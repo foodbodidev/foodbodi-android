@@ -49,7 +49,6 @@ class ProfileFragment : Fragment() {
     var selectedDate: DateString =
         DateString.fromCalendar(myCalendar)
 
-    var cachNumOfStep = 0;
     var state: DailyLog = DailyLog()
 
 
@@ -144,19 +143,9 @@ class ProfileFragment : Fragment() {
                 }
 
             })
-            .onStepCountDelta(object : Action<Int> {//GoogleFit fire this
+            .onStepCountTotal(object : Action<Int> {//Samsung Health fire this
             override fun accept(data: Int?) {
-                updateCachedStepByDelta(data!!)
-            }
-
-                override fun deny(data: Int?, reason: String) {
-                    Toast.makeText(this@ProfileFragment.requireContext(), reason, Toast.LENGTH_LONG).show()
-
-                }
-
-            }).onStepCountTotal(object : Action<Int> {//Samsung Health fire this
-            override fun accept(data: Int?) {
-                updateCachedStep(data!!)
+                updateStateStepCount(data!!)
             }
 
                 override fun deny(data: Int?, reason: String) {
@@ -193,7 +182,6 @@ class ProfileFragment : Fragment() {
                                 if (state.getStep() == null || state.getStep() < stepCount!!) {
                                     state.step = stepCount
                                 }
-                                cachNumOfStep = data.getStep();
                                 updateView()
 
                                 if (!isRegisterSensor) {
@@ -298,16 +286,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun updateCachedStepByDelta(delta: Int) {
+    private fun updateStateStepCount(delta: Int) {
         Toast.makeText(this@ProfileFragment.requireContext(), delta.toString(), Toast.LENGTH_SHORT).show()
-        updateCachedStep(cachNumOfStep + delta)
-    }
-
-    private fun updateCachedStep(delta: Int) {
-        Toast.makeText(this@ProfileFragment.requireContext(), delta.toString(), Toast.LENGTH_SHORT).show()
-        cachNumOfStep = delta;
-        state.step = cachNumOfStep
-        LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()!!, cachNumOfStep)
+        state.step = delta
+        //LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()!!, cachNumOfStep)
         if (isToday()) {
             updateView()
         }

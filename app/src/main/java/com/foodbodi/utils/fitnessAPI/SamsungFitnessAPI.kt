@@ -11,6 +11,8 @@ import com.google.android.gms.fitness.FitnessOptions
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.foodbodi.MainActivity
 import com.samsung.android.sdk.healthdata.*
@@ -139,6 +141,8 @@ class SamsungFitnessAPI : FitnessAPI {
     }
 
     override fun startListenOnStepCountDelta(): FitnessAPI {
+        val mHandler:Handler = Handler(Looper.getMainLooper());
+
         this.getStepCountTask = GetStepCountTask(this.healthDataStore!!, this.onStepCountTotal!!)
         this.getStepCountTask!!.execute()
         return this
@@ -161,12 +165,9 @@ class SamsungFitnessAPI : FitnessAPI {
         HealthDataResolver.Filter.eq("source_type", -2));
 
         val request:HealthDataResolver.ReadRequest = HealthDataResolver.ReadRequest.Builder()
-            // Set the data type
-            .setDataType("com.samsung.shealth.step_daily_trend")
-            // Set a filter
-            .setFilter(filter)
-            // Build
-            .build();
+            .setDataType(HealthConstants.StepCount.HEALTH_DATA_TYPE)
+            .setLocalTimeRange(HealthConstants.StepCount.START_TIME, HealthConstants.StepCount.TIME_OFFSET, today.time, Date().time)
+            .build()
         val mRdResult:HealthResultHolder.ResultListener<HealthDataResolver.ReadResult>  = object : HealthResultHolder.ResultListener<HealthDataResolver.ReadResult> {
             override fun onResult(result: HealthDataResolver.ReadResult) {
                 var totalCount:Int = 0;
@@ -305,14 +306,11 @@ class SamsungFitnessAPI : FitnessAPI {
 
             val today = Date(); today.hours = 0; today.minutes = 0; today.seconds = 0;
             // Create a filter for today's steps from all source devices
-            val filter:HealthDataResolver.Filter = HealthDataResolver.Filter.and(
-                HealthDataResolver.Filter.eq("day_time",today.time),
-                HealthDataResolver.Filter.eq("source_type", -2));
-
             val request:HealthDataResolver.ReadRequest = HealthDataResolver.ReadRequest.Builder()
-                .setDataType("com.samsung.shealth.step_daily_trend")
-                .setFilter(filter)
-                .build();
+                .setDataType(HealthConstants.StepCount.HEALTH_DATA_TYPE)
+                .setLocalTimeRange(HealthConstants.StepCount.START_TIME, HealthConstants.StepCount.TIME_OFFSET, today.time, Date().time)
+                .build()
+
 
             val mResolver = HealthDataResolver(this.heathDataStore, null);
             var totalCount = 0;
@@ -334,7 +332,7 @@ class SamsungFitnessAPI : FitnessAPI {
                     }
 
                 } catch ( e:Exception) {
-                    Log.d("GetStepCountTask", "Read Samsung step count fail")
+                    Log.d("GetStepCountTask", "Read Samsung step count fail ${e.message}")
                 }
 
                 Thread.sleep(30000L)
