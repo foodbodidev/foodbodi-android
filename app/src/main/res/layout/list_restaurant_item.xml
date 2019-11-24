@@ -9,7 +9,7 @@
                android:layout_width="60pt"
                android:layout_height="40pt"
                android:contentDescription="Photo"
-               android:background="@color/gray_color"/>
+               android:background="@drawable/round_corner_image"/>
     <TextView android:id="@+id/restaurant_item_name"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"

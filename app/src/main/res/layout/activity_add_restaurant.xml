@@ -199,7 +199,7 @@
                             android:layout_width="wrap_content" android:layout_height="match_parent">
                         <ImageView
                                 android:layout_gravity="center_horizontal|center_vertical"
-                                android:background="@color/edit_text_color"
+                                android:background="@drawable/round_corner_image"
                                 android:id="@+id/image_food_image"
                                 android:layout_width="80dp" android:layout_height="80dp"/>
                         <ImageButton
