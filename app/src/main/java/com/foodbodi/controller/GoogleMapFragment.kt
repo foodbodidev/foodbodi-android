@@ -27,10 +27,7 @@ import com.foodbodi.utils.Action
 import com.foodbodi.utils.GoogleMapUtils
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -50,6 +47,7 @@ class GoogleMapFragment : Fragment() {
 
     private lateinit var searchBox:EditText
     private var needMoveCamera = true;
+    private var lastGeoHash:String? = null;
 
     var fusedLocationClient: FusedLocationProviderClient? = null
 
@@ -155,19 +153,12 @@ class GoogleMapFragment : Fragment() {
             }
 
         })
+
         return view;
     }
 
     @SuppressLint("MissingPermission")
     private fun registerCurrentLocation() {
-        /*if (MainActivity.locationProvider != null) {
-            MainActivity.mLocationManager?.requestLocationUpdates(
-                MainActivity.locationProvider,
-                3000,
-                7f,
-                this@GoogleMapFragment
-            )
-        }*/
         var locationRequest: LocationRequest = LocationRequest.create().apply {
             interval = 10000
             fastestInterval = 5000
@@ -176,6 +167,13 @@ class GoogleMapFragment : Fragment() {
         fusedLocationClient?.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
         )
+
+        view!!.findViewById<Button>(R.id.current_location).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                moveCameraToCurrentLocation()
+            }
+
+        })
     }
 
     private fun loadRestaurant() {
@@ -210,6 +208,7 @@ class GoogleMapFragment : Fragment() {
                     )
                 ).title("You")
             )
+            userCurrentLocation!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.my_location))
         } else {
             userCurrentLocation?.position = LatLng(currentLocation?.latitude!!, currentLocation.longitude)
         }
@@ -238,28 +237,33 @@ class GoogleMapFragment : Fragment() {
     private fun findNearbyRestaurant(location: GoogleMapUtils.LatLng, callback: Action<ArrayList<Restaurant>>) {
         val geohash = GeoHash(location.lat, location.lng, 5)
         val center = geohash.toString()
+        val isChangeGeoHash = lastGeoHash == null || !center.equals(lastGeoHash)
 
-        firestore.collection("restaurants").whereArrayContains("neighbour_geohash", center)
-            .addSnapshotListener { snapshot, e ->
-                run {
-                    if (e != null) {
-                        callback.deny(null, e.message!!)
-                    }
-
-                    if (snapshot != null) {
-                        var list = ArrayList<Restaurant>()
-                        for (document in snapshot.documents) {
-                            val r = document.toObject(Restaurant::class.java);
-                            r!!.id = document.id
-                            list.add(r)
+        if (isChangeGeoHash) {
+            firestore.collection("restaurants").whereArrayContains("neighbour_geohash", center)
+                .addSnapshotListener { snapshot, e ->
+                    run {
+                        if (e != null) {
+                            callback.deny(null, e.message!!)
                         }
-                        callback.accept(list)
 
-                    } else {
-                        callback.deny(null, "Can not get restaurants in zone $center")
+                        if (snapshot != null) {
+                            var list = ArrayList<Restaurant>()
+                            for (document in snapshot.documents) {
+                                val r = document.toObject(Restaurant::class.java);
+                                r!!.id = document.id
+                                list.add(r)
+                            }
+                            callback.accept(list)
+
+                        } else {
+                            callback.deny(null, "Can not get restaurants in zone $center")
+                        }
                     }
                 }
-            }
+
+            lastGeoHash = center;
+        }
     }
 
     private fun invokeAuthentication() {
@@ -354,19 +358,28 @@ class GoogleMapFragment : Fragment() {
             if (RestaurantType.RESTAURANT == r.type) {
                 when (r.getCaloSegment()) {
                     CaloSegment.LOW -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_blue))
+                    }
+                    CaloSegment.MEDIUM -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_yellow))
+                    }
+                    CaloSegment.HIGH -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_red))
 
                     }
-                    CaloSegment.MEDIUM -> {}
-                    CaloSegment.HIGH -> {}
                 }
 
             } else if (RestaurantType.FOOD_TRUCK == r.type) {
                 when (r.getCaloSegment()) {
                     CaloSegment.LOW -> {
-
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truct_blue))
                     }
-                    CaloSegment.MEDIUM -> {}
-                    CaloSegment.HIGH -> {}
+                    CaloSegment.MEDIUM -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truck_yello))
+                    }
+                    CaloSegment.HIGH -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truck_red))
+                    }
                 }
             }
 
