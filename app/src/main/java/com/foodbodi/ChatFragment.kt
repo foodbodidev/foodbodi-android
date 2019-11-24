@@ -43,9 +43,8 @@ class ChatFragment : Fragment() {
     private lateinit var txtEnterText:EditText;
     private lateinit var btnSend:Button;
     private var listChat = ArrayList<CommentRequest>()
-    var restaurant_id = "0Dz6nrjaLPGcQiGBV3ZG";
     val firestore = FirebaseFirestore.getInstance()
-
+    private var unitID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,10 +63,8 @@ class ChatFragment : Fragment() {
         lvChat = view.findViewById(R.id.lvChat);
         btnSend = view.findViewById(R.id.btnSend);
         txtEnterText = view.findViewById(R.id.txtMessage);
-        ProgressHUD.instance.showLoading(this.requireActivity());
-        firestore.collection("comments").whereEqualTo("restaurant_id",restaurant_id).
+        firestore.collection("comments").whereEqualTo("restaurant_id",unitID).
             get().addOnSuccessListener { querySnapshot ->
-            ProgressHUD.instance.hideLoading()
             for (document in querySnapshot.documents) {
                 val commentData = document.toObject(CommentRequest::class.java);
                 if (commentData != null) {
@@ -84,7 +81,7 @@ class ChatFragment : Fragment() {
         btnSend.setOnClickListener { view ->
             if (txtEnterText.text.toString().length > 0){
                 var comment:CommentRequest = CommentRequest();
-                comment.restaurant_id = restaurant_id;
+                comment.restaurant_id = unitID;
                 comment.message = txtEnterText.text.toString();
                 FoodbodiRetrofitHolder.getService().
                     addCommentRestaurant(FoodbodiRetrofitHolder.getHeaders(this.requireContext()),comment).enqueue(object :
@@ -163,14 +160,11 @@ class ChatFragment : Fragment() {
          * @return A new instance of fragment ChatFragment.
          */
         // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ChatFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance(unitID: String): ChatFragment {
+            val fragment = ChatFragment()
+            fragment.unitID = unitID
+            return fragment
+        }
     }
 
     inner class NotesAdapter : BaseAdapter {

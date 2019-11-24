@@ -21,12 +21,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
+
 class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInteractionListener, NameOfFoodsFragment.OnFragmentInteractionListener {
     companion object {
         val RESTAURANT_ID = "restaurant_id";
     }
-
-
 
     var data: Restaurant? = null;
     var tabLayout: TabLayout? = null
@@ -45,7 +45,13 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
         tabLayout!!.addTab(tabLayout!!.newTab().setText("Name of foods"))
         tabLayout!!.addTab(tabLayout!!.newTab().setText("Chat"))
         tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL
-        val adapter = DetailRestaurantAdapter(this, supportFragmentManager, tabLayout!!.tabCount)
+        val restaurantId = intent.getStringExtra(RESTAURANT_ID)
+        val adapter = DetailRestaurantAdapter(this.supportFragmentManager, restaurantId);
+        var nameOfFoodFragment:NameOfFoodsFragment = NameOfFoodsFragment()
+        var chatFragment:ChatFragment = ChatFragment();
+        adapter.addFragment(nameOfFoodFragment, restaurantId);
+        adapter.addFragment(chatFragment, restaurantId);
+
         viewPager!!.adapter = adapter
 
 

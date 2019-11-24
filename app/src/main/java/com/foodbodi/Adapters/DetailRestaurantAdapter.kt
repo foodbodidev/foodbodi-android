@@ -8,23 +8,26 @@ import android.content.Context;
 import com.foodbodi.ChatFragment;
 import com.foodbodi.NameOfFoodsFragment;
 
-class DetailRestaurantAdapter(private val myContext: Context, fm: FragmentManager, internal var totalTabs: Int) : FragmentPagerAdapter(fm) {
-
-    // this is for fragment tabs
+class DetailRestaurantAdapter(manager: FragmentManager, unitID:String) : FragmentPagerAdapter(manager) {
+    private var unitID: String = ""
+    private val mFragmentList:ArrayList<Fragment> = ArrayList()
     override fun getItem(position: Int): Fragment {
         if (position == 0){
-            var nameOfFoodsFragment = NameOfFoodsFragment()
-            nameOfFoodsFragment.restaurant_id = ""
-            return nameOfFoodsFragment
+            return NameOfFoodsFragment.newInstance(this.unitID)
         }else{
-            return ChatFragment()
+            return ChatFragment.newInstance(this.unitID)
         }
 
     }
 
+    fun addFragment(fragment: Fragment, unitID: String) {
+        mFragmentList.add(fragment)
+        this.unitID = unitID
+    }
+
     // this counts total number of tabs
     override fun getCount(): Int {
-        return totalTabs
+        return mFragmentList.count();
     }
 }
 

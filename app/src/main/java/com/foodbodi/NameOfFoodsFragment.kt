@@ -20,7 +20,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
-
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -39,7 +38,6 @@ class NameOfFoodsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    var restaurant_id = "0Dz6nrjaLPGcQiGBV3ZG";
     private var listener: OnFragmentInteractionListener? = null
     var foods:ArrayList<Food> = ArrayList();
     //Outlet.
@@ -47,6 +45,10 @@ class NameOfFoodsFragment : Fragment() {
 
 
     val firestore = FirebaseFirestore.getInstance()
+    private var unitID: String? = null
+
+    // Here I want to get unitID
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +76,7 @@ class NameOfFoodsFragment : Fragment() {
     }
     private fun  getNameOfFoodsFromFirbase(){
         ProgressHUD.instance.showLoading(getActivity())
-        firestore.collection("foods").whereEqualTo("restaurant_id",restaurant_id).
+        firestore.collection("foods").whereEqualTo("restaurant_id",unitID).
             get().addOnSuccessListener { querySnapshot ->
             ProgressHUD.instance.hideLoading()
             var limit:Double = 300.0;
@@ -152,22 +154,10 @@ class NameOfFoodsFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NameOfFoodsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NameOfFoodsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance(unitID: String): NameOfFoodsFragment {
+            val fragment = NameOfFoodsFragment();
+            fragment.unitID = unitID
+            return fragment
+        }
     }
 }
