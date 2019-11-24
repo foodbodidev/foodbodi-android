@@ -74,7 +74,7 @@
     <string name="welcaome_msg">Transformation to a great looking body will become dream come true with daily calorie
         adjustment!
     </string>
-    <string name="search_box_hint">Restaurant name, food name, address</string>
+    <string name="search_box_hint">Restaurant name, food name</string>
     <string name="restaurant_name_hint">(Restaurant name)</string>
     <string name="restaurant_address_hint">(Restaurant address)</string>
 
