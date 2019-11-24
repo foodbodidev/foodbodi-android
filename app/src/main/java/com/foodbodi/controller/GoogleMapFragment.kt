@@ -182,7 +182,7 @@ class GoogleMapFragment : Fragment() {
 
     private fun loadRestaurant() {
         if (userCurrentLocation != null) {
-            findNearbyRestaurant(git st
+            findNearbyRestaurant(
                 GoogleMapUtils.LatLng(userCurrentLocation?.position!!.latitude, userCurrentLocation?.position!!.longitude),
                 object : Action<ArrayList<Restaurant>> {
                     override fun accept(list: ArrayList<Restaurant>?) {
