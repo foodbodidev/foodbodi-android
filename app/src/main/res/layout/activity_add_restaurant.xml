@@ -233,6 +233,7 @@
             <LinearLayout
                     android:paddingLeft="12dp"
                     android:paddingRight="12dp"
+                    android:background="@drawable/rounded_corner"
                     android:orientation="vertical"
                     android:id="@+id/list_added_food"
                     android:layout_width="match_parent"

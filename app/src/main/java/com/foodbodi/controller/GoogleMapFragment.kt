@@ -25,6 +25,7 @@ import com.foodbodi.apis.*
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.foodbodi.utils.GoogleMapUtils
+import com.foodbodi.utils.picasso_transformation.RoundCornerImageTransformer
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -33,6 +34,7 @@ import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.function.ToDoubleBiFunction
 
 //TODO : cache this View so that no need to re-create when navigate back to this
 class GoogleMapFragment : Fragment() {
@@ -79,6 +81,7 @@ class GoogleMapFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        lastGeoHash = null;
         needMoveCamera = true;
         userCurrentLocation = null;
         if (ContextCompat.checkSelfPermission(
@@ -122,6 +125,12 @@ class GoogleMapFragment : Fragment() {
 
 
         });
+        view!!.findViewById<ImageButton>(R.id.current_location).setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                moveCameraToCurrentLocation()
+            }
+
+        })
 
         getChildFragmentManager().beginTransaction().replace(R.id.map, supportMapFragment).commit();
 
@@ -169,7 +178,6 @@ class GoogleMapFragment : Fragment() {
         fusedLocationClient?.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
         )
-
     }
 
     private fun loadRestaurant() {
@@ -351,7 +359,19 @@ class GoogleMapFragment : Fragment() {
 
             }
 
-            if (RestaurantType.RESTAURANT == r.type) {
+            if (RestaurantType.FOOD_TRUCK == r.type) {
+                when (r.getCaloSegment()) {
+                    CaloSegment.LOW -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truct_blue))
+                    }
+                    CaloSegment.MEDIUM -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truck_yello))
+                    }
+                    CaloSegment.HIGH -> {
+                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truck_red))
+                    }
+                }
+            } else {
                 when (r.getCaloSegment()) {
                     CaloSegment.LOW -> {
                         marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_blue))
@@ -362,19 +382,6 @@ class GoogleMapFragment : Fragment() {
                     CaloSegment.HIGH -> {
                         marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_red))
 
-                    }
-                }
-
-            } else if (RestaurantType.FOOD_TRUCK == r.type) {
-                when (r.getCaloSegment()) {
-                    CaloSegment.LOW -> {
-                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truct_blue))
-                    }
-                    CaloSegment.MEDIUM -> {
-                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truck_yello))
-                    }
-                    CaloSegment.HIGH -> {
-                        marker!!.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.truck_red))
                     }
                 }
             }
@@ -424,6 +431,19 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>, val itemClickHandl
             }
 
         })
+
+        val kcalo = holder.view.findViewById<TextView>(R.id.restaurant_item_kcalo)
+        var total = 0.0;
+        for (double in restaurant.calo_values) {
+            total += double
+        }
+        val avg = total / restaurant.calo_values.size
+        kcalo.setText(holder.view.resources.getText(R.string.kcalo_format, avg.toString()))
+        when(restaurant.getCaloSegment()) {
+            CaloSegment.LOW -> kcalo.setTextColor(holder.view.resources.getColor(R.color.low_calo))
+            CaloSegment.MEDIUM -> kcalo.setTextColor(holder.view.resources.getColor(R.color.medium_calo))
+            CaloSegment.HIGH -> kcalo.setTextColor(holder.view.resources.getColor(R.color.high_calo))
+        }
 
         val time = restaurant.open_hour + " ~ " + restaurant.close_hour
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
