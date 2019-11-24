@@ -27,6 +27,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.foodbodi.apis.*
 import com.foodbodi.utils.*
+import com.foodbodi.utils.picasso_transformation.RoundCornerImageTransformer
 import com.squareup.picasso.Picasso
 import com.yalantis.ucrop.UCrop
 import okhttp3.MediaType
@@ -369,7 +370,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
                 val imageView: ImageView = photo!!
                 if (food?.photo != null) {
-                    Picasso.get().load(food.photo).into(imageView)
+                    Picasso.get().load(food.photo).transform(RoundCornerImageTransformer(5, 0)).into(imageView)
                 }
 
                 return view

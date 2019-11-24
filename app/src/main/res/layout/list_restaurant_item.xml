@@ -22,6 +22,10 @@
                   android:text="@string/not_updated"
                   android:textSize="@dimen/text_small"
         />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="@string/split_character"
+                  android:textSize="@dimen/text_small"
+        />
         <TextView android:id="@+id/restaurant_item_kcalo" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:textSize="@dimen/text_small"
         />

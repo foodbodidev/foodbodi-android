@@ -48,14 +48,31 @@
             android:padding="@dimen/text_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <EditText android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/edit_text_search_box"
-                  android:hint="@string/search_box_hint"
-                  android:background="@drawable/fb_textview"
-                  android:layout_marginBottom="@dimen/text_medium"
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_medium">
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/edit_text_search_box"
+                      android:hint="@string/search_box_hint"
+                      android:background="@drawable/fb_textview"
+                      android:drawableLeft="@android:drawable/ic_menu_search"
+                      android:drawablePadding="@dimen/text_small"
 
-        />
+            />
+            <ImageButton android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_alignParentRight="true"
+                         android:src="@drawable/my_location"
+                         android:background="@android:color/transparent"
+                         android:layout_centerVertical="true"
+                         android:id="@+id/current_location"
+                         android:layout_marginRight="@dimen/text_small"
+
+            />
+        </RelativeLayout>
+
         <ImageButton
                 android:background="@drawable/circle_green"
                 app:srcCompat="@drawable/ic_add_white_36dp"
