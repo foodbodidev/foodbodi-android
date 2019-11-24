@@ -60,17 +60,23 @@ class Restaurant : Serializable {
                 sum += value
             }
             avg = sum / calo_values.size
-            if (avg >= 600) {
-                return CaloSegment.HIGH
-            } else if (avg >= 400) {
-                return CaloSegment.MEDIUM
-            } else {
-                return CaloSegment.LOW
-            }
+            return getCaloSegment(avg)
         } else {
             return CaloSegment.LOW
         }
 
+    }
+
+    companion object {
+       fun getCaloSegment(calo:Double):CaloSegment {
+           if (calo >= 600) {
+               return CaloSegment.HIGH
+           } else if (calo >= 400) {
+               return CaloSegment.MEDIUM
+           } else {
+               return CaloSegment.LOW
+           }
+       }
     }
 }
 
