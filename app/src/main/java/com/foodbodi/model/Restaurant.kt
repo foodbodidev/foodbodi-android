@@ -4,6 +4,8 @@ import androidx.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
 import java.io.Serializable;
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class Restaurant : Serializable {
     @SerializedName("name")
@@ -65,6 +67,18 @@ class Restaurant : Serializable {
             return CaloSegment.LOW
         }
 
+    }
+    fun getAvgCalos():Double{
+        var avg:Double = 0.0;
+        var sum = 0.0;
+        if (calo_values.size > 0) {
+            for (value in calo_values) {
+                sum += value
+            }
+            avg = sum / calo_values.size;
+        }
+        avg = String.format("%.1f", avg).toDouble()
+        return avg
     }
 
     companion object {

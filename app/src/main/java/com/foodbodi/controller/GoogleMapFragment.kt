@@ -153,6 +153,8 @@ class GoogleMapFragment : Fragment() {
             }
 
         })
+        //current location.
+
 
         return view;
     }
@@ -168,17 +170,11 @@ class GoogleMapFragment : Fragment() {
             locationRequest, locationCallback, Looper.getMainLooper()
         )
 
-        view!!.findViewById<Button>(R.id.current_location).setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                moveCameraToCurrentLocation()
-            }
-
-        })
     }
 
     private fun loadRestaurant() {
         if (userCurrentLocation != null) {
-            findNearbyRestaurant(
+            findNearbyRestaurant(git st
                 GoogleMapUtils.LatLng(userCurrentLocation?.position!!.latitude, userCurrentLocation?.position!!.longitude),
                 object : Action<ArrayList<Restaurant>> {
                     override fun accept(list: ArrayList<Restaurant>?) {

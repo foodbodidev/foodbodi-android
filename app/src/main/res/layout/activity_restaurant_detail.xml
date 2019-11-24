@@ -48,13 +48,13 @@
             <TextView android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:id="@+id/text_restaurant_time"
-                      android:text="time"
+                      android:text=""
             />
             <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabRestaurant"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#00a294"
+                    android:background="@android:color/white"
                     >
 
             </com.google.android.material.tabs.TabLayout>

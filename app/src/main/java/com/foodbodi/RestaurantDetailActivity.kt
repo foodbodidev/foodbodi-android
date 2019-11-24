@@ -1,6 +1,7 @@
 package com.foodbodi
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,13 +10,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.foodbodi.Adapters.DetailRestaurantAdapter
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.RestaurantResponse
+import com.foodbodi.model.CaloSegment
 import com.foodbodi.model.Restaurant
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.material.tabs.TabLayout
 import retrofit2.Call
 import retrofit2.Callback
@@ -118,6 +122,21 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
             this.eFood!!.text = data!!.category;
             this.eName!!.text = data!!.name;
             this.eTime!!.text = data!!.open_hour + " ~ " + data!!.close_hour;
+            this.eKcal!!.text = data!!.getAvgCalos().toString();
+             data!!.getCaloSegment()
+            when (data!!.getCaloSegment()) {
+                CaloSegment.LOW -> {
+                    this.eKcal!!.setTextColor(ContextCompat.getColor(baseContext, R.color.low_calo));
+                }
+                CaloSegment.MEDIUM -> {
+                    this.eKcal!!.setTextColor(ContextCompat.getColor(baseContext, R.color.medium_calo));
+
+                }
+                CaloSegment.HIGH -> {
+                   this.eKcal!!.setTextColor(ContextCompat.getColor(baseContext, R.color.high_calo));
+
+                }
+            }
 
         } else {
 

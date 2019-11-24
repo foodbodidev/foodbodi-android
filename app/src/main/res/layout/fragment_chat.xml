@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:tools="http://schemas.android.com/tools"  android:layout_width="match_parent"  android:layout_height="match_parent"  tools:context=".MainActivity" >
-    <EditText
-            android:id="@+id/txtMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:inputType="text"
-            android:hint="Enter text"
-            android:ems="10" />
-    <Button  android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtMessage"
-            android:layout_centerHorizontal="true"
-            android:textAlignment="center"
-            android:text="Send"
-            />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity" >
+
+        <LinearLayout
+                android:id="@+id/linerChat"
+                android:layout_height="45dp"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="10dp"
+
+                >
+        <EditText
+                android:id="@+id/txtMessage"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:layout_width="fill_parent"
+                android:hint="Enter text"
+                android:background="@drawable/fb_edit_text"
+                >
+        </EditText>
+        <Button
+                android:id="@+id/btnSend"
+                android:text = "Send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+        </Button>
+        </LinearLayout>
     <ListView  android:id="@+id/lvChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/btnSend"
+            android:layout_below="@+id/linerChat"
             android:background="@color/White" >
     </ListView>
 </RelativeLayout>
