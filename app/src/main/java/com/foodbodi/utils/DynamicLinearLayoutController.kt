@@ -28,7 +28,7 @@ abstract class DynamicLinearLayoutController(val root:LinearLayout, var itemCont
             root.addView(view)
             val pos = this.data.size
             var child:LinearLayout = view.findViewById<LinearLayout>(this.itemContentId)
-            child.setOnTouchListener(object : SwipeEvent() {
+            child.setOnTouchListener(object : SwipeEvent(left = false, right = true) {
                 override fun onClick(view: View, event: MotionEvent) {
                     swipeCancel(view, event)
                 }
