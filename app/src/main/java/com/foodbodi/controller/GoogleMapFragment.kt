@@ -437,8 +437,8 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>, val itemClickHandl
         for (double in restaurant.calo_values) {
             total += double
         }
-        val avg = total / restaurant.calo_values.size
-        kcalo.setText(holder.view.resources.getText(R.string.kcalo_format, avg.toString()))
+        val avg:Double = total / restaurant.calo_values.size
+        kcalo.setText(holder.view.resources.getString(R.string.kcalo_format, avg))
         when(restaurant.getCaloSegment()) {
             CaloSegment.LOW -> kcalo.setTextColor(holder.view.resources.getColor(R.color.low_calo))
             CaloSegment.MEDIUM -> kcalo.setTextColor(holder.view.resources.getColor(R.color.medium_calo))
