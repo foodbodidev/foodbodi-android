@@ -8,6 +8,8 @@
     <color name="title_text_color">#193E52</color> --> main title color
     <color name="edit_text_color">#E5EDEF</color>
     <color name="gray_color">#D8D8D8</color>
-
-
+    <color name="low_calo">#7398de</color>
+    <color name="medium_calo">#fbd402</color>
+    <color name="high_calo">#eb6d4a</color>
+    <color name="text_grey">#6d7278</color>
 </resources>

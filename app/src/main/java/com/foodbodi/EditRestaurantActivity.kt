@@ -1,5 +1,6 @@
 package com.foodbodi
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -353,9 +354,17 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
                 if (food?.price != null) {
                     price!!.setText(view?.context?.getString(R.string.money_format, food.price))
+                    price.setTextColor(resources.getColor(R.color.text_grey))
                 }
                 if (food?.calo != null) {
                     kcalo!!.setText(view?.context?.getString(R.string.kcalo_format, food.calo))
+                    val caloSegment:CaloSegment = Restaurant.getCaloSegment(food.calo!!)
+                    when(caloSegment) {
+                        CaloSegment.LOW -> kcalo.setTextColor(resources.getColor(R.color.low_calo))
+                        CaloSegment.MEDIUM -> kcalo.setTextColor(resources.getColor(R.color.medium_calo))
+                        CaloSegment.HIGH -> kcalo.setTextColor(resources.getColor(R.color.high_calo))
+                    }
+
                 }
 
                 val imageView: ImageView = photo!!
@@ -439,7 +448,10 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
     }
 
     private fun clearAddFoodForm() {
-
+        findViewById<EditText>(R.id.input_food_name).setText("")
+        findViewById<EditText>(R.id.input_food_price).setText("")
+        findViewById<EditText>(R.id.input_food_kcalo).setText("")
+        findViewById<ImageView>(R.id.image_food_image).setImageDrawable(null)
     }
 
     private fun ensureFoodInputData():Food? {
