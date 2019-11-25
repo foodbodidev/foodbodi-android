@@ -63,6 +63,7 @@
                         android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
                         android:hint="@string/restaurant_name_hint"
+                        android:textColor="@color/title_text_color"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
@@ -71,6 +72,7 @@
                         android:focusableInTouchMode="false"
                         android:hint="@string/restaurant_address_hint"
                         android:id="@+id/input_restaurant_address"
+                        android:textColor="@color/title_text_color"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -93,14 +95,18 @@
                             android:orientation="vertical"
                             android:layout_weight="5"
                             android:layout_width="0dp" android:layout_height="wrap_content">
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        <TextView android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/title_text_color"
                                   android:text="@string/open_hour"/>
-                        <EditText
+                        <TextView
                                 android:id="@+id/input_restaurent_open_hour"
                                 android:hint="@string/hour_example"
                                 android:inputType="time"
                                 android:background="@drawable/fb_edit_text"
+                                android:textColor="@color/title_text_color"
                                 android:layout_marginBottom="10dp"
+                                android:gravity="center_vertical"
                                 android:layout_width="match_parent" android:layout_height="wrap_content"
                                 android:layout_marginRight="5dp"/>
                     </LinearLayout>
@@ -108,15 +114,20 @@
                             android:orientation="vertical"
                             android:layout_weight="5"
                             android:layout_width="0dp" android:layout_height="wrap_content">
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        <TextView android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/title_text_color"
                                   android:text="@string/close_hour"/>
-                        <EditText
+                        <TextView
                                 android:id="@+id/input_restaurent_close_hour"
                                 android:hint="@string/hour_example"
                                 android:inputType="time"
+                                android:textColor="@color/title_text_color"
+                                android:gravity="center_vertical"
                                 android:layout_marginBottom="10dp"
                                 android:background="@drawable/fb_edit_text"
-                                android:layout_width="match_parent" android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_marginLeft="5dp"/>
 
                     </LinearLayout>
@@ -161,6 +172,7 @@
                         android:text="@string/menu"
                         android:textSize="@dimen/text_large"
                         android:layout_marginBottom="@dimen/text_medium"
+                        android:textColor="@color/title_text_color"
                         android:layout_width="match_parent" android:layout_height="wrap_content"/>
                 <LinearLayout
                         android:weightSum="10"
@@ -174,6 +186,7 @@
                                 android:id="@+id/input_food_name"
                                 android:hint="@string/title"
                                 android:layout_marginBottom="@dimen/text_small"
+                                android:textColor="@color/title_text_color"
                                 android:background="@drawable/fb_edit_text"
                                 android:layout_width="match_parent" android:layout_height="wrap_content"/>
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
@@ -184,11 +197,13 @@
                                     android:minWidth="80dp"
                                     android:layout_marginEnd="@dimen/text_small"
                                     android:inputType="numberDecimal"
+                                    android:textColor="@color/title_text_color"
                                     android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                             <EditText
                                     android:id="@+id/input_food_kcalo"
                                     android:background="@drawable/fb_edit_text"
                                     android:hint="@string/add_kcalo"
+                                    android:textColor="@color/title_text_color"
                                     android:inputType="numberDecimal"
                                     android:layout_width="match_parent" android:layout_height="wrap_content"/>
                         </LinearLayout>
