@@ -6,9 +6,9 @@ import android.widget.Toast
 
 
 
-abstract class SwipeEvent() : View.OnTouchListener {
+abstract class SwipeEvent(val left:Boolean = true, val right:Boolean = true) : View.OnTouchListener, View.OnFocusChangeListener {
     val CLICK_DURATION:Long = 3000
-    val SWIPE_DISTANCE = 150;
+    val SWIPE_DISTANCE = 100;
     abstract fun onClick(view: View, event: MotionEvent)
     abstract fun onLongClick(view: View, event: MotionEvent)
     abstract fun onLeftSwipe(view: View)
@@ -21,8 +21,15 @@ abstract class SwipeEvent() : View.OnTouchListener {
     var t2:Long = 0
     var moving:Boolean = false
 
+    override fun onFocusChange(view: View?, focus: Boolean) {
+        if (!focus) {
+            swipeCancel(view!!, null)
+        }
+    }
+
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         if (moving) {
+            view.parent.requestDisallowInterceptTouchEvent(true)
             onMoveView(view, event)
         } else {
             swipeCancel(view, event)
@@ -36,6 +43,7 @@ abstract class SwipeEvent() : View.OnTouchListener {
                 return true
             }
             MotionEvent.ACTION_UP -> {
+                view.parent.requestDisallowInterceptTouchEvent(false)
                 x2 = event.getRawX()
                 y2 = event.getRawY()
                 t2 = System.currentTimeMillis()
@@ -49,10 +57,14 @@ abstract class SwipeEvent() : View.OnTouchListener {
                         //Long click
                     }
                 } else if (x1 > x2 && (x1 - x2) > SWIPE_DISTANCE) {
-                    onLeftSwipe(view)
+                    if (left) {
+                        onLeftSwipe(view)
+                    }
                     //Left swipe
                 } else if (x2 > x1 && (x2 - x1) > SWIPE_DISTANCE) {
-                    onRightSwipe(view)
+                    if (right) {
+                        onRightSwipe(view)
+                    }
                     //Right swipe
                 } else {
                     swipeCancel(view, event)
@@ -67,13 +79,15 @@ abstract class SwipeEvent() : View.OnTouchListener {
 
     private fun onMoveView(view: View, event: MotionEvent) {
         val distance = (event.getRawX() - x1)
-        view.setTranslationX(distance)
+        if (left && distance < 0 || right && distance > 0) {
+            view.setTranslationX(distance)
+        }
 
     }
 
-    fun swipeCancel(view:View, event: MotionEvent) {
-        stopMoving(view)
+    fun swipeCancel(view:View, event: MotionEvent?) {
         resetValues()
+        stopMoving(view)
     }
 
     private fun resetValues() {
