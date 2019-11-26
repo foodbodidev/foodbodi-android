@@ -12,6 +12,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.foodbodi.Adapters.DetailRestaurantAdapter
 import com.foodbodi.apis.FoodBodiResponse
@@ -31,6 +33,7 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
     companion object {
         val RESTAURANT_ID = "restaurant_id";
     }
+    var capturedRestaurantPhotos:ArrayList<String> = ArrayList()
 
     var data: Restaurant? = null;
     var tabLayout: TabLayout? = null
@@ -39,6 +42,7 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
     var eFood:TextView? = null
     var eKcal:TextView? = null
     var eTime:TextView? = null
+    lateinit var photoPager:ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +76,8 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
 
             }
         })
-        getDataRestaurant();
+        this.initUI()
+        getDataRestaurant()
 
     }
 
@@ -82,7 +87,24 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
     }
 
     private  fun initUI(){
+        this.ensurePhotoBanner()
+    }
+    private fun ensurePhotoBanner() {
+        photoPager = findViewById<ViewPager>(R.id.pager_restaurant_photo)
 
+        // The pager adapter, which provides the pages to the view pager widget.
+        val pagerAdapter = ScreenSlidePagerAdapter(supportFragmentManager)
+        photoPager.adapter = pagerAdapter
+    }
+    private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+        var photoViews = ArrayList<RestaurantPhotoItem>()
+        override fun getCount(): Int {
+            return photoViews.size
+        }
+
+        override fun getItem(position: Int): Fragment {
+            return photoViews.get(position)
+        }
     }
 
     override fun onFragmentInteraction(uri: Uri) {
@@ -100,16 +122,25 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
                 override fun onResponse(
                     call: Call<FoodBodiResponse<RestaurantResponse>>,
                     response: Response<FoodBodiResponse<RestaurantResponse>>
-                ) {
-                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                        data = response.body()?.data()?.restaurant
-                        this@RestaurantDetailActivity.updateView()
-                    } else {
-                        Toast.makeText(this@RestaurantDetailActivity,response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
+                ) = if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                    data = response.body()?.data()?.restaurant
+                    capturedRestaurantPhotos = data!!.photos
+                    for (url in capturedRestaurantPhotos) {
+                        var view: RestaurantPhotoItem = RestaurantPhotoItem(url)
+                        addRestaurantPhoto(view)
                     }
+
+                    this@RestaurantDetailActivity.updateView()
+                } else {
+                    Toast.makeText(this@RestaurantDetailActivity,response.body()?.errorMessage(), Toast.LENGTH_LONG).show()
                 }
 
             })
+    }
+    private fun addRestaurantPhoto(view:RestaurantPhotoItem) {
+        val adapter = photoPager.adapter as RestaurantDetailActivity.ScreenSlidePagerAdapter
+        adapter.photoViews.add(view)
+        adapter.notifyDataSetChanged()
     }
 
     private fun updateView() {

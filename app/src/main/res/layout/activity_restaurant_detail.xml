@@ -7,7 +7,7 @@
 
     <androidx.viewpager.widget.ViewPager
             android:background="@color/gray_color"
-            android:id="@+id/pager_restaurant_photos"
+            android:id="@+id/pager_restaurant_photo"
             android:layout_width="match_parent"
             android:layout_height="200dp"/>
 
