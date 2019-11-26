@@ -54,6 +54,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     var reservationButton: Button? = null
+    var backButton: Button? = null
     var totalTextView: TextView? = null
     var reservationId: String = ""
     var restaurantId: String = ""
@@ -80,6 +81,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
 
 
         setupActionUpdateCart()
+        setupActionBack()
 
         getReservationById()
 
@@ -88,10 +90,21 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
     fun setupOutLet() {
         reservationButton = findViewById(R.id.button_reservation)
         totalTextView = findViewById(R.id.total_calories)
+        backButton = findViewById(R.id.button_back)
+
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
+    }
+
+    fun setupActionBack() {
+        backButton?.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                onBackPressed()
+            }
+
+        })
     }
 
     fun setupActionUpdateCart() {
