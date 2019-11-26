@@ -18,7 +18,7 @@
                   android:id="@+id/edit_text_search_box"
                   android:hint="@string/search_box_hint"
                   android:background="@drawable/fb_textview"
-                  android:drawableLeft="@android:drawable/ic_menu_search"
+                  android:drawableLeft="@drawable/ic_search"
                   android:drawablePadding="@dimen/text_small"
 
         />

@@ -10,20 +10,21 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         <FrameLayout
-                android:layout_weight="3.5"
                 android:id="@+id/map"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_weight="3.5">
 
-            <Button android:layout_width="wrap_content"
+            <Button
+                    android:id="@+id/btn_su_add"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
                     android:background="@color/colorAccent"
                     android:text="SU Add"
-                    android:textColor="@color/White"
-                    android:id="@+id/btn_su_add"
-            />
+                    android:textColor="@color/White" />
 
 
         </FrameLayout>
@@ -57,9 +58,8 @@
                       android:id="@+id/edit_text_search_box"
                       android:hint="@string/search_box_hint"
                       android:background="@drawable/fb_textview"
-                      android:drawableLeft="@android:drawable/ic_menu_search"
+                      android:drawableLeft="@drawable/ic_search"
                       android:drawablePadding="@dimen/text_small"
-
             />
             <ImageButton android:layout_width="wrap_content"
                          android:layout_height="wrap_content"
