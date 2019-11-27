@@ -82,6 +82,7 @@
                         android:scrollbarSize="@dimen/text_medium"
                         android:id="@+id/spinner_restaurant_category"
                         android:layout_marginTop="10dp"
+                        android:padding="0dp"
                         android:background="@drawable/fb_edit_text"
                         android:layout_width="match_parent" android:layout_height="wrap_content">
                 </Spinner>

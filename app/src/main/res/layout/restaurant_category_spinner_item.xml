@@ -4,5 +4,10 @@
               android:layout_height="match_parent">
     <TextView
             android:id="@+id/restaurant_category_item_name"
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/title_text_color"
+            android:textSize="15dp"
+            android:text="Fast Food"
+            android:layout_width="match_parent" android:layout_height="35dp"/>
 </LinearLayout>
