@@ -7,4 +7,10 @@
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_title">48sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <!-- margin -->
+    <dimen name="margin_left">10dp</dimen>
+    <dimen name="margin_right">10dp</dimen>
+    <dimen name="margin_top">10dp</dimen>
+    <dimen name="margin_bottom">10dp</dimen>
+
 </resources>

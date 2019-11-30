@@ -99,7 +99,6 @@ class NameOfFoodsFragment : Fragment() {
                 }
             }
 
-
             var menu:Food = Food();
             menu.name = "Menu";
             menu.restaurant_id = "";

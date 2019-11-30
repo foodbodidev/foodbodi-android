@@ -9,6 +9,8 @@
             android:id="@+id/txtName"
             android:text=""
             android:gravity="left|center"
+            android:textSize="@dimen/text_large"
+            android:fontFamily="@font/sf_pro_text_light"
             android:textColor="@color/quantum_black_100"
             />
 </LinearLayout>
