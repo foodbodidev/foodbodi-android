@@ -12,8 +12,11 @@ import android.widget.ListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.Adapters.NamesOfFoodsAdapter
+import com.foodbodi.controller.Fragments.GetTodayCaloriesData
+import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.Food
 import com.foodbodi.model.Restaurant
+import com.foodbodi.utils.Action
 import com.foodbodi.utils.ProgressHUD
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.firestore.DocumentSnapshot
@@ -71,15 +74,23 @@ class NameOfFoodsFragment : Fragment() {
 
             adapter = NamesOfFoodsAdapter(foods);
         }
-        this.getNameOfFoodsFromFirbase();
+        GetTodayCaloriesData(CurrentUserProvider.get().getUser()?.email!!, this.activity!!)
+            .getRemainCalories(object : Action<Int> {
+                override fun accept(limit: Int?) {
+                    this@NameOfFoodsFragment.getNameOfFoodsFromFirbase(limit!!.toDouble());
+                }
+
+                override fun deny(data: Int?, reason: String) {
+                }
+
+            })
         return view;
     }
-    private fun  getNameOfFoodsFromFirbase(){
+    private fun  getNameOfFoodsFromFirbase(remainCalo:Double){
         ProgressHUD.instance.showLoading(getActivity())
         firestore.collection("foods").whereEqualTo("restaurant_id",unitID).
             get().addOnSuccessListener { querySnapshot ->
             ProgressHUD.instance.hideLoading()
-            var limit:Double = 300.0;
             var foryou:Food = Food();
             foryou.name = "For you";
             foryou.restaurant_id = "";
@@ -90,11 +101,12 @@ class NameOfFoodsFragment : Fragment() {
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
                 if (r != null) {
-                    if (r.calo?.compareTo(limit) == 1) {
+                    if (r.calo?.compareTo(remainCalo) == 1) {
                         foods.add(r)
                     }
                 }
             }
+
 
             var menu:Food = Food();
             menu.name = "Menu";
