@@ -2,8 +2,8 @@
 
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
         android:height="80sp"
-        android:width="120sp"
-        android:viewportWidth="24.0"
+        android:width="80sp"
+        android:viewportWidth="16.0"
         android:viewportHeight="16.0">
     <group>
         <path
@@ -15,11 +15,11 @@
                 android:fillColor="@android:color/background_light"
         />
         <path
-                android:pathData="M22 0 L24 0 L24 2 C24 1, 23 0, 22 0z"
+                android:pathData="M14 0 L16 0 L16 2 C16 1, 15 0, 14 0z"
                 android:fillColor="@android:color/background_light"
         />
         <path
-                android:pathData="M22 16 L24 16 L24 14 C24 15, 23 16,22 16z"
+                android:pathData="M14 16 L16 16 L16 14 C16 15, 15 16,14 16z"
                 android:fillColor="@android:color/background_light"
         />
     </group>

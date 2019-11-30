@@ -51,8 +51,9 @@
                 android:layout_width="wrap_content" android:layout_height="wrap_content">
             <ImageView
                     android:layout_gravity="center_vertical|center_horizontal"
-                    android:background="@drawable/round_corner_image"
+                    android:background="@color/gray_color"
                     android:id="@+id/food_item_photo"
+                    android:foreground="@drawable/round_conner_food_photo"
                     android:layout_width="80sp" android:layout_height="80sp"/>
         </FrameLayout>
 
