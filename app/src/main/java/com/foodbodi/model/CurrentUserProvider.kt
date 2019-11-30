@@ -4,10 +4,14 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.view.View
+import android.widget.Toast
 import com.foodbodi.AuthenticateFlowActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.controller.Fragments.GetTodayCaloriesData
 import com.foodbodi.utils.Action
+import com.foodbodi.utils.ProgressHUD
+import com.foodbodi.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,6 +19,7 @@ import retrofit2.Response
 class CurrentUserProvider private constructor(){
     private var user:User? = null
     private var status:Status = Status.NOT_RUN
+    private var remainCaloToEat:Double? = null;
     val callbacks:ArrayList<Action<User>> = ArrayList()
     init {
 
@@ -93,6 +98,24 @@ class CurrentUserProvider private constructor(){
         setUserData(null, context, false);
         status = Status.NOT_LOGGED_IN
         callback.accept(null)
+    }
+
+    fun updateRemainCaloToEat(activity:Activity) {
+        GetTodayCaloriesData(get().getUser()?.email!!, activity)
+            .getRemainCalories(object : Action<Int> {
+                override fun accept(limit: Int?) {
+                    this@CurrentUserProvider.remainCaloToEat = limit!!.toDouble()
+                }
+
+                override fun deny(data: Int?, reason: String) {
+                    Toast.makeText(activity,reason, Toast.LENGTH_LONG).show()
+                }
+
+            })
+    }
+
+    fun getRemainCaloToEat():Double {
+        if (this.remainCaloToEat == null) return 0.0 else return this.remainCaloToEat!!;
     }
 
     private fun flushCallbacks() {

@@ -136,6 +136,7 @@ class ProfileFragment : Fragment() {
             .onPermissionGranted(object : Action<Any> {
                 override fun accept(data: Any?) {
                     this@ProfileFragment.loadDailyLog()
+                    CurrentUserProvider.get().updateRemainCaloToEat(this@ProfileFragment.requireActivity())
                 }
 
                 override fun deny(data: Any?, reason: String) {

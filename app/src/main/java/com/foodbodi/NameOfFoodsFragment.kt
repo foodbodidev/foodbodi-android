@@ -74,19 +74,10 @@ class NameOfFoodsFragment : Fragment() {
 
             adapter = NamesOfFoodsAdapter(foods);
         }
-        GetTodayCaloriesData(CurrentUserProvider.get().getUser()?.email!!, this.activity!!)
-            .getRemainCalories(object : Action<Int> {
-                override fun accept(limit: Int?) {
-                    this@NameOfFoodsFragment.getNameOfFoodsFromFirbase(limit!!.toDouble());
-                }
-
-                override fun deny(data: Int?, reason: String) {
-                }
-
-            })
+        this@NameOfFoodsFragment.getNameOfFoodsFromFirbase();
         return view;
     }
-    private fun  getNameOfFoodsFromFirbase(remainCalo:Double){
+    private fun  getNameOfFoodsFromFirbase(){
         ProgressHUD.instance.showLoading(getActivity())
         firestore.collection("foods").whereEqualTo("restaurant_id",unitID).
             get().addOnSuccessListener { querySnapshot ->
@@ -98,10 +89,11 @@ class NameOfFoodsFragment : Fragment() {
             foryou.calo = 0.0;
             foods.add(0,foryou);
 
+            val limit = CurrentUserProvider.get().getRemainCaloToEat();
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
                 if (r != null) {
-                    if (r.calo?.compareTo(remainCalo) == 1) {
+                    if (r.calo?.compareTo(limit) == -1) {
                         foods.add(r)
                     }
                 }

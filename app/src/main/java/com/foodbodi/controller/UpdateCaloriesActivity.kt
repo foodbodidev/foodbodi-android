@@ -147,7 +147,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                     hideLoading()
 
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-
+                        CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
                         onBackPressed()
 
                     }

@@ -195,7 +195,7 @@ class GoogleFitnessAPI() : FitnessAPI {
 
     override fun getTodayStepCount(callback:Action<Int>) {
         val midnight: Date = Date(); midnight.hours = 0; midnight.minutes = 0; midnight.seconds = 0
-        Toast.makeText(this.activity,"get step count from $midnight to now", Toast.LENGTH_SHORT ).show()
+        Log.i(TAG,"get step count from $midnight to now");
         val googleApiClient: GoogleApiClient = GoogleApiClient.Builder(this.activity!!)
             .addApi(Fitness.HISTORY_API)
             .build()
