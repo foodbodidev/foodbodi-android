@@ -39,8 +39,10 @@ import com.foodbodi.utils.Utils
 import com.foodbodi.workers.SyncDailyLogWorker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
+    val firestore = FirebaseFirestore.getInstance()
     companion object {
         var MY_PERMISSIONS_REQUEST_LOCATION = 99;
         var mLocationManager: LocationManager? = null;
@@ -108,7 +110,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (CurrentUserProvider.get().isLoggedIn()) {
+            firestore.collection("notifications").whereEqualTo("receiver", CurrentUserProvider.get().getUser()?.email)
+                .addSnapshotListener{ snapshot, e ->
+                    run {
+                        if (e != null) {
+                            Toast.makeText(this, "Error while fetch notification : ${e.message}", Toast.LENGTH_LONG).show()
+                        } else if (snapshot != null) {
+                            for (document in snapshot.documents) {
+                                val notification = document.toObject(Notification::class.java);
+                                Toast.makeText(this@MainActivity, notification?.message, Toast.LENGTH_LONG).show()
+                            }
 
+                        }
+                    }
+                }
+        }
+    }
+
+
+    @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -130,7 +153,6 @@ class MainActivity : AppCompatActivity() {
         } else {
 
         }
-
         CurrentUserProvider.get().registerCallback(object : Action<User> {
             override fun accept(data: User?) {
                 if (data != null) {
@@ -143,7 +165,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
