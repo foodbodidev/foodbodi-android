@@ -89,6 +89,7 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
     private  fun initUI(){
         this.ensurePhotoBanner()
     }
+
     private fun ensurePhotoBanner() {
         photoPager = findViewById<ViewPager>(R.id.pager_restaurant_photo)
 
@@ -153,7 +154,7 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
             this.eFood!!.text = data!!.category;
             this.eName!!.text = data!!.name;
             this.eTime!!.text = data!!.open_hour + " ~ " + data!!.close_hour;
-            this.eKcal!!.text = data!!.getAvgCalos().toString();
+            this.eKcal!!.text = data!!.getAvgCalos().toString() + " Kcal";
              data!!.getCaloSegment()
             when (data!!.getCaloSegment()) {
                 CaloSegment.LOW -> {
