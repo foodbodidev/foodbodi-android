@@ -80,35 +80,41 @@ class ChatFragment : Fragment() {
             })
         btnSend.setOnClickListener { view ->
             if (txtEnterText.text.toString().length > 0){
+                ProgressHUD.instance.showLoading(this.requireActivity())
                 var comment:CommentRequest = CommentRequest();
                 comment.restaurant_id = unitID;
                 comment.message = txtEnterText.text.toString();
                 FoodbodiRetrofitHolder.getService().
                     addCommentRestaurant(FoodbodiRetrofitHolder.getHeaders(this.requireContext()),comment).enqueue(object :
                     Callback<FoodBodiResponse<CommentRequest>> {
+
                     override fun onFailure(call: Call<FoodBodiResponse<CommentRequest>>, t: Throwable) {
-                        Toast.makeText(context,"text is empty",Toast.LENGTH_LONG).show();
+                        ProgressHUD.instance.hideLoading()
+                        Toast.makeText(context,"Sorry! we can't add your comment",Toast.LENGTH_LONG).show();
                     }
 
                     override fun onResponse(
                         call: Call<FoodBodiResponse<CommentRequest>>,
                         response: Response<FoodBodiResponse<CommentRequest>>
                     ) {
+                        ProgressHUD.instance.hideLoading()
                         if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                            txtEnterText.setText("");
                             var message = response.body()?.data()?.message;
                             var resId = response.body()?.data?.restaurant_id;
-
                             listChat.add(comment);
 
                             var notesAdapter = NotesAdapter(context, listChat)
                             lvChat.adapter = notesAdapter;
                             notesAdapter.notifyDataSetChanged();
 
+                        }else{
+                            Toast.makeText(context,"Sorry! we can't add your comment",Toast.LENGTH_LONG).show();
                         }
                     }
                 });
             }else{
-                Toast.makeText(this.context,"text is empty",Toast.LENGTH_LONG).show();
+                Toast.makeText(this.context,"Text is empty",Toast.LENGTH_LONG).show();
             }
 
 
