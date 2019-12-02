@@ -1,7 +1,9 @@
 package com.foodbodi.utils
 
+import android.annotation.SuppressLint
 import java.io.Serializable
 import java.lang.StringBuilder
+import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import java.text.SimpleDateFormat
@@ -12,8 +14,26 @@ class DateString(var year: Int, var month: Int, var day: Int) : Serializable {
             .append(day.toString()).toString()
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun getPrettyString() : String {
+        val date:Date = Date(getTimeStamp())
+        val today:Boolean = Calendar.getInstance().get(Calendar.YEAR) == year
+                && Calendar.getInstance().get(Calendar.MONTH) + 1 == month
+                && Calendar.getInstance().get(Calendar.DATE) == day
+        if (today) {
+            return "Today"
+        } else {
+            val dateFormat:SimpleDateFormat = SimpleDateFormat("EEE, MMM dd, yyyy")
+            return dateFormat.format(date)
+        }
+    }
+
     fun getTimeStamp() : Long {
-        return Date(year, month, day).time
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month - 1)
+        calendar.set(Calendar.DATE, day)
+        return calendar.time.time
     }
 
     companion object {
