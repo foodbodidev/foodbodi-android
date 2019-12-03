@@ -1,12 +1,15 @@
 package com.foodbodi.Adapters
 
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.R
+import com.foodbodi.controller.UpdateCaloriesActivity
 import com.foodbodi.model.Food
 import com.squareup.picasso.Picasso
 
@@ -51,6 +54,31 @@ class NamesOfFoodsAdapter(foods:ArrayList<Food>): RecyclerView.Adapter<RecyclerV
         }else {
             (holder as ViewHeaderHolder).showDetails(food)
         }
+
+        holder.itemView.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val context = p0?.context
+                val updateCaloriesIntent = Intent(context, UpdateCaloriesActivity::class.java)
+                val foodFilter = ArrayList<Food>()
+                for (element in foodDisplay) {
+                    if (element.restaurant_id != null) {
+
+                        if (element.restaurant_id!!.isNotEmpty()) {
+                            foodFilter.add(element)
+                        }
+
+                    }
+                }
+                updateCaloriesIntent.putExtra("foodDisplay", foodFilter)
+                updateCaloriesIntent.putExtra("isUpdateCalories", false)
+                updateCaloriesIntent.putExtra("reservation_id", food.id)
+                updateCaloriesIntent.putExtra("restaurant_id", food.restaurant_id)
+
+                context?.startActivity(updateCaloriesIntent)
+                Log.d("RecyclerView", "CLICK!")
+            }
+
+        })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

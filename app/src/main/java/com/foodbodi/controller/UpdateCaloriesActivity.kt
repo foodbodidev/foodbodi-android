@@ -58,14 +58,25 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
     var totalTextView: TextView? = null
     var reservationId: String = ""
     var restaurantId: String = ""
+    var isUpdateCalories: Boolean = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_calories)
         setupOutLet()
-        reservationId = intent.getStringExtra("reservation_id")
-        restaurantId = intent.getStringExtra("restaurant_id")
+        reservationId = intent.getStringExtra("reservation_id")?: ""
+        restaurantId = intent.getStringExtra("restaurant_id")?: ""
+        isUpdateCalories = intent.getBooleanExtra("isUpdateCalories", true)
+
+        setupActionUpdateCart()
+        setupActionBack()
+
+        if (isUpdateCalories) {
+            getReservationById()
+        } else {
+            myDataset = intent.getSerializableExtra("foodDisplay") as ArrayList<Food>
+        }
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = CaloriesCardAdapter(myDataset, this)
@@ -78,12 +89,6 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
             adapter = viewAdapter
 
         }
-
-
-        setupActionUpdateCart()
-        setupActionBack()
-
-        getReservationById()
 
     }
 
@@ -123,7 +128,13 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                     foodCart.amount = element.amount
                     request.foods.add(foodCart)
                 }
-                updateReservationById(request)
+
+                if (isUpdateCalories) {
+                    updateReservationById(request)
+                } else {
+                    addReservation(request)
+                }
+
             }
 
         })
@@ -132,6 +143,32 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
     fun updateReservationById(request: ReservationRequest) {
         showLoading(this)
         FoodbodiRetrofitHolder.getService().updateReservationById(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), request, reservationId)
+            .enqueue(object : Callback<FoodBodiResponse<UpdateCaloriesResponse>> {
+
+                override fun onFailure(call: Call<FoodBodiResponse<UpdateCaloriesResponse>>, t: Throwable) {
+                    Utils.showAlert(t.message!!, this@UpdateCaloriesActivity)
+                    hideLoading()
+                    print(t.message)
+                }
+
+                override fun onResponse(
+                    call: Call<FoodBodiResponse<UpdateCaloriesResponse>>,
+                    response: Response<FoodBodiResponse<UpdateCaloriesResponse>>
+                ) {
+                    hideLoading()
+
+                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                        CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
+                        onBackPressed()
+
+                    }
+                }
+            })
+    }
+
+    private fun addReservation(request: ReservationRequest) {
+        showLoading(this)
+        FoodbodiRetrofitHolder.getService().addReservation(FoodbodiRetrofitHolder.getHeaders(this@UpdateCaloriesActivity), request)
             .enqueue(object : Callback<FoodBodiResponse<UpdateCaloriesResponse>> {
 
                 override fun onFailure(call: Call<FoodBodiResponse<UpdateCaloriesResponse>>, t: Throwable) {

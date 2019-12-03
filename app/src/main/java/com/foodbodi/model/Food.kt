@@ -1,8 +1,10 @@
 package com.foodbodi.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class Food {
+
+class Food: Serializable {
     @SerializedName("name")
     var name:String? = null
 

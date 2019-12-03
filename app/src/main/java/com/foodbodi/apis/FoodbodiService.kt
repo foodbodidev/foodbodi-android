@@ -95,6 +95,10 @@ interface FoodbodiService {
     fun updateReservationById(@HeaderMap headers: Map<String, String?>,@Body request: ReservationRequest,  @Path("reservation_id") reservation_id: String): Call<FoodBodiResponse<UpdateCaloriesResponse>>
 
     @Headers("Content-Type: application/json")
+    @POST("reservation")
+    fun addReservation(@HeaderMap headers: Map<String, String?>,@Body request: ReservationRequest): Call<FoodBodiResponse<UpdateCaloriesResponse>>
+
+    @Headers("Content-Type: application/json")
     @POST("comment")
     fun addCommentRestaurant(@HeaderMap headers: Map<String, String?>,@Body comment: CommentRequest) :Call<FoodBodiResponse<CommentRequest>>
 }
