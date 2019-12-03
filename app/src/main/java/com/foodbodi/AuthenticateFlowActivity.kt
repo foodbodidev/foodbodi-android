@@ -100,6 +100,7 @@ class AuthenticateFlowActivity : AppCompatActivity(), AuthenticateFlowController
         } else {
             CurrentUserProvider.get().setApiKey(apiKey, this)
             CurrentUserProvider.get().setUserData(user, this, true)
+            CurrentUserProvider.get().updateRemainCaloToEat(this)
             finish()
         }
     }

@@ -100,7 +100,7 @@ class NameOfFoodsFragment : Fragment() {
             }
 
             var menu:Food = Food();
-            menu.name = "Menu";
+            menu.name = "Name of foods";
             menu.restaurant_id = "";
             menu.amount = 0;
             menu.calo = 0.0;

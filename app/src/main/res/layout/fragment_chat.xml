@@ -9,24 +9,29 @@
                 android:id="@+id/linerChat"
                 android:layout_height="45dp"
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
 
                 >
         <EditText
                 android:id="@+id/txtMessage"
-                android:layout_height="fill_parent"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:layout_width="fill_parent"
                 android:hint="Enter text"
                 android:background="@drawable/fb_edit_text"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
                 >
         </EditText>
         <Button
                 android:id="@+id/btnSend"
                 android:text = "Send"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                >
         </Button>
         </LinearLayout>
     <ListView  android:id="@+id/lvChat"

@@ -9,6 +9,7 @@ import com.foodbodi.R
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.DatePicker
@@ -179,7 +180,7 @@ class ProfileFragment : Fragment() {
 
                         fitnessAPI.getTodayStepCount(object : Action<Int> {
                             override fun accept(stepCount: Int?) {
-                                Toast.makeText(this@ProfileFragment.requireContext(), "Today steps $stepCount", Toast.LENGTH_SHORT).show()
+                                Log.i(TAG, "Today steps $stepCount")
                                 if (state.getStep() == null || state.getStep() < stepCount!!) {
                                     state.step = stepCount
                                 }
@@ -238,7 +239,7 @@ class ProfileFragment : Fragment() {
         ProgressHUD.instance.hideLoading()
         if (view != null) {
             view!!.findViewById<TextView>(R.id.text_num_of_step).text = state.getStep().toString() + " steps"
-            view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getString()
+            view!!.findViewById<TextView>(R.id.text_daily_log_date).text = selectedDate.getPrettyString()
 
             val maximum = state.getThreshold()
             val kcaloToConsume =

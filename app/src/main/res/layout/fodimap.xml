@@ -22,6 +22,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
+                    android:visibility="invisible"
+                    android:enabled="false"
                     android:background="@color/colorAccent"
                     android:text="SU Add"
                     android:textColor="@color/White" />
@@ -32,6 +34,7 @@
         <LinearLayout
                 android:id="@+id/list_restaurant_scroll_view"
                 android:layout_weight="6.5"
+                android:padding="@dimen/text_small"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

@@ -10,7 +10,9 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.foodbodi.R
 import com.foodbodi.controller.UpdateCaloriesActivity
+import com.foodbodi.model.CaloSegment
 import com.foodbodi.model.Food
+import com.foodbodi.model.Restaurant
 import com.squareup.picasso.Picasso
 
 
@@ -108,26 +110,32 @@ class ViewHeaderHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
     }
 
-class ViewFoodHolder(inflater: LayoutInflater, parent: ViewGroup) :
+class ViewFoodHolder(val inflater: LayoutInflater, val parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.list_food_item, parent, false))  {
         lateinit var food_item_price:TextView
         lateinit var food_item_name : TextView
         lateinit var food_item_kcalo : TextView;
         lateinit var photo :ImageView;
 
-        init{
+    init{
             this.food_item_price = itemView.findViewById(R.id.food_item_price);
             this.food_item_name = itemView.findViewById(R.id.food_item_name);
             this.food_item_kcalo = itemView.findViewById(R.id.food_item_kcalo);
             this.photo = itemView.findViewById(R.id.food_item_photo);
         }
         fun showDetails(food:Food){
-            food_item_price.text = food.price.toString();
+            food_item_price.text = inflater.context.getString(R.string.money_format, food.price);
             food_item_name.text = food.name;
-            food_item_kcalo.text = food.calo.toString();
-            val imageView: ImageView = photo!!
-            if (food?.photo != null) {
+            food_item_kcalo.text = inflater.context.getString(R.string.kcalo_format, food.calo);
+            val imageView: ImageView = photo
+            if (food.photo != null) {
                 Picasso.get().load(food.photo).into(imageView)
+            }
+            val caloSegment: CaloSegment = Restaurant.getCaloSegment(food.calo!!)
+            when(caloSegment) {
+                CaloSegment.LOW -> food_item_kcalo.setTextColor(inflater.context.resources.getColor(R.color.low_calo))
+                CaloSegment.MEDIUM -> food_item_kcalo.setTextColor(inflater.context.resources.getColor(R.color.medium_calo))
+                CaloSegment.HIGH -> food_item_kcalo.setTextColor(inflater.context.resources.getColor(R.color.high_calo))
             }
         }
 }

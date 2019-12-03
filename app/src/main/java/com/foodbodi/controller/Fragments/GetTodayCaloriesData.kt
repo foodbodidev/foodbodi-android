@@ -45,7 +45,8 @@ class GetTodayCaloriesData(val username:String, val activity: Activity) {
                     }
 
                     override fun deny(data: Int?, reason: String) {
-                        cb.deny(null, reason)
+                        Log.i(TAG, reason)
+                        cb.accept(0)
                     }
 
                 })
