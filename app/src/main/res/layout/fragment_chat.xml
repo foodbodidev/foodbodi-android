@@ -15,30 +15,36 @@
                 >
         <EditText
                 android:id="@+id/txtMessage"
-                android:layout_height="35dp"
-                android:layout_weight="1"
-                android:layout_width="fill_parent"
-                android:hint="Enter text"
+                android:layout_height="38dp"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:hint="@string/type_new_comment"
                 android:background="@drawable/fb_edit_text"
-                android:layout_marginLeft="@dimen/margin_left"
-                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginStart="@dimen/margin_left"
+                android:layout_marginEnd="0dp"
+                android:inputType="text"
                 >
         </EditText>
         <Button
                 android:id="@+id/btnSend"
                 android:text = "Send"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="65dp"
+                android:layout_height="38dp"
                 android:layout_marginLeft="@dimen/margin_left"
                 android:layout_marginRight="@dimen/margin_right"
+                android:background="@color/silver"
                 >
         </Button>
         </LinearLayout>
-    <ListView  android:id="@+id/lvChat"
+
+    <ListView
+            android:id="@+id/lvChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/linerChat"
-            android:background="@color/White" >
-    </ListView>
+            android:layout_alignParentLeft="false"
+            android:scrollIndicators="none"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:background="@color/White"></ListView>
 </RelativeLayout>

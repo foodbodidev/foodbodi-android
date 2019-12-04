@@ -87,4 +87,5 @@
     <string name="calo_threshold_helptext">Maximum amount of calories (kcal) you want to intake per day: </string>
     <string name="for_you">For You</string>
     <string name="split_character"> | </string>
+    <string name="type_new_comment">Type new comment</string>
 </resources>

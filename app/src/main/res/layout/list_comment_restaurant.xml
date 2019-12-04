@@ -12,7 +12,12 @@
                 android:id="@+id/tvContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingLeft="@dimen/margin_left"
+                android:paddingRight= "@dimen/margin_right"
+                android:paddingBottom="@dimen/margin_bottom"
+                android:padding="@dimen/margin_top"
+                android:background="@drawable/radius_text_background"
+
                 />
 
 </LinearLayout>
