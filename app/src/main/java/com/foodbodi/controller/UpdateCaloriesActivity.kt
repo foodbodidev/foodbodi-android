@@ -1,48 +1,32 @@
 package com.foodbodi.controller
 
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.foodbodi.R
-import com.foodbodi.model.Reservation
-import com.foodbodi.Adapters.CaloriesCardAdapter
-import com.foodbodi.apis.requests.ReservationRequest
-import com.foodbodi.apis.FoodCardResonse
-
-import kotlinx.android.synthetic.main.activity_update_calories.*
-import kotlinx.android.synthetic.main.activity_update_calories.cart_recycler_view
-import kotlinx.android.synthetic.main.reservation_fragment.*
 import androidx.recyclerview.widget.RecyclerView
+import com.foodbodi.Adapters.CaloriesCardAdapter
+import com.foodbodi.Adapters.CaloriesCartDelegate
+import com.foodbodi.Base.BaseActivity
+import com.foodbodi.R
 import com.foodbodi.apis.FoodBodiResponse
-import com.foodbodi.apis.UpdateCaloriesResponse
+import com.foodbodi.apis.FoodCardResonse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
-import com.foodbodi.model.*
+import com.foodbodi.apis.UpdateCaloriesResponse
+import com.foodbodi.apis.requests.ReservationRequest
+import com.foodbodi.model.CurrentUserProvider
+import com.foodbodi.model.Food
+import com.foodbodi.model.FoodCartModel
+import com.foodbodi.utils.DateUtils
+import com.foodbodi.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.content.Intent
-import android.view.View
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.Button
-import android.widget.TextView
-import com.foodbodi.utils.DateString
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.properties.Delegates
-import com.foodbodi.utils.DateUtils
-import android.app.AlertDialog
-import android.R.layout
-import android.app.Dialog
-import android.view.animation.RotateAnimation
-import android.widget.ProgressBar
-import com.foodbodi.Base.BaseActivity
-import android.app.ProgressDialog
-import android.os.Message
-import com.foodbodi.Adapters.CaloriesCartDelegate
-import com.foodbodi.utils.Utils
 
 
 class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
@@ -64,13 +48,11 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_calories)
-        setupOutLet()
+
         reservationId = intent.getStringExtra("reservation_id")?: ""
         restaurantId = intent.getStringExtra("restaurant_id")?: ""
         isUpdateCalories = intent.getBooleanExtra("isUpdateCalories", true)
 
-        setupActionUpdateCart()
-        setupActionBack()
 
         if (isUpdateCalories) {
             getReservationById()
@@ -89,22 +71,35 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
             adapter = viewAdapter
 
         }
+        configureLayout()
+        setupActionUpdateCart()
+        setupActionBack()
 
     }
 
-    fun setupOutLet() {
+
+
+
+    private fun configureLayout() {
         reservationButton = findViewById(R.id.button_reservation)
         totalTextView = findViewById(R.id.total_calories)
         backButton = findViewById(R.id.button_back)
 
+        var reservationButtonUw = reservationButton ?: return
+
+        if (isUpdateCalories) {
+            reservationButtonUw.text = "UPDATE"
+            reservationButtonUw.setBackgroundColor(ContextCompat.getColor(this, R.color.high_calo))
+
+        } else {
+            reservationButtonUw.text = "RESERVATION"
+            reservationButtonUw.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
-    fun setupActionBack() {
-        backButton?.setOnClickListener(object : View.OnClickListener {
+    private fun setupActionBack() {
+        backButton?.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 onBackPressed()
             }
