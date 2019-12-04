@@ -55,7 +55,7 @@ class ProfileFragment : Fragment() {
 
     val onDateSetListener: DatePickerDialog.OnDateSetListener = object : DatePickerDialog.OnDateSetListener {
         override fun onDateSet(datePickerView: DatePicker?, year: Int, month: Int, day: Int) {
-            selectedDate = DateString(year, month, day)
+            selectedDate = DateString(year, month + 1, day)
             loadDailyLog()
         }
 
@@ -114,7 +114,7 @@ class ProfileFragment : Fragment() {
             override fun onClick(p0: View?) {
                 DatePickerDialog(
                     this@ProfileFragment.requireContext(), onDateSetListener,
-                    selectedDate.year, selectedDate.month, selectedDate.day
+                    selectedDate.year, selectedDate.month - 1, selectedDate.day
                 ).show()
             }
         })
@@ -289,7 +289,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateStateStepCount(delta: Int) {
-        Toast.makeText(this@ProfileFragment.requireContext(), delta.toString(), Toast.LENGTH_SHORT).show()
+        Log.i(TAG, "updateStateStepCount $delta")
         state.step = delta
         //LocalDailyLogDbManager.updateTodayDailyLogRecord(CurrentUserProvider.get().getUser()!!, cachNumOfStep)
         if (isToday()) {
@@ -328,6 +328,7 @@ class ProfileFragment : Fragment() {
                                 myDialog.hide()
                                 state.calo_threshold = currentUser.daily_calo
                                 updateView()
+                                CurrentUserProvider.get().updateRemainCaloToEat(this@ProfileFragment.requireActivity())
                             } else {
                                 Toast.makeText(this@ProfileFragment.requireContext(), response.body()?.errorMessage, Toast.LENGTH_LONG ).show()
                             }

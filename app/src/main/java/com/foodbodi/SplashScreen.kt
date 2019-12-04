@@ -14,6 +14,7 @@ class SplashScreen : AppCompatActivity() {
 
         CurrentUserProvider.get().loadCurrentUser(object : Action<User> {
             override fun accept(data: User?) {
+                CurrentUserProvider.get().updateRemainCaloToEat(this@SplashScreen)
                 finish()
             }
 
