@@ -152,10 +152,14 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                 ) {
                     hideLoading()
 
-                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                    val response = response.body() ?: return
+
+                    if (FoodBodiResponse.SUCCESS_CODE == response.statusCode()) {
                         CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
                         onBackPressed()
 
+                    } else {
+                       // Utils.showAlert(response.errorMessage, this@UpdateCaloriesActivity)
                     }
                 }
             })
@@ -178,10 +182,14 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                 ) {
                     hideLoading()
 
-                    if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                    val response = response.body() ?: return
+
+                    if (FoodBodiResponse.SUCCESS_CODE == response.statusCode()) {
                         CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
                         onBackPressed()
 
+                    } else {
+                        //Utils.showAlert(response.errorMessage, this@UpdateCaloriesActivity)
                     }
                 }
             })
