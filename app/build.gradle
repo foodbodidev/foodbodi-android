@@ -5,7 +5,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 //apply plugin: 'kotlinx-serialization'
-
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def google_map_api_key = properties.getProperty('google_map_api_key')
 android {
     signingConfigs {
         debug {
