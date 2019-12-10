@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
+import com.foodbodi.controller.Fragments.GetTodayCaloriesData
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.DailyLog
 import com.foodbodi.utils.Action
@@ -172,7 +173,24 @@ class ProfileFragment : Fragment() {
         ProgressHUD.instance.showLoading(getActivity())
 
         if (isToday()) {
-            LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
+            GetTodayCaloriesData(CurrentUserProvider.get().getUser()?.email!!, this@ProfileFragment.requireActivity())
+                .getTodayData(object : Action<DailyLog> {
+                    override fun accept(dailyLog: DailyLog?) {
+                       state = dailyLog!!;
+                        updateView();
+
+                        if (!isRegisterSensor) {
+                            fitnessAPI.startListenOnStepCountDelta()
+                            isRegisterSensor = true
+                        }
+                    }
+
+                    override fun deny(data: DailyLog?, reason: String) {
+                        Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
+                    }
+
+                })
+            /*LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
                 this@ProfileFragment.context!!,
                 object : Action<DailyLog> {
                     override fun accept(data: DailyLog?) {
@@ -181,9 +199,7 @@ class ProfileFragment : Fragment() {
                         fitnessAPI.getTodayStepCount(object : Action<Int> {
                             override fun accept(stepCount: Int?) {
                                 Log.i(TAG, "Today steps $stepCount")
-                                if (state.getStep() == null || state.getStep() < stepCount!!) {
-                                    state.step = stepCount
-                                }
+                                state.step = stepCount
                                 updateView()
 
                                 if (!isRegisterSensor) {
@@ -200,10 +216,9 @@ class ProfileFragment : Fragment() {
                     }
 
                     override fun deny(data: DailyLog?, reason: String) {
-                        Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
                     }
 
-                })
+                })*/
         } else {
             FoodbodiRetrofitHolder.getService().getDailyLog(FoodbodiRetrofitHolder.getHeaders(this@ProfileFragment.requireContext()), selectedDate.year.toString(), selectedDate.month.toString(), selectedDate.day.toString())
                 .enqueue(object : Callback<FoodBodiResponse<DailyLog>> {

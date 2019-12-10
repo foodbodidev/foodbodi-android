@@ -34,6 +34,9 @@ class DailyLog : Serializable {
         fun getLocalID(dateString: DateString, user:String):String {
             return Companion.getLocalID(dateString.year, dateString.month, dateString.day, user)
         }
+        fun stepToKCalo(step:Int) :Double {
+            return 25.0 * (step / 1000);
+        }
     }
 
     fun getStep():Int {
@@ -41,7 +44,7 @@ class DailyLog : Serializable {
     }
 
     fun getBurnedCalo() : Double {
-        return 25.0 * getStep() / 1000;
+        return stepToKCalo(getStep())
     }
 
     fun getTotalEat() : Int {

@@ -38,7 +38,7 @@ class GetTodayCaloriesData(val username:String, val activity: Activity) {
                 fitnessAPI.getTodayStepCount(object : Action<Int> {
                     override fun accept(data: Int?) {
                         if (data != null) {
-                            cb.accept(threshold - total + data * 25 / 1000)
+                            cb.accept(threshold - total + DailyLog.stepToKCalo(data).toInt())
                         } else {
                             cb.accept(threshold - total)
                         }
@@ -82,5 +82,45 @@ class GetTodayCaloriesData(val username:String, val activity: Activity) {
                 }
 
             })
+    }
+
+    fun getTodayData(cb:Action<DailyLog>) {
+        val todayLog:DailyLog = LocalDailyLogDbManager.ensureLocalDailyLogRecord(DateString.fromCalendar(Calendar.getInstance()), this.username)
+        var threshold = todayLog.calo_threshold
+        if (threshold == null) threshold = 3000
+
+        getReservations(object : Action<ArrayList<Reservation>> {
+            override fun accept(reservations: ArrayList<Reservation>?) {
+                var total:Int? = reservations?.map { item -> item.total }?.sumBy { value -> if( value != null) value else 0 }
+                if (total == null) total = 0;
+                todayLog.total_eat = total;
+
+                val fitnessAPI = FitnessAPIFactory.getByProvider()
+                fitnessAPI.setActivity(activity)
+                Log.i(TAG, "Loading today step count")
+                fitnessAPI.getTodayStepCount(object : Action<Int> {
+                    override fun accept(data: Int?) {
+                        if (data != null) {
+                            todayLog.step = data;
+                            cb.accept(todayLog);
+                        } else {
+                            todayLog.step = 0;
+                            cb.accept(todayLog)
+                        }
+                    }
+
+                    override fun deny(data: Int?, reason: String) {
+                        Log.i(TAG, reason)
+                        cb.accept(null)
+                    }
+
+                })
+            }
+
+            override fun deny(data: ArrayList<Reservation>?, reason: String) {
+                cb.deny(null, reason)
+            }
+
+        })
     }
 }
