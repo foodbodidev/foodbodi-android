@@ -59,11 +59,3 @@ class DateString(var year: Int, var month: Int, var day: Int) : Serializable {
         }
     }
 }
-
-object DateUtils {
-    @JvmStatic
-    fun toSimpleString(date: Date) : String {
-        val format = SimpleDateFormat("yyyy-mm-dd")
-        return format.format(date)
-    }
-}

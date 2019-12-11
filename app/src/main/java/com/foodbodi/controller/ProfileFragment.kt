@@ -16,6 +16,7 @@ import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.foodbodi.MainActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.controller.Fragments.GetTodayCaloriesData
@@ -44,7 +45,6 @@ import kotlin.collections.ArrayList
 class ProfileFragment : Fragment() {
 
     val TAG = ProfileFragment::class.java.simpleName
-    val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE: Int = 10
 
     val myCalendar: Calendar = Calendar.getInstance();
 
@@ -52,6 +52,7 @@ class ProfileFragment : Fragment() {
         DateString.fromCalendar(myCalendar)
 
     var state: DailyLog = DailyLog()
+    var hasPermission = false;
 
 
     val onDateSetListener: DatePickerDialog.OnDateSetListener = object : DatePickerDialog.OnDateSetListener {
@@ -95,17 +96,16 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    val fitnessAPI:FitnessAPI = FitnessAPIFactory.getByProvider()
     var isRegisterSensor = false;
 
     override fun onStop() {
         super.onStop()
-        fitnessAPI.onStop()
+        MainActivity.fitnessAPI.onStop()
     }
 
     override fun onResume() {
-        updateView()
         super.onResume()
+        loadDailyLog()
     }
 
 
@@ -132,11 +132,12 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fitnessAPI.setActivity(this.requireActivity())
+        MainActivity.fitnessAPI.setActivity(this.requireActivity())
             .readStepCount()
-            .useRequestCode(GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
+            .useRequestCode(MainActivity.GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
             .onPermissionGranted(object : Action<Any> {
                 override fun accept(data: Any?) {
+                    hasPermission = true;
                     this@ProfileFragment.loadDailyLog()
                     CurrentUserProvider.get().updateRemainCaloToEat(this@ProfileFragment.requireActivity())
                 }
@@ -157,40 +158,34 @@ class ProfileFragment : Fragment() {
                 }
 
             })
-        fitnessAPI.ensurePermission()
+        MainActivity.fitnessAPI.ensurePermission()
     }
 
-
-
-
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        fitnessAPI.consumePermissionGrantResult(requestCode, resultCode, data)
-    }
 
     private fun loadDailyLog() {
-        ProgressHUD.instance.showLoading(getActivity())
+        if (hasPermission) {
+            if (isToday()) {
+                GetTodayCaloriesData(
+                    CurrentUserProvider.get().getUser()?.email!!,
+                    this@ProfileFragment.requireActivity()
+                )
+                    .getTodayData(object : Action<DailyLog> {
+                        override fun accept(dailyLog: DailyLog?) {
+                            state = dailyLog!!;
+                            updateView();
 
-        if (isToday()) {
-            GetTodayCaloriesData(CurrentUserProvider.get().getUser()?.email!!, this@ProfileFragment.requireActivity())
-                .getTodayData(object : Action<DailyLog> {
-                    override fun accept(dailyLog: DailyLog?) {
-                       state = dailyLog!!;
-                        updateView();
-
-                        if (!isRegisterSensor) {
-                            fitnessAPI.startListenOnStepCountDelta()
-                            isRegisterSensor = true
+                            if (!isRegisterSensor) {
+                                MainActivity.fitnessAPI.startListenOnStepCountDelta()
+                                isRegisterSensor = true
+                            }
                         }
-                    }
 
-                    override fun deny(data: DailyLog?, reason: String) {
-                        Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
-                    }
+                        override fun deny(data: DailyLog?, reason: String) {
+                            Toast.makeText(this@ProfileFragment.context, reason, Toast.LENGTH_LONG).show();
+                        }
 
-                })
-            /*LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
+                    })
+                /*LocalDailyLogDbManager.getDailyLogOfDate(selectedDate,
                 this@ProfileFragment.context!!,
                 object : Action<DailyLog> {
                     override fun accept(data: DailyLog?) {
@@ -219,27 +214,38 @@ class ProfileFragment : Fragment() {
                     }
 
                 })*/
-        } else {
-            FoodbodiRetrofitHolder.getService().getDailyLog(FoodbodiRetrofitHolder.getHeaders(this@ProfileFragment.requireContext()), selectedDate.year.toString(), selectedDate.month.toString(), selectedDate.day.toString())
-                .enqueue(object : Callback<FoodBodiResponse<DailyLog>> {
-                    override fun onResponse(
-                        call: Call<FoodBodiResponse<DailyLog>>,
-                        response: Response<FoodBodiResponse<DailyLog>>
-                    ) {
-                        if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                            state = response.body()!!.data();
-                            updateView()
-                        } else {
-                            Toast.makeText(this@ProfileFragment.requireContext(), response.body()?.errorMessage, Toast.LENGTH_LONG).show()
+            } else {
+                ProgressHUD.instance.showLoading(getActivity())
+                FoodbodiRetrofitHolder.getService().getDailyLog(
+                    FoodbodiRetrofitHolder.getHeaders(this@ProfileFragment.requireContext()),
+                    selectedDate.year.toString(),
+                    selectedDate.month.toString(),
+                    selectedDate.day.toString()
+                )
+                    .enqueue(object : Callback<FoodBodiResponse<DailyLog>> {
+                        override fun onResponse(
+                            call: Call<FoodBodiResponse<DailyLog>>,
+                            response: Response<FoodBodiResponse<DailyLog>>
+                        ) {
+                            if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
+                                state = response.body()!!.data();
+                                updateView()
+                            } else {
+                                Toast.makeText(
+                                    this@ProfileFragment.requireContext(),
+                                    response.body()?.errorMessage,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
-                    }
 
-                    override fun onFailure(call: Call<FoodBodiResponse<DailyLog>>, t: Throwable) {
-                        ProgressHUD.instance.hideLoading()
-                        Toast.makeText(this@ProfileFragment.requireContext(), t.message, Toast.LENGTH_LONG).show()
-                    }
+                        override fun onFailure(call: Call<FoodBodiResponse<DailyLog>>, t: Throwable) {
+                            ProgressHUD.instance.hideLoading()
+                            Toast.makeText(this@ProfileFragment.requireContext(), t.message, Toast.LENGTH_LONG).show()
+                        }
 
-                })
+                    })
+            }
         }
 
     }
@@ -285,7 +291,7 @@ class ProfileFragment : Fragment() {
             kcalos.add(PieEntry(remainKcalo.toFloat(), "Remain calories"))
             kcalos.add(PieEntry(kcaloToConsume.toFloat(), "Calories intake"))
             val pieData: PieData = PieData()
-            val dataSet = PieDataSet(kcalos, "Calories (kcalo)")
+            val dataSet = PieDataSet(kcalos, "")
             dataSet.setColors(
                 Arrays.asList(
                     ContextCompat.getColor(this.requireContext(), R.color.edit_text_color),

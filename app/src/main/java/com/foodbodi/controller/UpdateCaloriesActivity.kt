@@ -20,7 +20,7 @@ import com.foodbodi.apis.requests.ReservationRequest
 import com.foodbodi.model.CurrentUserProvider
 import com.foodbodi.model.Food
 import com.foodbodi.model.FoodCartModel
-import com.foodbodi.utils.DateUtils
+import com.foodbodi.utils.DateString
 import com.foodbodi.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
@@ -115,7 +115,7 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
 
                 val request = ReservationRequest()
 
-                request.date_string = DateUtils.toSimpleString(Date())
+                request.date_string = DateString.fromCalendar(Calendar.getInstance()).getString()
                 request.restaurantId = restaurantId
                 for (element in dataList) {
                     var foodCart = FoodCartModel()

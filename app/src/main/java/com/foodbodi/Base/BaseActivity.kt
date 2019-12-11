@@ -23,7 +23,6 @@ import com.foodbodi.apis.UpdateCaloriesResponse
 import com.foodbodi.apis.requests.ReservationRequest
 import com.foodbodi.model.Food
 import com.foodbodi.model.FoodCartModel
-import com.foodbodi.utils.DateUtils
 import com.foodbodi.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback

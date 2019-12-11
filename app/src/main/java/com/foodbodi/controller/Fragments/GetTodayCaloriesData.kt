@@ -63,7 +63,7 @@ class GetTodayCaloriesData(val username:String, val activity: Activity) {
     fun getReservations(cb:Action<ArrayList<Reservation>>) {
         Log.i(TAG, "Loading calory intakes")
         FoodbodiRetrofitHolder.getService()
-            .getReservation(FoodbodiRetrofitHolder.getHeaders(activity))
+            .getReservationByDate(FoodbodiRetrofitHolder.getHeaders(activity), DateString.fromCalendar(Calendar.getInstance()).getString())
             .enqueue(object : Callback<FoodBodiResponse<ReservationResponse>> {
                 override fun onFailure(call: Call<FoodBodiResponse<ReservationResponse>>, t: Throwable) {
                     cb.deny(null, "Can not get calories intakes list")
