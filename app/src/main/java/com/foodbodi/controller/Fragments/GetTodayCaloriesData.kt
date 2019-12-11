@@ -3,6 +3,7 @@ package com.foodbodi.controller.Fragments
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import com.foodbodi.MainActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.ReservationResponse
@@ -32,7 +33,7 @@ class GetTodayCaloriesData(val username:String, val activity: Activity) {
             override fun accept(reservations: ArrayList<Reservation>?) {
                 var total:Int? = reservations?.map { item -> item.total }?.sumBy { value -> if( value != null) value else 0 }
                 if (total == null) total = 0;
-                val fitnessAPI = FitnessAPIFactory.getByProvider()
+                val fitnessAPI = MainActivity.fitnessAPI
                 fitnessAPI.setActivity(activity)
                 Log.i(TAG, "Loading today step count")
                 fitnessAPI.getTodayStepCount(object : Action<Int> {
@@ -95,8 +96,7 @@ class GetTodayCaloriesData(val username:String, val activity: Activity) {
                 if (total == null) total = 0;
                 todayLog.total_eat = total;
 
-                val fitnessAPI = FitnessAPIFactory.getByProvider()
-                fitnessAPI.setActivity(activity)
+                val fitnessAPI = MainActivity.fitnessAPI
                 Log.i(TAG, "Loading today step count")
                 fitnessAPI.getTodayStepCount(object : Action<Int> {
                     override fun accept(data: Int?) {

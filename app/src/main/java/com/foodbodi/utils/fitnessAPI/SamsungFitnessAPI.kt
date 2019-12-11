@@ -42,58 +42,6 @@ class SamsungFitnessAPI : FitnessAPI {
     var getStepCountTask:GetStepCountTask? = null;
 
 
-
-    private var mConnectionListener:HealthDataStore.ConnectionListener = object : HealthDataStore.ConnectionListener {
-        override fun onConnected() {
-            Logger.info(TAG, "Samsung HeathDaraStore connected", this@SamsungFitnessAPI.activity!!)
-            val pmsManager = HealthPermissionManager(healthDataStore)
-
-            try {
-                // Check whether the permissions that this application needs are acquired
-                val resultMap = pmsManager.isPermissionAcquired(permissionKeys)
-
-                if (resultMap.containsValue(java.lang.Boolean.FALSE)) {
-                    // Request the permission for reading step counts if it is not acquired
-                    pmsManager.requestPermissions(permissionKeys, this@SamsungFitnessAPI.activity).setResultListener(permissionListener)
-                } else {
-                   onPermissionGranted!!.accept(null)
-                }
-            } catch (e: Exception) {
-                Logger.error(TAG, e.javaClass.name + " - " + e.message, this@SamsungFitnessAPI.activity!!)
-                Logger.error(TAG, "Permission setting fails.", this@SamsungFitnessAPI.activity!!)
-                onPermissionGranted!!.deny(e, e.message!!)
-            }
-
-        }
-
-        override fun onConnectionFailed(error: HealthConnectionErrorResult?) {
-            Logger.error(TAG, error.toString(), this@SamsungFitnessAPI.activity!!)
-            showConnectionFailureDialog(error!!);
-        }
-
-        override fun onDisconnected() {
-            Logger.warning(TAG, "Samsung HeathDaraStore disconnected", this@SamsungFitnessAPI.activity!!)
-
-        }
-
-    }
-
-    private var permissionListener = object : HealthResultHolder.ResultListener<HealthPermissionManager.PermissionResult> {
-        override fun onResult(result: HealthPermissionManager.PermissionResult?) {
-            Logger.info(TAG, "Permission callback is received.", this@SamsungFitnessAPI.activity!!)
-            val resultMap = result!!.getResultMap()
-
-            if (resultMap.containsValue(java.lang.Boolean.FALSE)) {
-                // Requesting permission fails
-                onPermissionGranted!!.deny(null, "User denied permission")
-            } else {
-                // Get the current step count and display it
-                onPermissionGranted!!.accept(null)
-            }
-        }
-
-    }
-
     override fun readStepCount(): FitnessAPI {
         permissionKeys.add(HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ))
         return this;
@@ -121,6 +69,57 @@ class SamsungFitnessAPI : FitnessAPI {
     }
 
     override fun ensurePermission() {
+        var permissionListener = object : HealthResultHolder.ResultListener<HealthPermissionManager.PermissionResult> {
+            override fun onResult(result: HealthPermissionManager.PermissionResult?) {
+                Logger.info(TAG, "Permission callback is received.", this@SamsungFitnessAPI.activity!!)
+                val resultMap = result!!.getResultMap()
+
+                if (resultMap.containsValue(java.lang.Boolean.FALSE)) {
+                    // Requesting permission fails
+                    onPermissionGranted!!.deny(null, "User denied permission")
+                } else {
+                    // Get the current step count and display it
+                    onPermissionGranted!!.accept(null)
+                }
+            }
+
+        }
+         var mConnectionListener:HealthDataStore.ConnectionListener = object : HealthDataStore.ConnectionListener {
+            override fun onConnected() {
+                Logger.info(TAG, "Samsung HeathDaraStore connected", this@SamsungFitnessAPI.activity!!)
+                val pmsManager = HealthPermissionManager(healthDataStore)
+
+                try {
+                    // Check whether the permissions that this application needs are acquired
+                    val resultMap = pmsManager.isPermissionAcquired(permissionKeys)
+
+                    if (resultMap.containsValue(java.lang.Boolean.FALSE)) {
+                        // Request the permission for reading step counts if it is not acquired
+                        pmsManager.requestPermissions(permissionKeys, this@SamsungFitnessAPI.activity).setResultListener(permissionListener)
+                    } else {
+                        onPermissionGranted!!.accept(null)
+                    }
+                } catch (e: Exception) {
+                    Logger.error(TAG, e.javaClass.name + " - " + e.message, this@SamsungFitnessAPI.activity!!)
+                    Logger.error(TAG, "Permission setting fails.", this@SamsungFitnessAPI.activity!!)
+                    onPermissionGranted!!.deny(e, e.message!!)
+                }
+
+            }
+
+            override fun onConnectionFailed(error: HealthConnectionErrorResult?) {
+                Logger.error(TAG, error.toString(), this@SamsungFitnessAPI.activity!!)
+                showConnectionFailureDialog(error!!);
+            }
+
+            override fun onDisconnected() {
+                Logger.warning(TAG, "Samsung HeathDaraStore disconnected", this@SamsungFitnessAPI.activity!!)
+
+            }
+
+        }
+
+
         healthDataStore = HealthDataStore(this@SamsungFitnessAPI.activity, mConnectionListener)
         healthDataStore!!.connectService()
 
