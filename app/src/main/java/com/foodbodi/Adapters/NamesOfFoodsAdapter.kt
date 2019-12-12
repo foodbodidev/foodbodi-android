@@ -61,7 +61,7 @@ class NamesOfFoodsAdapter(foods:ArrayList<Food>): RecyclerView.Adapter<RecyclerV
             override fun onClick(p0: View?) {
                 val context = p0?.context
                 val updateCaloriesIntent = Intent(context, UpdateCaloriesActivity::class.java)
-                val foodFilter = ArrayList<Food>()
+                var foodFilter = ArrayList<Food>()
                 for (element in foodDisplay) {
                     if (element.restaurant_id != null) {
 
@@ -71,6 +71,7 @@ class NamesOfFoodsAdapter(foods:ArrayList<Food>): RecyclerView.Adapter<RecyclerV
 
                     }
                 }
+                foodFilter = foodFilter.distinctBy { it.id } as ArrayList<Food> // check de-dup
                 updateCaloriesIntent.putExtra("foodDisplay", foodFilter)
                 updateCaloriesIntent.putExtra("isUpdateCalories", false)
                 updateCaloriesIntent.putExtra("reservation_id", food.id)

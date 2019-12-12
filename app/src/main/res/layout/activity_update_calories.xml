@@ -81,7 +81,7 @@
                         android:textColor="@color/colorPrimary"
                         android:layout_marginBottom="10dp"
                         android:layout_marginTop="10dp"
-                        android:text="555"
+                        android:text="0 Kcal"
                         android:textSize="17sp"/>
 
             </LinearLayout>

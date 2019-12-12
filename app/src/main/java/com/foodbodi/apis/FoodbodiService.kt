@@ -86,6 +86,10 @@ interface FoodbodiService {
     fun getReservation(@HeaderMap headers: Map<String, String?>): Call<FoodBodiResponse<ReservationResponse>>
 
     @Headers("Content-Type: application/json")
+    @GET("reservation/mine")
+    fun getReservationByDate(@HeaderMap headers: Map<String, String?>,  @Query("date_string") dateString: String): Call<FoodBodiResponse<ReservationResponse>>
+
+    @Headers("Content-Type: application/json")
     @GET("reservation/{reservation_id}")
     fun getReservationById(@HeaderMap headers: Map<String, String?>, @Path("reservation_id") reservation_id: String): Call<FoodBodiResponse<FoodCardResonse>>
 

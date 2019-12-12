@@ -36,6 +36,8 @@ import com.foodbodi.controller.ReservationFragment
 import com.foodbodi.model.*
 import com.foodbodi.utils.Action
 import com.foodbodi.utils.Utils
+import com.foodbodi.utils.fitnessAPI.FitnessAPI
+import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import com.foodbodi.workers.SyncDailyLogWorker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -43,10 +45,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
     val firestore = FirebaseFirestore.getInstance()
+
     companion object {
         var MY_PERMISSIONS_REQUEST_LOCATION = 99;
         var mLocationManager: LocationManager? = null;
         var locationProvider: String? = null;
+        val fitnessAPI: FitnessAPI = FitnessAPIFactory.getByProvider()
+        val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE: Int = 10
 
         fun ensureGetLastLocation(context: Context, callback: Action<Location>) {
             if (ActivityCompat.checkSelfPermission(
@@ -208,6 +213,13 @@ class MainActivity : AppCompatActivity() {
     fun syncData() {
         val syncRequest = OneTimeWorkRequestBuilder<SyncDailyLogWorker>().build()
         WorkManager.getInstance(this).enqueue(syncRequest)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) {
+            MainActivity.fitnessAPI.consumePermissionGrantResult(requestCode, resultCode, data)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

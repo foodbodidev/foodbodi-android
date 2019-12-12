@@ -93,7 +93,8 @@ class NameOfFoodsFragment : Fragment() {
             for (document in querySnapshot.documents) {
                 val r = document.toObject(Food::class.java);
                 if (r != null) {
-                    if (r.calo?.compareTo(limit) == -1) {
+                    r!!.id = document.id
+                    if (r.calo?.compareTo(3000) == -1) {
                         foods.add(r)
                     }
                 }
@@ -106,7 +107,8 @@ class NameOfFoodsFragment : Fragment() {
             menu.calo = 0.0;
             foods.add(menu);
             for (document in querySnapshot.documents) {
-                val r = document.toObject(Food::class.java);
+                val r = document.toObject(Food::class.java)
+                r!!.id = document.id
                 foods.add(r!!)
             }
 
