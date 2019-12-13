@@ -99,15 +99,15 @@ class ReservationFragment: BaseFragment() {
                             isLoadingNextPage = false
 
                         } else {
+                            isLoadingNextPage = (data.size != 0)
                             cursor = cursorResponse
-                            isLoadingNextPage = true
                         }
 
                         listReservation.addAll(data)
 
 
                         if (list_recycler_view != null) {
-                            (list_recycler_view.adapter as CaloriesIntakeAdapter).reloadData(data)
+                            (list_recycler_view.adapter as CaloriesIntakeAdapter).reloadData(listReservation)
                         }
 
                     }
