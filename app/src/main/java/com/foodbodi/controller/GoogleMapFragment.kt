@@ -445,7 +445,9 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>, val itemClickHandl
             CaloSegment.HIGH -> kcalo.setTextColor(holder.view.resources.getColor(R.color.high_calo))
         }
 
-        val time = restaurant.open_hour + " ~ " + restaurant.close_hour
+
+        val time = if (restaurant.open_hour != null && restaurant.close_hour != null) restaurant.open_hour + " ~ " + restaurant.close_hour else "--:--"
+
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
 
         val imageView: ImageView = holder.view.findViewById<ImageView>(R.id.restaurant_item_photo)
