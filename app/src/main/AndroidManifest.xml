@@ -38,20 +38,17 @@
         >
         </activity>
         <activity android:name=".RegisterBusinessInformation"
-                  android:screenOrientation="portrait"
-        >
+                  android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".EditRestaurantActivity"
                 android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait"
-        >
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".UpdateBasicInfoActivity"
                 android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait"
-        >
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".AuthenticateFlowActivity"
@@ -61,14 +58,10 @@
         </activity>
         <activity
                 android:name=".MainActivity"
-                android:label="@string/title_activity_main"
-                android:screenOrientation="portrait"
-        >
+                android:label="@string/app_name"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
-
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

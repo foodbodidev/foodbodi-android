@@ -68,16 +68,16 @@ class Restaurant : Serializable {
         }
 
     }
-    fun getAvgCalos():Double{
-        var avg:Double = 0.0;
+    fun getAvgCalos():String{
+        var avg:String = "";
         var sum = 0.0;
         if (calo_values.size > 0) {
             for (value in calo_values) {
                 sum += value
             }
-            avg = sum / calo_values.size;
+            avg = (sum / calo_values.size).toString();
         }
-        avg = String.format("%.1f", avg).toDouble()
+//        avg = String.format("%.1f", avg)
         return avg
     }
 
