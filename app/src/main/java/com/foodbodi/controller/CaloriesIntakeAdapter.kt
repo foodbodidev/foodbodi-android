@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.foodbodi.model.Reservation
 import android.graphics.Color
 import android.util.Log
+import com.foodbodi.utils.DateString
 
 class CaloriesIntakeAdapter(private var myDataset: List<Reservation>) :
     RecyclerView.Adapter<CaloriesIntakeViewHolder>() {
@@ -79,7 +80,7 @@ class CaloriesIntakeViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
     fun bind(data: Reservation) {
         titleTextView?.text = data.restaurant_name
-        dateTextView?.text = data.date_string
+        dateTextView?.text = DateString.fromString(data.date_string!!)?.getPrettyString()
         caloriesButton?.text = data.total.toString() + " kcal"
 
         var color = Color.parseColor("#808000")
