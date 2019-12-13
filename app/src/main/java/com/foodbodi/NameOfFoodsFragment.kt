@@ -83,10 +83,10 @@ class NameOfFoodsFragment : Fragment() {
             get().addOnSuccessListener { querySnapshot ->
             ProgressHUD.instance.hideLoading()
             var foryou:Food = Food();
-            foryou.name = "For you";
-            foryou.restaurant_id = "";
-            foryou.amount = 0;
-            foryou.calo = 0.0;
+            foryou.name = getString(R.string.for_you)
+            foryou.restaurant_id = ""
+            foryou.amount = 0
+            foryou.calo = 0.0
             foods.add(0,foryou);
 
             val limit = CurrentUserProvider.get().getRemainCaloToEat();
@@ -94,14 +94,14 @@ class NameOfFoodsFragment : Fragment() {
                 val r = document.toObject(Food::class.java);
                 if (r != null) {
                     r!!.id = document.id
-                    if (r.calo?.compareTo(3000) == -1) {
+                    if (r.calo?.compareTo(limit) == -1) {
                         foods.add(r)
                     }
                 }
             }
 
             var menu:Food = Food();
-            menu.name = "Name of foods";
+            menu.name = getString(R.string.tab_Name_Of_Foods_fragment);
             menu.restaurant_id = "";
             menu.amount = 0;
             menu.calo = 0.0;
