@@ -296,8 +296,8 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
         val category:RestaurantCategory? = findViewById<Spinner>(R.id.spinner_restaurant_category).selectedItem as? RestaurantCategory
         val updateData = Restaurant()
         updateData.category = category?.key
-        updateData.open_hour = findViewById<EditText>(R.id.input_restaurent_open_hour).text.toString()
-        updateData.close_hour = findViewById<EditText>(R.id.input_restaurent_close_hour).text.toString()
+        updateData.open_hour = findViewById<TextView>(R.id.input_restaurent_open_hour).text.toString()
+        updateData.close_hour = findViewById<TextView>(R.id.input_restaurent_close_hour).text.toString()
         updateData.type = restaurantType
         updateData.photos = capturedRestaurantPhotos
         // restaurant.address = findViewById<EditText>(R.id.input_restaurant_address).text.toString()
