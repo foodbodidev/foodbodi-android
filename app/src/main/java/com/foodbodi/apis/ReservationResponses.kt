@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName
 
 class ReservationResponse  {
     @SerializedName("reservations")
-    lateinit var reservation: ArrayList<Reservation>
+    var reservation: ArrayList<Reservation> = ArrayList()
+    @SerializedName("cursor")
+    var cursor: String = ""
 
 }

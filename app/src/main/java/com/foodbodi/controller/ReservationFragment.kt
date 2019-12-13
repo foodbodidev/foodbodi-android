@@ -2,6 +2,7 @@ package com.foodbodi.controller
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +31,11 @@ import retrofit2.Response
 
 class ReservationFragment: BaseFragment() {
 
-    private  var myDataset: ArrayList<Reservation> = ArrayList()
+    private  var listReservation: ArrayList<Reservation> = ArrayList()
+    var adapter: CaloriesIntakeAdapter = CaloriesIntakeAdapter(listReservation)
+
+    var cursor: String = ""
+    var isLoadingNextPage = false
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -43,35 +48,72 @@ class ReservationFragment: BaseFragment() {
         list_recycler_view.apply {
             layoutManager = LinearLayoutManager(activity)
 
-            adapter = CaloriesIntakeAdapter(myDataset)
+            adapter = CaloriesIntakeAdapter(listReservation)
         }
+
+        setUpScrollView()
         this.getReservation()
     }
 
-    fun getReservation() {
-        showLoading(getActivity())
-        FoodbodiRetrofitHolder.getService().getReservation(FoodbodiRetrofitHolder.getHeaders(this.requireContext()))
+
+    private fun setUpScrollView() {
+        list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if (isLoadingNextPage) {
+                    var lastItem = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                    if (lastItem == listReservation.size - 1) {
+                        //bottom of list!
+                        loadMore()
+                    }
+                }
+            }
+        })
+    }
+
+    fun loadMore() {
+        progressBar.visibility = View.VISIBLE
+        getReservation()
+    }
+
+    private fun getReservation() {
+        FoodbodiRetrofitHolder.getService().getReservation(FoodbodiRetrofitHolder.getHeaders(this.requireContext()), cursor)
             .enqueue(object : Callback<FoodBodiResponse<ReservationResponse>> {
                 override fun onFailure(call: Call<FoodBodiResponse<ReservationResponse>>, t: Throwable) {
                     Utils.showAlert(t.message!!, requireActivity())
-                    hideLoading()
+                    progressBar.visibility = View.GONE
                 }
 
                 override fun onResponse(
                     call: Call<FoodBodiResponse<ReservationResponse>>,
                     response: Response<FoodBodiResponse<ReservationResponse>>
                 ) {
-                    hideLoading()
+                    progressBar.visibility = View.GONE
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
-                        val data = response.body()?.data()?.reservation
-                        if (data != null && list_recycler_view != null) {
-                            (list_recycler_view.adapter as CaloriesIntakeAdapter).reloadData(data);
+                        val data = response.body()?.data()?.reservation ?: return
+                        val cursorResponse = response.body()?.data()?.cursor ?: ""
+
+                        if (cursorResponse == cursor){
+                            isLoadingNextPage = false
+
+                        } else {
+                            cursor = cursorResponse
+                            isLoadingNextPage = true
+                        }
+
+                        listReservation.addAll(data)
+
+
+                        if (list_recycler_view != null) {
+                            (list_recycler_view.adapter as CaloriesIntakeAdapter).reloadData(data)
                         }
 
                     }
                 }
 
             })
+
     }
 
 }
