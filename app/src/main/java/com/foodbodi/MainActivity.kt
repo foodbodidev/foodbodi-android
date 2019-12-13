@@ -3,6 +3,7 @@ package com.foodbodi
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActionBar
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -11,17 +12,18 @@ import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageButton
+import android.view.ViewGroup
+import android.widget.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
-import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -51,12 +53,14 @@ class MainActivity : AppCompatActivity() {
     private var mRunnable:Runnable = Runnable {
         doubleBackToExitPressedOnce = false;
     }
+    lateinit var toolBar:View
     companion object {
         var MY_PERMISSIONS_REQUEST_LOCATION = 99;
         var mLocationManager: LocationManager? = null;
         var locationProvider: String? = null;
         val fitnessAPI: FitnessAPI = FitnessAPIFactory.getByProvider()
         val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE: Int = 10
+        var backToExit = false;
 
         fun ensureGetLastLocation(context: Context, callback: Action<Location>) {
             if (ActivityCompat.checkSelfPermission(
@@ -74,6 +78,42 @@ class MainActivity : AppCompatActivity() {
                 callback.accept(location)
             }
 
+        }
+
+        fun createToolbar(activity:Activity, root:ViewGroup):View {
+            var toolbar: View? = activity.layoutInflater. inflate(R.layout.custom_action_bar, null, false)
+            toolbar!!.findViewById<ImageButton>(R.id.action_bar_back_btn)
+                .setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(p0: View?) {
+                        backToExit = false
+                        activity.onBackPressed()
+                    }
+
+                })
+            toolbar.findViewById<ImageButton>(R.id.action_bar_logout)
+                .setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(p0: View?) {
+                        Utils.showAlert("Do you want to logout?", activity) {
+                            activity.getSharedPreferences(AuthenticateFlowActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)?.edit()
+                                ?.remove(AuthenticateFlowActivity.API_KEY_FIELD)?.apply()
+                            CurrentUserProvider.get().logout(activity, object : Action<User> {
+                                override fun accept(data: User?) {
+                                    LoginManager.getInstance().logOut()
+                                    val intent:Intent = activity.intent;
+                                    activity.finish()
+                                    activity.startActivity(intent)
+                                }
+
+                                override fun deny(data: User?, reason: String) {
+                                }
+
+                            })
+                        }
+                    }
+
+                })
+            root.addView(toolbar, 0)
+            return toolbar
         }
     }
     private lateinit var googleMapFragment: GoogleMapFragment;
@@ -111,28 +151,33 @@ class MainActivity : AppCompatActivity() {
     fun updateActionBar(itemId:Int) {
         when (itemId) {
             R.id.navigation_fodimap -> {
-                supportActionBar?.hide()
+                toolBar.visibility = View.GONE
             }
             R.id.navigation_reservation -> {
-                supportActionBar?.show()
-                supportActionBar?.title = resources.getText(R.string.title_reservation)
+                toolBar.visibility = View.VISIBLE
+                toolBar.findViewById<TextView>(R.id.action_bar_title).text = resources.getText(R.string.title_reservation)
             }
             R.id.navigation_profile -> {
-                supportActionBar?.show()
-                supportActionBar?.title = resources.getText(R.string.title_profile)
+                toolBar.visibility = View.VISIBLE
+                toolBar.findViewById<TextView>(R.id.action_bar_title).text = resources.getText(R.string.title_profile)
             }
         }
     }
 
     override fun onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed()
-            return
-        }
+        if (backToExit) {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
 
-        this.doubleBackToExitPressedOnce = true
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
-        mhandle.postDelayed(mRunnable, 2000)
+            this.doubleBackToExitPressedOnce = true
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+            mhandle.postDelayed(mRunnable, 2000)
+        } else {
+            super.onBackPressed()
+        }
+        backToExit = true; //back on toolbar or back from button
     }
 
     override fun onDestroy() {
@@ -176,6 +221,7 @@ class MainActivity : AppCompatActivity() {
 
         startActivity(Intent(this, SplashScreen::class.java))
 
+        toolBar = createToolbar(this, findViewById<LinearLayout>(R.id.container))
         navView = findViewById(R.id.nav_view)
 
         googleMapFragment = GoogleMapFragment();
@@ -197,7 +243,9 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         getMenuInflater().inflate(R.menu.global_actions, menu);

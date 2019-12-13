@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+             android:padding="@dimen/text_small"
+             android:background="@drawable/textline"
+              >
+    <ImageButton
+            android:id="@+id/action_bar_back_btn"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:layout_gravity="start"
+            android:background="@color/White"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <TextView
+            android:id="@+id/action_bar_title"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Foodbodi"
+            android:textColor="#000000" />
+
+    <ImageButton android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="end"
+                 android:id="@+id/action_bar_logout"
+                 android:background="@color/White"
+                 android:src="@drawable/iconmonstr_log_out_7"
+
+    />
+
+
+
+</FrameLayout>
