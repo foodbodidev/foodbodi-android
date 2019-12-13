@@ -9,6 +9,7 @@ import com.foodbodi.R
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Typeface
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
@@ -30,6 +31,7 @@ import com.foodbodi.utils.ProgressHUD
 import com.foodbodi.utils.fitnessAPI.FitnessAPI
 import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -302,8 +304,11 @@ class ProfileFragment : Fragment() {
             pieData.dataSet = dataSet
 
             pieChart.data = pieData
-            pieChart.centerText = "$remainKcalo \n KCAL LEFT"
+            pieChart.centerText = "${remainKcalo.toInt()} \n KCAL LEFT"
             pieChart.animateXY(0, 0)
+            pieChart.legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+            pieChart.legend.form = Legend.LegendForm.CIRCLE
+            pieChart.legend.xEntrySpace = 10f
 
             pieChart.onChartGestureListener = pieChartClickListener
         }
