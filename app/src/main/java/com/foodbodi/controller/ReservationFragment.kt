@@ -89,6 +89,7 @@ class ReservationFragment: BaseFragment() {
                     call: Call<FoodBodiResponse<ReservationResponse>>,
                     response: Response<FoodBodiResponse<ReservationResponse>>
                 ) {
+                    val progressBar = progressBar ?: return
                     progressBar.visibility = View.GONE
                     if (FoodBodiResponse.SUCCESS_CODE == response.body()?.statusCode()) {
                         val data = response.body()?.data()?.reservation ?: return
