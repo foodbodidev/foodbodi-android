@@ -80,11 +80,15 @@ class MainActivity : AppCompatActivity() {
         updateActionBar(item.itemId)
         when (item.itemId) {
             R.id.navigation_fodimap -> {
-                loadFragment(googleMapFragment);
+                loadFragment(googleMapFragment)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_reservation -> {
-                loadFragment(reservationFragment)
+                if (CurrentUserProvider.get().isLoggedIn()) {
+                    loadFragment(reservationFragment)
+                } else {
+                    startActivity(Intent(this, AuthenticateFlowActivity::class.java))
+                }
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_profile -> {
