@@ -13,6 +13,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -45,7 +46,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
     val firestore = FirebaseFirestore.getInstance()
-
+    private var doubleBackToExitPressedOnce = false
+    private var mhandle:Handler = Handler()
+    private var mRunnable:Runnable = Runnable {
+        doubleBackToExitPressedOnce = false;
+    }
     companion object {
         var MY_PERMISSIONS_REQUEST_LOCATION = 99;
         var mLocationManager: LocationManager? = null;
@@ -116,6 +121,24 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.show()
                 supportActionBar?.title = resources.getText(R.string.title_profile)
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+        mhandle.postDelayed(mRunnable, 2000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mhandle != null){
+            mhandle.removeCallbacks(mRunnable);
         }
     }
 
