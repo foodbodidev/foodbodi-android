@@ -68,17 +68,30 @@ class Restaurant : Serializable {
         }
 
     }
-    fun getAvgCalos():String{
-        var avg:String = "";
+    fun getAvgCalos():Double{
+        var avg:Double = 0.0;
         var sum = 0.0;
         if (calo_values.size > 0) {
             for (value in calo_values) {
                 sum += value
             }
-            avg = (sum / calo_values.size).toString();
+            avg = (sum / calo_values.size);
         }
-//        avg = String.format("%.1f", avg)
         return avg
+    }
+
+    fun getOpenHour():String {
+        if (open_hour != null) return open_hour!!
+        else {
+            return "--"
+        }
+    }
+
+    fun getCLoseHour():String {
+        if (close_hour != null) return close_hour!!
+        else {
+            return "--"
+        }
     }
 
     companion object {
