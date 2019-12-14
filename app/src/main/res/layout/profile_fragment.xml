@@ -29,7 +29,7 @@
                     android:layout_marginTop="@dimen/text_medium"
                     android:layout_width="match_parent"
                     android:layout_marginLeft="10dp"
-                    android:text="20-20-2020"
+                    android:text=""
                     android:textColor="@color/title_text_color"
                     android:layout_height="wrap_content"/>
 

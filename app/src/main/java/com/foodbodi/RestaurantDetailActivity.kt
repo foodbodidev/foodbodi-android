@@ -6,10 +6,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -78,6 +75,14 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
         })
         this.initUI()
         getDataRestaurant()
+
+        findViewById<ImageButton>(R.id.restaurant_detail_back)
+            .setOnClickListener(object : View.OnClickListener {
+                override fun onClick(p0: View?) {
+                    onBackPressed()
+                }
+
+            })
 
     }
 

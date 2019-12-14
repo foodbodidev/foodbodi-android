@@ -21,9 +21,9 @@ class DateString(var year: Int, var month: Int, var day: Int) : Serializable {
                 && Calendar.getInstance().get(Calendar.MONTH) + 1 == month
                 && Calendar.getInstance().get(Calendar.DATE) == day
         if (today) {
-            return "Today"
+            return SimpleDateFormat("'Today' MMM dd, yyyy").format(date)
         } else {
-            val dateFormat:SimpleDateFormat = SimpleDateFormat("EEE, MMM dd, yyyy")
+            val dateFormat:SimpleDateFormat = SimpleDateFormat("' 'EEE, MMM dd, yyyy") //hardcode to keep text length always the same
             return dateFormat.format(date)
         }
     }
