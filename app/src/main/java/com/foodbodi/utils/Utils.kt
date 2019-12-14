@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager
 class Utils {
 
     companion object {
-        fun showAlert(message: String, context: FragmentActivity, completion: (() -> Unit)? = null) {
+        fun showAlert(message: String, context: Activity, completion: (() -> Unit)? = null) {
             val dialogBuilder = AlertDialog.Builder(context)
             // set message of alert dialog
             dialogBuilder.setMessage(message)
