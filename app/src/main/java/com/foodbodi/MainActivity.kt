@@ -2,7 +2,6 @@ package com.foodbodi
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActionBar
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -12,8 +11,6 @@ import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
-import android.opengl.Visibility
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
@@ -23,15 +20,12 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
-import com.facebook.FacebookSdk
 import com.facebook.login.LoginManager
 import com.foodbodi.controller.GoogleMapFragment
 import com.foodbodi.controller.ProfileFragment
@@ -42,15 +36,13 @@ import com.foodbodi.utils.Utils
 import com.foodbodi.utils.fitnessAPI.FitnessAPI
 import com.foodbodi.utils.fitnessAPI.FitnessAPIFactory
 import com.foodbodi.workers.SyncDailyLogWorker
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
     val firestore = FirebaseFirestore.getInstance()
     private var doubleBackToExitPressedOnce = false
     private var mhandle:Handler = Handler()
-    private var mRunnable:Runnable = Runnable {
+    private var cancelDoubleBackToExitRunnable:Runnable = Runnable {
         doubleBackToExitPressedOnce = false;
     }
     lateinit var toolBar:View
@@ -167,13 +159,13 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (backToExit) {
             if (doubleBackToExitPressedOnce) {
-                super.onBackPressed()
+                finish();
                 return
             }
 
             this.doubleBackToExitPressedOnce = true
             Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
-            mhandle.postDelayed(mRunnable, 2000)
+            mhandle.postDelayed(cancelDoubleBackToExitRunnable, 2000)
         } else {
             super.onBackPressed()
         }
@@ -183,7 +175,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (mhandle != null){
-            mhandle.removeCallbacks(mRunnable);
+            mhandle.removeCallbacks(cancelDoubleBackToExitRunnable);
         }
     }
 
