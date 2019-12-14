@@ -153,8 +153,8 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
             //bind data.
             this.eFood!!.text = data!!.category;
             this.eName!!.text = data!!.name;
-            this.eTime!!.text = data!!.getOpenHour() + " ~ " + data!!.getCLoseHour();
-            this.eKcal!!.text = data!!.getAvgCalos().toInt().toString() + " Kcal";
+            this.eTime!!.text = resources.getString(R.string.work_hour_format, data!!.getOpenHour(), data!!.getCLoseHour())
+            this.eKcal!!.text = resources.getString(R.string.kcalo_format, data!!.getAvgCalos().toInt());
              data!!.getCaloSegment()
             when (data!!.getCaloSegment()) {
                 CaloSegment.LOW -> {
