@@ -12,10 +12,7 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.util.Log
 import android.view.MotionEvent
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import com.foodbodi.MainActivity
 import com.foodbodi.apis.FoodBodiResponse
@@ -113,7 +110,7 @@ class ProfileFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View = inflater.inflate(R.layout.profile_fragment, container, false);
-        view.findViewById<TextView>(R.id.text_daily_log_date).setOnClickListener(object : View.OnClickListener {
+        view.findViewById<LinearLayout>(R.id.image_view_date_container).setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 DatePickerDialog(
                     this@ProfileFragment.requireContext(), onDateSetListener,

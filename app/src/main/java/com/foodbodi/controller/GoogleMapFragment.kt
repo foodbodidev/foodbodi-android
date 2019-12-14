@@ -446,7 +446,7 @@ class MyAdapter(private val myDataset: ArrayList<Restaurant>, val itemClickHandl
         }
 
 
-        val time = if (restaurant.open_hour != null && restaurant.close_hour != null) restaurant.open_hour + " ~ " + restaurant.close_hour else "--:--"
+        val time = holder.view.resources.getString(R.string.work_hour_format, restaurant.getOpenHour(), restaurant.getCLoseHour())
 
         holder.view.findViewById<TextView>(R.id.restaurant_item_time).setText(time)
 
