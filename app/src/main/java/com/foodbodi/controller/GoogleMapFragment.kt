@@ -144,7 +144,7 @@ class GoogleMapFragment : Fragment() {
             }
         })
         var fab_edit:ImageButton = view.findViewById<ImageButton>(R.id.fab_edit_restaurant)!!;
-        fab_add.setOnClickListener(View.OnClickListener {
+        fab_edit.setOnClickListener(View.OnClickListener {
             if (CurrentUserProvider.get().isLoggedIn()) {
                 invokeAddRestaurantForm()
             } else {
@@ -155,11 +155,12 @@ class GoogleMapFragment : Fragment() {
         if (CurrentUserProvider.get().getUser() != null) {
             if (CurrentUserProvider.get().getUser()!!.restaurants.size > 0) {
                 fab_add.visibility = View.GONE
+                fab_edit.visibility = View.VISIBLE
             } else {
                 fab_edit.visibility = View.GONE
+                fab_add.visibility = View.VISIBLE
             }
         } else {
-            fab_add.visibility = View.GONE
             fab_edit.visibility = View.GONE
         }
 

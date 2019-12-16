@@ -6,12 +6,12 @@
              android:padding="@dimen/text_small"
              android:background="@drawable/textline"
               >
-    <ImageButton
-            android:id="@+id/action_bar_back_btn"
-            android:src="@drawable/ic_arrow_back_black_24dp"
-            android:layout_gravity="start"
-            android:background="@color/White"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+<!--    <ImageButton-->
+<!--            android:id="@+id/action_bar_back_btn"-->
+<!--            android:src="@drawable/ic_arrow_back_black_24dp"-->
+<!--            android:layout_gravity="start"-->
+<!--            android:background="@color/White"-->
+<!--            android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
 
     <TextView
             android:id="@+id/action_bar_title"
