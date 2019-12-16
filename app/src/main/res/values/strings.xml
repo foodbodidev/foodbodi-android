@@ -20,8 +20,8 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="age">Your Age</string>
-    <string name="height">Your Height</string>
-    <string name="weight">Your Weight</string>
+    <string name="height">Your Height (inch)</string>
+    <string name="weight">Your Weight (kg)</string>
     <string name="target_weight">Goal Weight</string>
     <string name="next">Next</string>
     <string name="firstname">First Name</string>
