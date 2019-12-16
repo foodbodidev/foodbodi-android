@@ -13,48 +13,49 @@
             android:roundIcon="@mipmap/ic_launcher"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".GettingStartedActivity">
+        </activity>
         <activity
                 android:name=".controller.UpdateCaloriesActivity"
                 android:label="@string/title_activity_update_calories"
-                android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
-        >
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".SearchRestaurantActivity"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+                android:name=".SearchRestaurantActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".RestaurantDetailActivity"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+                android:name=".RestaurantDetailActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".SplashScreen"
-                  android:screenOrientation="portrait"
-                  android:theme="@style/AppTheme.NoActionBar"
-        >
+        <activity
+                android:name=".SplashScreen"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".NotifyWaitingForApproval"
-                  android:screenOrientation="portrait"
-        >
+        <activity
+                android:name=".NotifyWaitingForApproval"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".RegisterBusinessInformation"
-                  android:screenOrientation="portrait">
+        <activity
+                android:name=".RegisterBusinessInformation"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".EditRestaurantActivity"
-                android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
                 android:name=".UpdateBasicInfoActivity"
-                android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
                 android:name=".AuthenticateFlowActivity"
-                android:windowSoftInputMode="adjustPan"
                 android:screenOrientation="portrait"
-        >
+                android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
                 android:name=".MainActivity"
@@ -62,6 +63,7 @@
                 android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
