@@ -7,7 +7,7 @@ class FoodBodiResponse<T : Any> {
         val SUCCESS_CODE = 0
     }
     @SerializedName("status_code")
-    lateinit var statusCode:Number
+    var statusCode:Int = 0
 
     @SerializedName("data")
     lateinit var data:T
@@ -15,7 +15,7 @@ class FoodBodiResponse<T : Any> {
     @SerializedName("message")
     lateinit var errorMessage:String
 
-    fun statusCode(): Number {
+    fun statusCode(): Int {
         return this.statusCode;
     }
 

@@ -155,11 +155,16 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                     val response = response.body() ?: return
 
                     if (FoodBodiResponse.SUCCESS_CODE == response.statusCode()) {
-                        CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
-                        onBackPressed()
+
+                        Utils.showAlertOk("Update calories intake successfully", this@UpdateCaloriesActivity) {
+                            CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
+                            onBackPressed()
+                        }
 
                     } else {
-                       // Utils.showAlert(response.errorMessage, this@UpdateCaloriesActivity)
+                        Utils.showAlertOk(response.errorMessage, this@UpdateCaloriesActivity) {
+                            onBackPressed()
+                        }
                     }
                 }
             })
@@ -185,11 +190,15 @@ class UpdateCaloriesActivity : BaseActivity(), CaloriesCartDelegate  {
                     val response = response.body() ?: return
 
                     if (FoodBodiResponse.SUCCESS_CODE == response.statusCode()) {
-                        CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
-                        onBackPressed()
+                        Utils.showAlertOk("Add calories intake successfully", this@UpdateCaloriesActivity) {
+                            CurrentUserProvider.get().updateRemainCaloToEat(this@UpdateCaloriesActivity)
+                            onBackPressed()
+                        }
 
                     } else {
-                        //Utils.showAlert(response.errorMessage, this@UpdateCaloriesActivity)
+                        Utils.showAlertOk(response.errorMessage, this@UpdateCaloriesActivity) {
+                            onBackPressed()
+                        }
                     }
                 }
             })

@@ -33,6 +33,24 @@ class Utils {
             alert.show()
         }
 
+        fun showAlertOk(message: String, context: Activity, completion: (() -> Unit)? = null) {
+            val dialogBuilder = AlertDialog.Builder(context)
+            // set message of alert dialog
+            dialogBuilder.setMessage(message)
+                // if the dialog is cancelable
+                // positive button text and action
+                .setPositiveButton("Ok", DialogInterface.OnClickListener {
+                        dialog, id -> completion?.invoke()
+                })
+
+            // create dialog box
+            val alert = dialogBuilder.create()
+            // set title for alert dialog box
+            alert.setTitle("Notice")
+            // show alert dialog
+            alert.show()
+        }
+
         fun hideSoftKeyboard(activity: Activity) {
 
             val inputMethodManager = activity.getSystemService(
