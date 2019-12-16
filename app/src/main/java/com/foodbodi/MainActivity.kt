@@ -74,15 +74,15 @@ class MainActivity : AppCompatActivity() {
 
         fun createToolbar(activity:Activity, root:ViewGroup):View {
             var toolbar: View? = activity.layoutInflater. inflate(R.layout.custom_action_bar, null, false)
-            toolbar!!.findViewById<ImageButton>(R.id.action_bar_back_btn)
-                .setOnClickListener(object : View.OnClickListener {
-                    override fun onClick(p0: View?) {
-                        backToExit = false
-                        activity.onBackPressed()
-                    }
-
-                })
-            toolbar.findViewById<ImageButton>(R.id.action_bar_logout)
+//            toolbar!!.findViewById<ImageButton>(R.id.action_bar_back_btn)
+//                .setOnClickListener(object : View.OnClickListener {
+//                    override fun onClick(p0: View?) {
+//                        backToExit = false
+//                        activity.onBackPressed()
+//                    }
+//
+//                })
+            toolbar!!.findViewById<ImageButton>(R.id.action_bar_logout)
                 .setOnClickListener(object : View.OnClickListener {
                     override fun onClick(p0: View?) {
                         Utils.showAlert("Do you want to logout?", activity) {
