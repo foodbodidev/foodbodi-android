@@ -85,6 +85,15 @@
                 android:layout_gravity="end|top"
 
         />
+        <ImageButton
+                android:background="@drawable/circle_white"
+                app:srcCompat="@drawable/iconmonstr_gear_1"
+                android:id="@+id/fab_edit_restaurant"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="end|top"
+
+        />
 
 
 

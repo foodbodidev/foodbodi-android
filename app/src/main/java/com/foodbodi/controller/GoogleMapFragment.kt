@@ -135,13 +135,34 @@ class GoogleMapFragment : Fragment() {
         getChildFragmentManager().beginTransaction().replace(R.id.map, supportMapFragment).commit();
 
 
-        view.findViewById<ImageButton>(R.id.fab_add_restaurant)!!.setOnClickListener(View.OnClickListener {
+        var fab_add:ImageButton = view.findViewById<ImageButton>(R.id.fab_add_restaurant)!!;
+        fab_add.setOnClickListener(View.OnClickListener {
             if (CurrentUserProvider.get().isLoggedIn()) {
                 invokeAddRestaurantForm()
             } else {
                 invokeAuthentication()
             }
         })
+        var fab_edit:ImageButton = view.findViewById<ImageButton>(R.id.fab_edit_restaurant)!!;
+        fab_add.setOnClickListener(View.OnClickListener {
+            if (CurrentUserProvider.get().isLoggedIn()) {
+                invokeAddRestaurantForm()
+            } else {
+                invokeAuthentication()
+            }
+        })
+
+        if (CurrentUserProvider.get().getUser() != null) {
+            if (CurrentUserProvider.get().getUser()!!.restaurants.size > 0) {
+                fab_add.visibility = View.GONE
+            } else {
+                fab_edit.visibility = View.GONE
+            }
+        } else {
+            fab_add.visibility = View.GONE
+            fab_edit.visibility = View.GONE
+        }
+
 
         searchBox = view.findViewById<EditText>(R.id.edit_text_search_box)
         searchBox.setOnFocusChangeListener(object : View.OnFocusChangeListener {
