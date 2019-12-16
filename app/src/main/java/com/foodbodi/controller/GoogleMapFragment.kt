@@ -144,7 +144,7 @@ class GoogleMapFragment : Fragment() {
             }
         })
         var fab_edit:ImageButton = view.findViewById<ImageButton>(R.id.fab_edit_restaurant)!!;
-        fab_add.setOnClickListener(View.OnClickListener {
+        fab_edit.setOnClickListener(View.OnClickListener {
             if (CurrentUserProvider.get().isLoggedIn()) {
                 invokeAddRestaurantForm()
             } else {
