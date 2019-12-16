@@ -84,6 +84,7 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
 
             })
 
+
     }
 
     override fun onAttachFragment(fragment: Fragment) {
@@ -101,6 +102,14 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
         // The pager adapter, which provides the pages to the view pager widget.
         val pagerAdapter = ScreenSlidePagerAdapter(supportFragmentManager)
         photoPager.adapter = pagerAdapter
+
+        photoPager.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                val url = ((photoPager.adapter as ScreenSlidePagerAdapter).getItem(photoPager.currentItem) as RestaurantPhotoItem).url
+
+            }
+
+        })
     }
     private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         var photoViews = ArrayList<RestaurantPhotoItem>()
