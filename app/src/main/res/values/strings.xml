@@ -89,5 +89,10 @@
     <string name="for_you">For You</string>
     <string name="split_character"> | </string>
     <string name="type_new_comment">Type new comment</string>
+    <string name="welcome">Welcome</string>
+    <string name="get_start">GET START</string>
+    <string name="welcome_message">Transformation to a great looking body will become dream come true with daily
+        calorie
+    </string>
 
 </resources>
