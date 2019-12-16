@@ -16,6 +16,7 @@ import com.foodbodi.Adapters.DetailRestaurantAdapter
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.RestaurantResponse
+import com.foodbodi.controller.ViewImageActivity
 import com.foodbodi.model.CaloSegment
 import com.foodbodi.model.Restaurant
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -102,14 +103,6 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
         // The pager adapter, which provides the pages to the view pager widget.
         val pagerAdapter = ScreenSlidePagerAdapter(supportFragmentManager)
         photoPager.adapter = pagerAdapter
-
-        photoPager.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                val url = ((photoPager.adapter as ScreenSlidePagerAdapter).getItem(photoPager.currentItem) as RestaurantPhotoItem).url
-
-            }
-
-        })
     }
     private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         var photoViews = ArrayList<RestaurantPhotoItem>()

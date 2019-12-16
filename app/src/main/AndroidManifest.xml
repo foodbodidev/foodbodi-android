@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.foodbodi">
+        package="com.foodbodi">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
             android:allowBackup="true"
@@ -14,95 +14,90 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
+                android:name=".controller.ViewImageActivity"
+                android:label="@string/title_activity_view_image"
+                android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
                 android:name=".controller.UpdateCaloriesActivity"
                 android:label="@string/title_activity_update_calories"
-                android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
-        >
-        </activity>
-        <activity android:name=".SearchRestaurantActivity"
-                  android:screenOrientation="portrait"
-        >
-        </activity>
-        <activity android:name=".RestaurantDetailActivity"
-                  android:screenOrientation="portrait"
-        >
-        </activity>
-        <activity android:name=".SplashScreen"
-                  android:screenOrientation="portrait"
-                  android:theme="@style/AppTheme.NoActionBar"
-        >
-        </activity>
-        <activity android:name=".NotifyWaitingForApproval"
-                  android:screenOrientation="portrait"
-        >
-        </activity>
-        <activity android:name=".RegisterBusinessInformation"
-                  android:screenOrientation="portrait">
-        </activity>
+                android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+                android:name=".SearchRestaurantActivity"
+                android:screenOrientation="portrait"></activity>
+        <activity
+                android:name=".RestaurantDetailActivity"
+                android:screenOrientation="portrait"></activity>
+        <activity
+                android:name=".SplashScreen"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+                android:name=".NotifyWaitingForApproval"
+                android:screenOrientation="portrait"></activity>
+        <activity
+                android:name=".RegisterBusinessInformation"
+                android:screenOrientation="portrait"></activity>
         <activity
                 android:name=".EditRestaurantActivity"
-                android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustPan"></activity>
         <activity
                 android:name=".UpdateBasicInfoActivity"
-                android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustPan"></activity>
         <activity
                 android:name=".AuthenticateFlowActivity"
-                android:windowSoftInputMode="adjustPan"
                 android:screenOrientation="portrait"
-        >
-        </activity>
+                android:windowSoftInputMode="adjustPan"></activity>
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name"
                 android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyDeNkAwx8vvuc5VkBAzeTptnq4KSPgjJmU"/>
+                android:value="AIzaSyDeNkAwx8vvuc5VkBAzeTptnq4KSPgjJmU" />
         <meta-data
                 android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version"/>
+                android:value="@integer/google_play_services_version" />
         <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
-                android:value="@string/facebook_app_id"/>
+                android:value="@string/facebook_app_id" />
         <meta-data
                 android:name="com.samsung.android.health.permission.read"
-                android:value="com.samsung.health.step_count"/>
+                android:value="com.samsung.health.step_count" />
 
         <activity
                 android:name="com.facebook.FacebookActivity"
                 android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-                android:label="@string/app_name"/>
+                android:label="@string/app_name" />
         <activity
                 android:name="com.facebook.CustomTabActivity"
                 android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="@string/fb_login_protocol_scheme"/>
+                <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
         <activity
                 android:name="com.yalantis.ucrop.UCropActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <uses-library
                 android:name="org.apache.http.legacy"
-                android:required="false"/>
+                android:required="false" />
     </application>
 
 </manifest>

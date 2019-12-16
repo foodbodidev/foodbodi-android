@@ -1,6 +1,7 @@
 package com.foodbodi
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -11,10 +12,10 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.Toast
+import com.foodbodi.controller.ViewImageActivity
 import com.foodbodi.utils.Action
 import com.foodbodi.utils.PhotoGetter
-
-
+import java.util.*
 
 
 class RestaurantPhotoItem(var url:String?) : Fragment() {
@@ -37,6 +38,16 @@ class RestaurantPhotoItem(var url:String?) : Fragment() {
                 PhotoGetter.loadImageFromURL(url!!, imageView)
             }
         }
+        imageView.setOnClickListener(object:View.OnClickListener{
+            override fun onClick(v: View?) {
+                val url = url
+                val intent = Intent(context, ViewImageActivity::class.java).apply {
+                    putExtra("key_url_image", url)
+                }
+                startActivity(intent)
+            }
+
+        })
 
         return view
     }

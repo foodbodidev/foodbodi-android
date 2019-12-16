@@ -89,5 +89,7 @@
     <string name="for_you">For You</string>
     <string name="split_character"> | </string>
     <string name="type_new_comment">Type new comment</string>
+    <string name="title_activity_view_image">ViewImageActivity</string>
+
 
 </resources>
