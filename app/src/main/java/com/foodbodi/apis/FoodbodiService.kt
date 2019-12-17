@@ -20,6 +20,9 @@ interface FoodbodiService {
     @GET("restaurant/mine")
     fun listMineRestaurant(@HeaderMap headers:Map<String, String?>):Call<FoodBodiResponse<RestaurantsResponse>>;
 
+    @DELETE("restaurant/{id}")
+    fun deleteRestaurant(@HeaderMap headers: Map<String, String?>, @Path("id") id:String) : Call<FoodBodiResponse<Any>>
+
     @GET("metadata/restaurant_category")
     fun getRestaurantCategories():Call<FoodBodiResponse<HashMap<String, RestaurantCategory>>>
 
