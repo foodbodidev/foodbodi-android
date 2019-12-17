@@ -21,6 +21,7 @@ import com.foodbodi.model.CaloSegment
 import com.foodbodi.model.Restaurant
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.list_calories_cart_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,6 +63,8 @@ class RestaurantDetailActivity: AppCompatActivity(),ChatFragment.OnFragmentInter
 
 
         viewPager!!.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        tabLayout!!.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        tabLayout!!.setTabTextColors(ContextCompat.getColor(this, R.color.gray_color), ContextCompat.getColor(this, R.color.colorPrimary))
 
         tabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
