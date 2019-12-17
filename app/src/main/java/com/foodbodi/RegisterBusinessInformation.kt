@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.foodbodi.Base.BaseActivity
 import com.foodbodi.apis.FoodBodiResponse
 import com.foodbodi.apis.FoodbodiRetrofitHolder
 import com.foodbodi.apis.RestaurantResponse
@@ -25,7 +26,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-class RegisterBusinessInformation : AppCompatActivity() {
+class RegisterBusinessInformation : BaseActivity() {
     private val AUTOCOMPLETE_PLACE_CODE = 1
     private var SU_mode = false
     companion object {
@@ -109,6 +110,17 @@ class RegisterBusinessInformation : AppCompatActivity() {
 
                     })
 
+            }
+
+        })
+        setupActionBack()
+    }
+
+    private fun setupActionBack() {
+        val backButton = findViewById<Button>(R.id.button_back)
+        backButton?.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                onBackPressed()
             }
 
         })
