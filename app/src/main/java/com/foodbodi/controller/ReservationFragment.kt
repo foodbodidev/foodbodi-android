@@ -37,6 +37,8 @@ class ReservationFragment: BaseFragment() {
     var cursor: String = ""
     var isLoadingNextPage = false
 
+    var isLoad: Boolean = false
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.reservation_fragment, container, false)
@@ -52,8 +54,13 @@ class ReservationFragment: BaseFragment() {
         }
 
         setUpScrollView()
-        listReservation = ArrayList()
-        this.getReservation()
+        if (!isLoad) {
+            this.getReservation()
+            isLoad = true
+        } else {
+            progressBar.visibility = View.GONE
+        }
+
     }
 
 
