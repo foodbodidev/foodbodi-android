@@ -36,6 +36,7 @@ import okhttp3.RequestBody
 import java.util.*
 import android.app.TimePickerDialog
 import android.text.InputType
+import com.facebook.internal.Utility
 import org.checkerframework.checker.nullness.compatqual.NullableType
 import java.text.SimpleDateFormat
 
@@ -68,6 +69,7 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
 
     lateinit var addFoodBtn:Button
     lateinit var addFoodSection:LinearLayout
+    lateinit var btnDeleteRestaurant:ImageButton
 
     companion object {
         val DATA_SERIALIZE_NAME:String = "restaurant"
@@ -114,7 +116,30 @@ class EditRestaurantActivity : AppCompatActivity(), AdapterView.OnItemSelectedLi
             }
 
         })
+        btnDeleteRestaurant = findViewById<ImageButton>(R.id.imgDeleteRestaurant);
+        btnDeleteRestaurant.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                Utils.showAlert(getString(R.string.delete_restaurant_title),this@EditRestaurantActivity) {
+                    //call api.
+                    ProgressHUD.instance.showLoading(this@EditRestaurantActivity)
+                    FoodbodiRetrofitHolder.getService().deleteRestaurant(FoodbodiRetrofitHolder.getHeaders(this@EditRestaurantActivity), restaurant.id!!)
+                        .enqueue( object : Callback<FoodBodiResponse<Any>> {
+                            override fun onFailure(call: Call<FoodBodiResponse<Any>>, t: Throwable) {
+                                ProgressHUD.instance.hideLoading()
+                                Utils.showAlert(t.message!!, this@EditRestaurantActivity)
+                            }
 
+                            override fun onResponse(
+                                call: Call<FoodBodiResponse<Any>>,
+                                response: Response<FoodBodiResponse<Any>>
+                            ) {
+                                ProgressHUD.instance.hideLoading()
+                                onBackPressed()
+                            }
+                        })
+                }
+            }
+        })
 
         fillData()
 

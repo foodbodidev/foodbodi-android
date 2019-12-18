@@ -20,7 +20,8 @@
             android:layout_marginTop="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_width="48dp"
-            android:layout_height="48dp">
+            android:layout_height="48dp"
+            >
         <ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -37,7 +38,16 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"/>
     </RelativeLayout>
-
+    <ImageButton
+            android:id="@+id/imgDeleteRestaurant"
+            android:background="@color/gray_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_delete"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/fab_margin"
+            >
+    </ImageButton>
 
     <androidx.core.widget.NestedScrollView
             android:layout_marginTop="150dp"
