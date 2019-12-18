@@ -52,6 +52,7 @@ class ReservationFragment: BaseFragment() {
         }
 
         setUpScrollView()
+        listReservation = ArrayList()
         this.getReservation()
     }
 
