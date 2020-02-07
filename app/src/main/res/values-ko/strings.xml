@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">푸드바디</string>
+    <string name="title_fodimap">푸디맵</string>
+    <string name="title_reservation">예약내역</string>
+    <string name="title_profile">프로필</string>
+    <string name="not_updated">업데이트하지않음</string>
+    <string name="continue_with_email">이메일로 연결하기</string>
+    <string name="continue_with_google">구글로 연결하기</string>
+    <string name="continue_with_facebook">페이스북으로 연결하기</string>
+    <string name="continue_to">계속할까요</string>
+    <string name="login">로그인</string>
+    <string name="register">등록하기</string>
+    <string name="submit">제출할까요?</string>
+    <string name="gender_question">당신의성이 어떻게 됩니까?</string>
+    <string name="your_basic">당신의 정보</string>
+    <string name="email">이메일</string>
+    <string name="password">비밀번호</string>
+    <string name="male">남자</string>
+    <string name="age">Y당신의 나이는?</string>
+    <string name="height">키</string>
+    <string name="weight">몸무게 (kg)</string>
+    <string name="target_weight">원하는 목표</string>
+    <string name="next">다음</string>
+    <string name="firstname">이름</string>
+    <string name="lastname">성</string>
+    <string name="title">제목</string>
+</resources>

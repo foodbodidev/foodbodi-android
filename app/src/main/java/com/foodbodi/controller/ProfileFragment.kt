@@ -170,12 +170,14 @@ class ProfileFragment : Fragment() {
                 )
                     .getTodayData(object : Action<DailyLog> {
                         override fun accept(dailyLog: DailyLog?) {
-                            state = dailyLog!!;
-                            updateView();
+                            if (dailyLog != null) {
+                                state = dailyLog;
+                                updateView();
 
-                            if (!isRegisterSensor) {
-                                MainActivity.fitnessAPI.startListenOnStepCountDelta()
-                                isRegisterSensor = true
+                                if (!isRegisterSensor) {
+                                    MainActivity.fitnessAPI.startListenOnStepCountDelta()
+                                    isRegisterSensor = true
+                                }
                             }
                         }
 
